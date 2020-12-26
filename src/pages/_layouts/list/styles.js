@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import search from '~/assets/search-24px.svg';
 import { darken } from 'polished';
+import { TaskList } from '~/pages/_layouts/list/styles';
 
 export const Container = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: auto;
-  max-height: 78vh;
+  max-height: 90vh;
   max-width: 100%;
   margin: 0 10px;
   border-radius: 4px;
@@ -18,59 +19,76 @@ export const Container = styled.div`
     padding: 24px 4px;
     max-height: none;
   }
-  header {
+  strong {
+    max-height: 50px;
+    width: 210px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    margin: auto 4px;
+    overflow: hidden;
+    color: #444;
+    background: #9d9eb4;
+  }
+
+  .container-left {
+    width: 60%;
+    padding: 8px;
+    border: 1px solid #111;
+    /* background: #a0d9; */
+  }
+  .container-right {
+    width: 40%;
+    padding: 8px;
+    border: 1px solid #111;
+    /* background: #a044; */
+  }
+
+  @media (max-width: 620px) {
+    strong {
+      font-size: 2vw;
+      margin: auto 1px;
+    }
+
+  }
+`;
+
+export const TaskListDiv = styled.div`
+  .list-header {
     display: flex;
     flex-direction: column;
-    height: 100px;
+    height: 6rem;
     width: 100%;
-    margin: 0 0 .5rem;
-    background-color: #F5F5F5;
-    /* background: #a0daa9; */
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background: #a0da;
+    @media (max-width: 620px) {
+      height: auto;
+    }
   }
-  strong {
-    text-align: left;
-    font-size: 20px;
-    margin: 10px 0;
-    color: #58595B;
-  }
+
   .list-header-div {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin: .5rem 0;
-    /* background: #a0daa9; */
-    input {
-      height: 44px;
-      width: 300px;
-      font-size: 16px;
-      font-weight: normal;
-      text-indent: 24px;
-      color: #333;
-      border: 0;
-      border-radius: 4px;
-      padding: 0px 15px;
-      background: #FFF url(${search}) no-repeat center left 7px;
-    }
-    input.cssSpaceFiller {
-      visibility: hidden;
-    }
+    background: #a0daa9;
   }
-  @media (max-width: 620px) {
-    padding: 24px 4px;
-    strong {
-      font-size: 4vw;
-      margin: 4px 0;
-    }
-    header {
-      height: auto;
-    }
+  .header-input {
+    height: 44px;
+    width: 300px;
+    font-size: 16px;
+    font-weight: normal;
+    text-indent: 24px;
+    color: #333;
+    border: 0;
+    border-radius: 4px;
+    padding: 0px 15px;
+    background: #FFF url(${search}) no-repeat center left 7px;
+  }
 
-    .list-header-div {
-      font-size: 3vw;
-      width: 60%;
-      padding: 0;
-      text-indent: 34px;
-    }
+  .cssSpaceFiller {
+    visibility: hidden;
   }
 
   .title-bar {
@@ -79,132 +97,152 @@ export const Container = styled.div`
     /* height: 60px; */
     width: 100%;
     border-radius: 4px;
-    padding: .5rem 0;
-    margin: 1rem auto 0;
+    padding: .5rem 5px .5rem 0;
+    margin: 1rem auto 0 ;
     background: #b86d29;
-    strong {
-      max-height: 50px;
-      width: 210px;
-      font-size: 16px;
-      font-weight: 600;
-      text-align: center;
-      margin: auto 4px;
-      overflow: hidden;
-      color: #444;
-      background: #9d9eb4;
-    }
-    .date-div {
-      display: flex;
-      justify-content: space-between;
-      width: 16rem;
-      background-color: #F00;
-    }
-    .short-tag {
-      width: 110px;
-    }
-    @media (max-width: 620px) {
-      .title-bar {
-        height: auto;
-        width: auto;
-        margin: 0;
-      }
-      strong {
-        font-size: 2vw;
-        margin: auto 1px;
-      }
 
-    }
-    .title-photo-and-name {
-      max-height: 70px;
-      width: 310px;
-      overflow: hidden;
-      /* background: #ffc87c; */
-    }
-  }
-  .item-list {
-    max-height: 100%;
-  }
-`;
-
-export const Line = styled.div`
-  display: flex;
-  flex-direction: column;
-  .line-div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    height: auto;
-    min-height: 44px;
-    width: 100%;
-    border-radius: 4px;
-    padding: .5rem 0;
-    margin: 1rem auto 0;
-    background-color: #fff;
-    background: #d1ffbd;
   }
 
-  label {
-    max-height: 50px;
-    width: 210px;
-    font-size: 14px;
-    font-weight: normal;
-    text-align: center;
-    margin: auto 4px;
-    overflow: hidden;
-    color: #000;
-    background: #a0daa9;
-  }
-
-  .photo-and-name-div {
+  .date-div {
     display: flex;
     justify-content: space-between;
-    width: 310px;
-    margin: auto 4px;
-    background: #eac853;
+    width: 16rem;
+    background-color: #F00;
+  }
+
+  .title-strong {
+    width: 330px;
+    background: #ffc87c;
   }
 
   .short-tag {
     width: 110px;
+    background-color: #444;
   }
 
-  img {
-    border: 1px solid #DDDDDD;
-    border-radius: 50%;
-    margin: auto 0px auto 4px;
+  .long-tag {
+    width: 100%;
+    max-width: 990px;
   }
 
   .name-label {
     margin-right: 0;
   }
 
-  .date-div {
-    display: flex;
-      justify-content: space-between;
-      width: 16rem;
-      background-color: #F00;
+  .long-label {
+    width: 100%;
+    max-width: 990px;
+  }
+
+
+  .title-photo-and-name {
+    max-height: 70px;
+    width: 310px;
+    overflow: hidden;
+    /* background: #ffc87c; */
+  }
+  .item-list {
+    max-height: 30vh;
+    overflow-y: scroll;
+    ::-webkit-scrollbar {
+      width: 5px;
     }
-  .startdate {
-    width: 110px;
-    border-radius: 16px;
-    padding: 2px;
-    background: #F5F5F5;
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+    }
   }
-  .duedate {
-    width: 110px;
-    border-radius: 16px;
-    padding: 2px;
+
+  @media (max-width: 620px) {
+    .title-bar {
+      height: auto;
+      width: auto;
+      margin: 0;
+    }
   }
-  .task-details-div {
+`;
+
+export const TaskDetailsDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  width: 100%;
+  padding: 4px;
+  background-color: #999;
+
+  .task-details-label {
+    width: auto;
+    font-weight: bold;
+    text-align: left;
+    margin: .5rem 4px 0 4px;
+    color: #444444;
+    /* background: #666; */
+  }
+
+
+
+  .task-details-description-div {
+    height: 100px;
+    background-color: #F5F5F5;
+  }
+
+  .sub-tasks-div {
+    display: flex;
+    flex-direction: column;
+
+
+    padding: 4px;
+    /* background-color: #ff4; */
+  }
+  .sub-tasks-list-div {
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    width: 100%;
+    /* border: 1px solid #111; */
+    border-radius: 4px;
+    background-color: #F5F5F5;
+  }
+
+  .sub-task-checkbox-label {
     display: flex;
     flex-direction: row;
-    min-height: 10rem;
-    /* background-color: #F00; */
+    /* background-color: #f00; */
   }
+
+  .sub-tasks-checkbox-input {
+    height: 22px;
+    width: auto;
+    margin: 4px;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    padding: 0 12px;
+    color: #444444;
+    background-color: #FFFFFF;
+    &::placeholder {
+      color: #DDDDDD;
+    }
+    @media (max-width: 620px) {
+      font-size: 3vw;
+      width: 96%;
+      margin: auto;
+    }
+    @media (max-width: 350px) {
+      width: 50%;
+    }
+    background-color: #555;
+  }
+
+  .sub-tasks-checkbox-span {
+    font-weight: 400;
+    margin: auto 4px;
+    /* background: #666; */
+  }
+
   .task-details-aside {
     display: flex;
     flex-direction: column;
     /* justify-content: space-around; */
-    width: 33.3%;
+    width: 10vw;
     padding: auto;
     /* background-color: #F5F; */
   }
@@ -240,40 +278,160 @@ export const Line = styled.div`
   .task-details-bottom-div {
     display: flex;
     justify-content: space-around;
-    /* background-color: #999; */
+    background-color: #999;
   }
 
-  .task-details-strong {
-    width: auto;
-    text-align: left;
-    font-size: 14px;
-    font-weight: bold;
-    padding: .5rem auto 0;
-    color: #444444;
-    background: #ff3;
-    @media (max-width: 620px) {
-      font-size: 3vw;
-      margin: 14px 4px 4px 10px;
+
+`;
+
+export const MessageDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 4px;
+  background-color: #5edc1f;
+
+  .message-conversation-div {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 4px;
+    margin: 1.5rem 0;
+    border: 1px solid #111;
+    border-radius: 4px;
+    overflow-y: scroll;
+    /* background-color: #fff333; */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
     }
   }
 
-  .sub-tasks-div {
-    display: flex;
-    flex-direction: column;
-    width: 66.6%;
-
-    margin: 4px;
-    /* background-color: #ff4; */
-  }
-  .sub-tasks-list-div {
-    display: flex;
-    flex-direction: column;
-    height: 80%;
+  .message-div {
+    height: auto;
+    padding: auto 24px;
     border: 1px solid #111;
+  }
+
+  .message-div.user {
+    text-align: right;
+  }
+
+  .message-div.worker {
+    text-align: left;
+  }
+
+  .message-span {
+    /* display: flex; */
+    font-size: 14px;
+    line-height: 36px;
+    align-self: center;
+    padding: 4px 12px;
+    margin: 0 4px;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+
+  .message-span.worker {
+    background-color: #F5F5F5;
+  }
+
+  .message-time-span {
+    font-size: 10px;
+    color: #444;
+  }
+
+  .message-time-span.user {
+
+  }
+
+
+  .message-form {
+
+  }
+
+  .message-input {
+    width: 100%;
+    margin: 4px 0 0;
+    padding: 10px;
+    border: none;
     border-radius: 4px;
 
-    /* background-color: #F5F; */
   }
+`;
+
+export const Line = styled.div`
+  display: flex;
+  flex-direction: column;
+  .line-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: auto;
+    min-height: 44px;
+    width: 100%;
+    border-radius: 4px;
+    padding: .5rem 0;
+    margin: 1rem auto 0;
+    background-color: #fff;
+    background: #d1ffbd;
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    margin: auto 4px;
+    overflow: hidden;
+    color: #000;
+    /* background: #a0daa9; */
+  }
+
+  .item-label {
+    width: 330px;
+    background: #eac853;
+  }
+
+  .photo-and-name-div {
+    display: flex;
+    justify-content: space-between;
+    width: 310px;
+    margin: auto 4px;
+    background: #eac853;
+  }
+
+  img {
+    border: 1px solid #DDDDDD;
+    border-radius: 50%;
+    margin: auto 0px auto 4px;
+  }
+
+  .date-div {
+    display: flex;
+      justify-content: space-between;
+      width: 16rem;
+      background-color: #F00;
+    }
+  .startdate {
+    width: 110px;
+    border-radius: 16px;
+    padding: 2px;
+    background: #F5F5F5;
+  }
+  .duedate {
+    width: 110px;
+    border-radius: 16px;
+    padding: 2px;
+  }
+
+
+
 
   .whatsappbutton {
       border-radius: 4px;

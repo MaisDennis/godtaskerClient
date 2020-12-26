@@ -6,9 +6,9 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
-  height: 100px;
+  height: 5vh;
   max-width: 900px;
-  margin: 20px auto;
+  margin: 1vh auto;
   display: flex;
   justify-content: space-between;
   align-items: center;

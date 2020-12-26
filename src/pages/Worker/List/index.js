@@ -48,7 +48,7 @@ export default function ListWorkers() {
   // -----------------------------------------------------------------------------
   return (
    <Container>
-      <header>
+      <header className="list-header">
         <strong>Funcionários</strong>
         <div className='list-header-div'>
           <input placeholder='Busca por Funcionário'
@@ -62,9 +62,9 @@ export default function ListWorkers() {
 
       <div className="title-bar">
         <strong className='title-photo-and-name'>Nome</strong>
-        <strong>Dept.</strong>
-        <strong>Tel.</strong>
-        <strong>Tarefas</strong>
+        <strong className="title-strong">Dept.</strong>
+        <strong className="title-strong">Tel.</strong>
+        <strong className="title-strong">Tarefas</strong>
       </div>
 
       <ul className='item-list'>

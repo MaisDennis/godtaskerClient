@@ -111,7 +111,7 @@ export const Container = styled.div`
         width: auto;
         height: auto;
       }
-      strong {
+      .title-strong {
         width: 210px;
         font-size: 18px;
         font-weight: bold;
@@ -126,17 +126,17 @@ export const Container = styled.div`
         margin: auto 1px;
         }
       }
-      strong.strongDescription {
+      .strongDescription {
         @media (max-width: 620px) {
           visibility: collapse;
         }
       }
-      strong.short {
+      .short-strong {
         width: 55px;
         padding: auto;
         /* background: #e2da; */
       }
-      strong.long {
+      .long-strong {
         width: 600px;
         max-height: 70px;
         overflow: hidden;
