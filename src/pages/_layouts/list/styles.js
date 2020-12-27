@@ -142,7 +142,8 @@ export const TaskListDiv = styled.div`
     /* background: #ffc87c; */
   }
   .item-list {
-    max-height: 30vh;
+    min-height: 40vh;
+    max-height: 50vh;
     overflow-y: scroll;
     ::-webkit-scrollbar {
       width: 5px;
@@ -164,9 +165,10 @@ export const TaskListDiv = styled.div`
 export const TaskDetailsDiv = styled.div`
   display: flex;
   flex-direction: column;
-  height: 300px;
+  height: 30vh;
   width: 100%;
   padding: 4px;
+  overflow-y: scroll;
   background-color: #999;
 
   .task-details-label {

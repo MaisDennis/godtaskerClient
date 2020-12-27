@@ -6,12 +6,15 @@ import { format, parseISO, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
+import Searchbar from '../../../utils/Searchbar';
 import { Container, TaskListDiv, TaskDetailsDiv, MessageDiv, Line } from '~/pages/_layouts/list/styles';
 // import insert from '~/assets/insert_photo-24px.svg';
 // import whatsapplogo from '~/assets/whatsapplogo5.png'
 // -----------------------------------------------------------------------------
 export default function ListTasks() {
+  const [inputState, setInputState] = useState('');
   const [tasks, setTasks] = useState([]);
+  const [defaultTasks, setDefaultTasks] = useState([]);
   const [task, setTask] = useState(tasks[0]);
   const [chatMessage, setChatMessage] = useState();
   const [queryInput, setQueryInput] = useState([]);
@@ -24,7 +27,22 @@ export default function ListTasks() {
   const formattedDate = fdate =>
     fdate == null
       ? ''
-      : format(parseISO(fdate), "dd'/'MMM'/'yyyy", { locale: ptBR });
+      : format(parseISO(fdate), "dd'/'MMM'/'yyyy HH:mm", { locale: ptBR });
+
+  const formattedMessageDate = fdate =>
+  fdate == null
+    ? ''
+    : format(fdate, "dd'/'MMM'/'yyyy HH:mm", { locale: ptBR });
+
+  const handleUpdateInput = async (input) => {
+    const filteredList = defaultTasks.filter(t => {
+      let workerName = t.worker.worker_name
+
+      return workerName.toLowerCase().includes(input.toLowerCase())
+    })
+    setTasks(filteredList)
+    setInputState(input)
+  }
 
   useEffect(() => {
     load('', user_id);
@@ -35,9 +53,9 @@ export default function ListTasks() {
       params: { workerNameFilter, userID }
     })
     setTasks(response.data);
+    setDefaultTasks(response.data)
     setTask(response.data[0])
-    console.log(response.data)
-
+    // console.log(response.data)
   }
 
   function handleInputChange(e) {
@@ -61,19 +79,22 @@ export default function ListTasks() {
   async function handleMessageSubmit(e) {
     e.preventDefault()
     let pushMessage = task.messages
+    let formattedTimeStamp = formattedMessageDate(new Date())
+    const id = task.id
 
     pushMessage.push({
       "message": chatMessage,
       "sender": "user",
       "user_read": false,
       "worker_read": false,
+      "timestamp": formattedTimeStamp
     })
-console.log(pushMessage)
-    const id = task.id
+
     await api.put(`tasks/messages/${id}`,
       pushMessage
     );
     setChatMessage()
+    // load('', user_id);
     messageRef.current.value = '';
   }
   // -----------------------------------------------------------------------------
@@ -81,17 +102,22 @@ console.log(pushMessage)
     <Container>
       <div className="container-left">
         <TaskListDiv>
-          {/* <header className='list-header'>
+          <header className='list-header'>
             <strong>Tarefas</strong>
             <div className='list-header-div'>
-              <input className="header-input" placeholder='Busca por Nome de Funcionário'
-                onChange={handleInputChange} onKeyDown={handleQueryInput}
-              />
+              <Searchbar className="header-input" input={inputState} onChange={handleUpdateInput}/>
+              {/* <input
+                className="header-input"
+
+                // onChange={handleInputChange}
+                onChange={handleUpdateInput}
+                onKeyDown={handleQueryInput}
+              /> */}
               <Link className='create-link' to='/tasks'>
                 <Plus size={11} color='#FFF' /> Nova Tarefa
               </Link>
             </div>
-          </header> */}
+          </header>
 
           <div className='title-bar'>
             <strong className='title-strong'>Tarefa</strong>
@@ -148,7 +174,9 @@ console.log(pushMessage)
             </div>
           </div>
           <div className="buttons-div">
-            <button className="edit-task-button">Editar a tarefa</button>
+            <Link className='create-link' to={task ? (`/tasks/update/${task.id}`) : null}>
+              <Plus size={11} color='#FFF' /> Editar Tarefa
+            </Link>
             <button className="remove-task-button" onClick={() => handleRemoveTask(task)}>Cancelar a tarefa</button>
           </div>
 
@@ -165,14 +193,14 @@ console.log(pushMessage)
                   {m.sender === 'user'
                     ? (
                       <>
-                        <span className={`message-time-span ${m.sender}`}> 24/12/2020 18:06</span>
+                        <span className={`message-time-span ${m.sender}`}>{m.timestamp}</span>
                         <span className={`message-span ${m.sender}`}>{m.message}</span>
                       </>
                     )
                     : (
                       <>
                         <span className={`message-span ${m.sender}`}>{m.message}</span>
-                        <span className={`message-time-span ${m.sender}`}> 24/12/2020 18:06</span>
+                    <span className={`message-time-span ${m.sender}`}>{m.timestamp}</span>
                       </>
                     )
                   }
