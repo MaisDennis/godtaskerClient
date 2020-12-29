@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { Rewind, CheckCircle } from 'react-feather'
 import { Link } from 'react-router-dom';
 import { startOfHour, endOfHour, parseISO, isBefore, subDays, format } from 'date-fns';
-import { TiEdit, TiArrowForward } from 'react-icons/ti';
+import { TiEdit } from 'react-icons/ti';
 import { RiCloseCircleFill } from 'react-icons/ri';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
@@ -36,7 +36,6 @@ export default function CreateTask() {
   useEffect(() => {
     loadWorkerOptionsList(user_id);
   }, [user_id])
-
   async function loadWorkerOptionsList(userID) {
     const response = await api.get(`users/${userID}/contact-list`);
     setWorker(response.data);
@@ -151,13 +150,13 @@ export default function CreateTask() {
             </div>
           </div>
         </header>
-
+          {/* Task Name */}
         <div className="form-body-div">
           <div className="sub-content-line-div">
             <label>Tarefa<sup>*</sup></label>
             <input name="name" type="string" placeholder="Lavar o carro" ref={register} />
           </div>
-
+          {/* Description */}
           <div className="sub-content-line-div">
             <label>Descrição</label>
             <textarea
@@ -169,7 +168,7 @@ export default function CreateTask() {
               ref={register}
             />
           </div>
-
+          {/* Sub Tasks */}
           <div className="sub-content-line-div">
             <label className='checkbox-label'>
               <input className='checkbox-input' type="checkbox" onClick={handleToggleSubTasksDiv}/>
@@ -183,7 +182,6 @@ export default function CreateTask() {
                 )
                 : null
               }
-
             </label>
           </div>
           {
@@ -243,7 +241,7 @@ export default function CreateTask() {
                                     className='sub-task-add-button'
                                     type="button"
                                     onClick={() => handleEditSubTask(index)}
-                            >{`Alterar a sub-tarefa ${index+1}.`}</button>
+                                  >{`Alterar a sub-tarefa ${index+1}.`}</button>
                                 </div>
                               </>
                             )
@@ -276,7 +274,7 @@ export default function CreateTask() {
             )
             : null
           }
-
+          {/* Dates */}
           <div className="sub-content-line-divider-div">
             <div className='sub-content-line-div'>
               <label>Início<sup>*</sup></label>
@@ -293,7 +291,7 @@ export default function CreateTask() {
             </div>
           </div>
           <br/>
-
+          {/* Radio Tags */}
           <div className="sub-content-line-divider-div">
             <div className="sub-content-line-div">
               <label>Prioridade</label>
@@ -443,7 +441,7 @@ export default function CreateTask() {
               </div>
             </div>
           </div>
-
+          {/* Workers */}
           <div className='sub-content-line-div'>
             <label>Enviar a Funcionários<sup>*</sup></label>
             {worker.map((w) =>
