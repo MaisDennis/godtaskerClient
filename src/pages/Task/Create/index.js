@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Rewind, CheckCircle } from 'react-feather'
 import { Link } from 'react-router-dom';
-import { startOfHour, endOfHour, parseISO, isBefore, subDays, format } from 'date-fns';
+import { parseISO, isBefore , subHours, format } from 'date-fns';
 import { TiEdit } from 'react-icons/ti';
 import { RiCloseCircleFill } from 'react-icons/ri';
 // -----------------------------------------------------------------------------
@@ -18,9 +18,9 @@ export default function CreateTask() {
   const [subTasksCheckBox, setSubTasksCheckBox] = useState(false);
   const [subTaskToggleEdit, setSubTaskToggleEdit] = useState(false);
   const [subTasksInputValue, setSubTasksInputValue] = useState([]);
-  const [startDateInputValue, setStartDateInputValue] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [startDateInputValue, setStartDateInputValue] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
 
-  const [editSubTask, setEditSubTask] = useState();
+
   const [editSubTaskInputValue, setEditSubTasksInputValue] = useState();
   const [editSubTaskIndex, setEditSubTaskIndex] = useState();
 
@@ -30,8 +30,7 @@ export default function CreateTask() {
 
   const subTaskInputRef = useRef();
   const editSubTaskInputRef = useRef();
-  // const user_id = useSelector(state => state.user.profile.id);
-  const user_id = 1;
+  const user_id = useSelector(state => state.user.profile.id);
 
   useEffect(() => {
     loadWorkerOptionsList(user_id);
@@ -47,8 +46,6 @@ export default function CreateTask() {
     // console.log(`2-${radioUrgent}`)
     // console.log(`3-${radioComplex}`)
     // console.log('---')
-    console.log(worker)
-
   }
 
   function handleAddSubTask() {
@@ -87,9 +84,10 @@ export default function CreateTask() {
   }
 
   const { register, handleSubmit } = useForm();
+
   const onSubmit = ({ name, description, start_date, due_date, phonenumbers }) => {
-    const hourStart = startOfHour(parseISO(start_date));
-    const parsedDueDateByEndingHour = endOfHour(parseISO(due_date)); // This solves: start_date === end_date issue for now (2020.07.22)
+    const timeStart = parseISO(start_date);
+    const timeEnd = parseISO(due_date); // This solves: start_date === end_date issue for now (2020.07.22)
     const taskAttributeArray = [ radioPriority, radioUrgent, radioComplex ]
 
     if (!phonenumbers[0]) {
@@ -101,13 +99,13 @@ export default function CreateTask() {
     } else if (!start_date) {
       toast.error('Por favor, colocar uma data de início.');
       return;
-    } else if (isBefore(hourStart, subDays(new Date(), 1))) {
+    } else if (isBefore(timeStart, subHours(new Date(), 1))) {
       toast.error('O início está no passado.');
       return;
     } else if (!due_date) {
       toast.error('Por favor, colocar um prazo.');
       return;
-    } else if (isBefore(parsedDueDateByEndingHour, hourStart)) {
+    } else if (isBefore(timeEnd, timeStart)) {
       toast.error('O prazo está antes do início.');
     } else {
       phonenumbers.map(p => {
@@ -121,12 +119,11 @@ export default function CreateTask() {
             due_date,
             workerphonenumber: p
           }, user_id
-        ]);
+        ])
 
       })
       // history.push('/');
       toast.success('Tarefa cadastrada com sucesso!');
-
     }
   }
 
@@ -280,14 +277,14 @@ export default function CreateTask() {
               <label>Início<sup>*</sup></label>
               <input
                 name="start_date"
-                type="date"
+                type="datetime-local"
                 ref={register}
                 onChange={e => setStartDateInputValue(e.target.value)}
                 value={startDateInputValue}/>
             </div>
             <div className='sub-content-line-div'>
               <label>Prazo<sup>*</sup></label>
-              <input name="due_date" type="date" ref={register} />
+              <input name="due_date" type="datetime-local" ref={register} />
             </div>
           </div>
           <br/>

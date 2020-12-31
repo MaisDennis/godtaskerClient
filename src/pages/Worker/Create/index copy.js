@@ -15,9 +15,25 @@ export default function CreateWorker() {
     const [masked, setMasked] = useState(' ');
   const user_id = useSelector(state => state.user.profile.id);
 
+  // const gender = [ {"id": "masculino" }, {"id": "feminino" }, {"id": "alien"}];
+  // const genderOptions = gender.map(g => ({ id: g.id, title: g.id }))
+
   async function handleSubmit({ first_name, last_name, worker_name, department }) {
     const phonenumber = masked.replace(/\D/gim, '');
     try {
+      // await api.post('workers', {
+      //   first_name,
+      //   last_name,
+      //   worker_name,
+      //   dept,
+      //   phonenumber,
+      //   worker_password,
+      //   gender,
+      //   user_id,
+      // });
+      // history.push('/workers/list');
+      // toast.success('Funcionário cadastrado com sucesso!');
+
       await api.post(`users/${user_id}/contact-list`, {
         first_name,
         last_name,
@@ -79,6 +95,10 @@ export default function CreateWorker() {
               }}
             />
           </div>
+          {/* <div className="sub-content-line-div">
+              <label>Gênero<sup>*</sup></label>
+              <Select className='gender-select' name="gender" options={genderOptions} placeholder="Gênero"/>
+          </div> */}
         </div>
       </Form>
     </Container>

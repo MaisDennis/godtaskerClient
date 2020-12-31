@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom'
-import { Form, Input } from '@rocketseat/unform';
+import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import InputMask from 'react-input-mask';
 import * as Yup from 'yup';
-import { Select } from '@rocketseat/unform';
 // -----------------------------------------------------------------------------
 import logo from '~/assets/detective/detective.svg';
 import godtaskerFont from '~/assets/godtaskerFont/godtaskerFontPlainGrey.png';
@@ -13,20 +12,32 @@ import { signUpRequest } from '~/store/modules/auth/actions';
 export default function SignUp() {
   const dispatch = useDispatch();
   const [ masked, setMasked ] = useState(' ');
-  const gender = [ {"id": "masculino" }, {"id": "feminino" }, {"id": "alien"}];
-  const genderOptions = gender.map(g => ({ id: g.id, title: g.id }))
+  const genderOptions = [ 'feminino', 'masculino', 'alien', 'outro']
 
   const schema = Yup.object().shape({
-    name: Yup.string().required('O nome é obrigatório'),
-    email: Yup.string().email('Insira um e-mail válido').required('O e-mail é obrigatório'),
-    gender: Yup.string().required('Escolha o gênero'),
+    first_name: Yup.string().required('O nome é obrigatório'),
+    last_name: Yup.string().required('O sobrenome é obrigatório'),
+    user_name: Yup.string().required('O nome de usuário é obrigatório'),
     password: Yup.string().min(6,'No mínimo 6 caracteres.').required('A senha é obrigatorória'),
-    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'A senha confirmada não é igual')
+    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'A senha confirmada não é igual'),
+    phonenumber: Yup.string()
+    .required()
+    .min(11),
+    email: Yup.string().email('Insira um e-mail válido').required('O e-mail é obrigatório'),
+    birth_date: Yup.string(),
+    gender: Yup.string().required('Escolha o gênero'),
+
   });
 
-  function handleSubmit({name, email, password, gender }) {
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = ({
+    first_name, last_name, user_name, password, email, birth_date, gender
+  }) => {
     const phonenumber = masked.replace(/\D/gim, '');
-    dispatch(signUpRequest(name, email, password, phonenumber, gender ));
+    dispatch(signUpRequest(
+      first_name, last_name, user_name, password, phonenumber, email, birth_date, gender
+    ));
   }
   // ---------------------------------------------------------------------------
   return (
@@ -34,25 +45,30 @@ export default function SignUp() {
     <img className="logo" src={logo} alt="detective"/>
     <img className="godtasker" src={godtaskerFont} alt="godtaskerFont"/>
 
-    <Form schema={schema} onSubmit={handleSubmit}>
-      <Input name= "name" placeholder="Nome completo" />
-      <Input name= "email" type="email" placeholder="Seu e-mail" />
-      <InputMask name ="phoneNumberMask" type="text" mask="(99)99999-9999" placeholder="Seu número de Whatsapp" maskChar="_"
-        onChange={e => {
-          setMasked(e.target.value);
-        }}
+    <form schema={schema} onSubmit={handleSubmit(onSubmit)}>
+      <input name= "first_name" placeholder="Primeiro Nome" ref={register}/>
+      <input name= "last_name" placeholder="Sobrenome" ref={register}/>
+      <input name= "user_name" placeholder="Nome de usuário" ref={register}/>
+      <InputMask
+        name ="phoneNumberMask"
+        type="text"
+        mask="(99) 99999-9999"
+        placeholder="(99) 91234-1234"
+        maskChar="_"
+        onChange={e => {setMasked(e.target.value);}}
       />
-      {/* <select name="gender">
-        {gender.map(g =>
+      <input name= "email" type="email" placeholder="Seu e-mail" ref={register}/>
+      <input name="birth_date" placeholder="Data de nascimento" ref={register}/>
+      <select name="gender" placeholder="Gênero" ref={register}>
+        {genderOptions.map(g =>
           <option key={g} value={g}>{g}</option>
         )}
-      </select> */}
-      <Select name="gender" options={genderOptions} placeholder="Gênero"/>
-      <Input name="password" type="password" placeholder="Sua senha secreta" />
-      <Input name="confirmPassword" type="password" placeholder="Confirmar a senha" />
+      </select>
+      <input name="password" type="password" placeholder="Sua senha secreta" ref={register}/>
+      <input name="confirmPassword" type="password" placeholder="Confirmar a senha" />
       <button type="submit">Criar conta</button>
       <Link to="/">Já tenho login</ Link>
-    </Form>
+    </form>
   </>
   );
 }

@@ -1,7 +1,15 @@
 import React from 'react';
 
 const SearchBar = ({ input: keyword, onChange: setKeyword }) => {
-  const BarStyling = { width: "100%", border:"1px solid #CCC", backgroundColor: "#FFF", borderRadius: ".4rem", padding: "0.5rem"}
+  const BarStyling = {
+    height: "36px",
+    width: "100%",
+    margin: 0,
+    padding: "10px 12px",
+    border:"1px solid #CCC",
+    borderRadius: ".4rem",
+    backgroundColor: "#FFF"
+  }
   return (
     <input
       style={BarStyling}

@@ -11,8 +11,7 @@ import { Container, Line } from '~/pages/_layouts/list/styles';
 export default function ListWorkers() {
   const [ workers, setWorkers ] = useState([]);
   const [ queryInput, setQueryInput ] = useState([]);
-  // const user_id = useSelector(state => state.user.profile.id)
-  const user_id = 1;
+  const user_id = useSelector(state => state.user.profile.id);
 
   useEffect(() => {
     loadWorkers(user_id);
@@ -21,7 +20,6 @@ export default function ListWorkers() {
   async function loadWorkers(userID) {
     const response = await api.get(`users/${userID}/contact-list`, {
     })
-
     setWorkers(response.data);
   }
 

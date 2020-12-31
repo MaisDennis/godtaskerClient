@@ -9,7 +9,7 @@ import Notifications from '~/components/Notifications';
 // -----------------------------------------------------------------------------
 export default function Header() {
   const profile = useSelector(state => state.user.profile);
-  // -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   return (
     <Container>
       <Content>
@@ -18,7 +18,7 @@ export default function Header() {
           <ul>
             <li><Link to="/dashboard">Tarefas</Link></li>
             <li><Link to="/workers/list">Funcionários</Link></li>
-            <li><Link to="/messages">Mensagens</Link></li>
+            {/* <li><Link to="/messages">Mensagens</Link></li> */}
             <li><Link to="/tutorial">Tutorial</Link></li>
           </ul>
         </nav>

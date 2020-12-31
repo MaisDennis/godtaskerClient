@@ -21,7 +21,6 @@ export function* signIn({ payload }) {
     history.push('/dashboard');
 
   } catch (err) {
-
     yield put(signFailure());
     toast.error('Falha na autenticação, verifique seus dados');
   }
@@ -36,22 +35,24 @@ export function setToken({payload }) {
 }
 // -----------------------------------------------------------------------------
 export function* signUp({ payload }) {
-  try {
-    const { name, email, password, phonenumber, gender } = payload;
-    yield call(api.post, 'users', {
-      name,
-      email,
-      password,
-      provider: false,
-      phonenumber,
-      gender
+    const { first_name, last_name, user_name, password, phonenumber, email, birth_date, gender } = payload;
+    // yield call(api.post, 'users', {
+    //   first_name, last_name, user_name, password, phonenumber, email, birth_date, gender, subscriber: false
+    // })
+
+    api.post('users', ({
+      first_name, last_name, user_name, password, phonenumber, email, birth_date, gender, subscriber: false
+    })).then(function(response) {
+      history.push('/');
+      toast.success('Usuário cadastrado com sucesso!');
+      console.log(response)
+    }).catch((error) => {
+      toast.error('Falha no cadastro, verifique seus dados!');
+      console.log(error)
     });
-    history.push('/');
-  } catch (err) {
-    toast.error('Falha no cadastro, verifique seus dados!');
-    yield put(signFailure());
-  }
+    // yield put(signFailure());
 }
+
 // -----------------------------------------------------------------------------
 export function signOnOut() {
   history.push('/');

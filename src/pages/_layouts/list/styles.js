@@ -1,19 +1,14 @@
 import styled from 'styled-components';
 import search from '~/assets/search-24px.svg';
 import { darken } from 'polished';
-import { TaskList } from '~/pages/_layouts/list/styles';
 
 export const Container = styled.div`
   display: flex;
   flex-direction: row;
   height: auto;
-  max-height: 90vh;
+  /* max-height: 92vh;  */
   max-width: 100%;
-  margin: 0 10px;
-  border-radius: 4px;
-  padding: 1rem;
-  padding-bottom: 30px;
-  background-color: #F5F5F5;
+
   /* background: #a0daa9; */
   @media (max-height: 680px) {
     padding: 24px 4px;
@@ -24,23 +19,47 @@ export const Container = styled.div`
     width: 210px;
     font-size: 16px;
     font-weight: 600;
-    text-align: center;
+    text-align: left;
     margin: auto 4px;
     overflow: hidden;
     color: #444;
-    background: #9d9eb4;
+    /* background: #9d9eb4; */
   }
 
-  .container-left {
-    width: 60%;
-    padding: 8px;
+  label {
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    margin: auto 4px;
+    overflow: hidden;
+    color: #000;
+    /* background: #a0daa9; */
+  }
+
+  input {
+    height: 24px;
+  }
+
+  img {
+    border: 1px solid #DDDDDD;
+    border-radius: 50%;
+    margin: auto 0px auto 4px;
+  }
+
+  .container-div {
+    margin: 0 8px;
+    padding: 1rem;
+    padding-bottom: 30px;
     border: 1px solid #111;
+    border-radius: 4px;
+    background-color: #F5F5F5;
+  }
+  .container-div.left {
+    width: 72%;
     /* background: #a0d9; */
   }
-  .container-right {
-    width: 40%;
-    padding: 8px;
-    border: 1px solid #111;
+  .container-div.right {
+    width: 28%;
     /* background: #a044; */
   }
 
@@ -49,7 +68,6 @@ export const Container = styled.div`
       font-size: 2vw;
       margin: auto 1px;
     }
-
   }
 `;
 
@@ -57,11 +75,12 @@ export const TaskListDiv = styled.div`
   .list-header {
     display: flex;
     flex-direction: column;
-    height: 6rem;
+    height: auto;
     width: 100%;
     border-radius: 4px;
-    margin-bottom: 10px;
-    background: #a0da;
+    padding: 0;
+    margin: 4px 0 10px;
+    /* background: #a0da; */
     @media (max-width: 620px) {
       height: auto;
     }
@@ -71,8 +90,9 @@ export const TaskListDiv = styled.div`
     display: flex;
     justify-content: space-between;
     width: 100%;
-    margin: .5rem 0;
-    background: #a0daa9;
+    margin: 0;
+    padding: 4px 0;
+    /* background: #a0daa9; */
   }
   .header-input {
     height: 44px;
@@ -87,8 +107,18 @@ export const TaskListDiv = styled.div`
     background: #FFF url(${search}) no-repeat center left 7px;
   }
 
-  .cssSpaceFiller {
-    visibility: hidden;
+  .form-body-div {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin: 0 5px;
+    border-radius: 4px;
+    padding: 0 24px;
+    background: #FFF;
+    /* background: #a0daa9; */
+    @media (max-width: 620px) {
+      padding: 0;
+    }
   }
 
   .title-bar {
@@ -97,9 +127,9 @@ export const TaskListDiv = styled.div`
     /* height: 60px; */
     width: 100%;
     border-radius: 4px;
-    padding: .5rem 5px .5rem 0;
+    padding: .5rem 0 .5rem;
     margin: 1rem auto 0 ;
-    background: #b86d29;
+    /* background: #b86d29; */
 
   }
 
@@ -111,13 +141,19 @@ export const TaskListDiv = styled.div`
   }
 
   .title-strong {
-    width: 330px;
-    background: #ffc87c;
+    min-width: 230px;
+    text-align: center;
+    /* background: #ffc87c; */
   }
 
   .short-tag {
     width: 110px;
-    background-color: #444;
+    text-align: center;
+    /* background-color: #fff; */
+  }
+  .short-tag-last {
+    width: 110px;
+    /* background-color: #fff; */
   }
 
   .long-tag {
@@ -134,7 +170,6 @@ export const TaskListDiv = styled.div`
     max-width: 990px;
   }
 
-
   .title-photo-and-name {
     max-height: 70px;
     width: 310px;
@@ -142,8 +177,9 @@ export const TaskListDiv = styled.div`
     /* background: #ffc87c; */
   }
   .item-list {
-    min-height: 40vh;
-    max-height: 50vh;
+    min-height: 35vh;
+    max-height: 45vh;
+    margin-bottom: 12px;
     overflow-y: scroll;
     ::-webkit-scrollbar {
       width: 5px;
@@ -152,7 +188,6 @@ export const TaskListDiv = styled.div`
       background: #888;
     }
   }
-
   @media (max-width: 620px) {
     .title-bar {
       height: auto;
@@ -165,17 +200,30 @@ export const TaskListDiv = styled.div`
 export const TaskDetailsDiv = styled.div`
   display: flex;
   flex-direction: column;
-  height: 30vh;
+  height: auto;
   width: 100%;
   padding: 4px;
   overflow-y: scroll;
-  background-color: #999;
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  background-color: #fff;
+
+  .test {
+    display: flex;
+  flex-direction: column;
+
+  }
 
   .task-details-label {
     width: auto;
     font-weight: bold;
     text-align: left;
-    margin: .5rem 4px 0 4px;
+    line-height: 24px;
+    margin: .5rem 4px 4px 4px;
     color: #444444;
     /* background: #666; */
   }
@@ -183,38 +231,48 @@ export const TaskDetailsDiv = styled.div`
 
 
   .task-details-description-div {
-    height: 100px;
+    height: auto;
+    line-height: 24px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 10px 12px;
+
     background-color: #F5F5F5;
   }
 
   .sub-tasks-div {
     display: flex;
     flex-direction: column;
-
-
-    padding: 4px;
+    /* padding: 4px; */
     /* background-color: #ff4; */
   }
   .sub-tasks-list-div {
     display: flex;
     flex-direction: column;
-    height: 100px;
+    height: auto;
     width: 100%;
+    padding: 10px 12px;
     /* border: 1px solid #111; */
     border-radius: 4px;
+    border: 1px solid #ccc;
     background-color: #F5F5F5;
+    /* background-color: #F5F5; */
   }
 
   .sub-task-checkbox-label {
     display: flex;
     flex-direction: row;
+    height: auto;
+    text-align: left;
+    line-height: 24px;
+    white-space: pre-line;
+    margin-bottom: 24px;
     /* background-color: #f00; */
   }
 
   .sub-tasks-checkbox-input {
     height: 22px;
     width: auto;
-    margin: 4px;
     border: 1px solid #DDDDDD;
     border-radius: 4px;
     padding: 0 12px;
@@ -236,7 +294,7 @@ export const TaskDetailsDiv = styled.div`
 
   .sub-tasks-checkbox-span {
     font-weight: 400;
-    margin: auto 4px;
+    margin: auto 12px;
     /* background: #666; */
   }
 
@@ -294,7 +352,7 @@ export const MessageDiv = styled.div`
   width: 100%;
   margin: 0 auto;
   padding: 4px;
-  background-color: #5edc1f;
+  /* background-color: #5edc1f; */
 
   .message-conversation-div {
     display: flex;
@@ -303,10 +361,10 @@ export const MessageDiv = styled.div`
     width: 100%;
     padding: 4px;
     margin: 1.5rem 0;
-    border: 1px solid #111;
+    /* border: 1px solid #111; */
     border-radius: 4px;
     overflow-y: scroll;
-    /* background-color: #fff333; */
+    background-color: #fff;
     ::-webkit-scrollbar {
       width: 5px;
     }
@@ -317,16 +375,20 @@ export const MessageDiv = styled.div`
 
   .message-div {
     height: auto;
-    padding: auto 24px;
-    border: 1px solid #111;
+    width: 90%;
+    margin: 0 auto;
+    padding: 4px 0;
+    border-bottom: 1px solid #F5F5F5;
   }
 
   .message-div.user {
     text-align: right;
+
   }
 
   .message-div.worker {
     text-align: left;
+    /* background-color: #ccc; */
   }
 
   .message-span {
@@ -340,10 +402,12 @@ export const MessageDiv = styled.div`
     background-color: #fff;
   }
 
-  .message-span.worker {
-    background-color: #F5F5F5;
+  .message-span.user {
+    background-color: #daf1e0;
   }
-
+  .message-span.worker {
+    background-color: #b4c7db;
+  }
   .message-time-span {
     font-size: 10px;
     color: #444;
@@ -362,8 +426,9 @@ export const MessageDiv = styled.div`
     width: 100%;
     margin: 4px 0 0;
     padding: 10px;
-    border: none;
+    border: 1px solid #ccc;
     border-radius: 4px;
+    background-color: #fff;
 
   }
 `;
@@ -371,33 +436,25 @@ export const MessageDiv = styled.div`
 export const Line = styled.div`
   display: flex;
   flex-direction: column;
+  border-radius: 24px;
+
   .line-div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     height: auto;
-    min-height: 44px;
+    min-height: 36px;
     width: 100%;
-    border-radius: 4px;
+    border-radius: 24px;
     padding: .5rem 0;
-    margin: 1rem auto 0;
+    margin: 4px auto 0;
     background-color: #fff;
-    background: #d1ffbd;
-  }
-
-  label {
-    font-size: 14px;
-    font-weight: normal;
-    text-align: center;
-    margin: auto 4px;
-    overflow: hidden;
-    color: #000;
-    /* background: #a0daa9; */
+    /* background: #d1ffbd; */
   }
 
   .item-label {
-    width: 330px;
-    background: #eac853;
+    min-width: 230px;
+    /* background: #eac853; */
   }
 
   .photo-and-name-div {
@@ -405,13 +462,54 @@ export const Line = styled.div`
     justify-content: space-between;
     width: 310px;
     margin: auto 4px;
-    background: #eac853;
+    /* background: #eac853; */
   }
 
-  img {
-    border: 1px solid #DDDDDD;
-    border-radius: 50%;
-    margin: auto 0px auto 4px;
+  .select-div {
+    display: flex;
+    flex-direction: row;
+    width: 110px;
+    /* background-color: #4433ff; */
+  }
+
+  .list-select {
+    height: 24px;
+    width: 88px;
+    background-color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+
+    margin: auto;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 0 4px;
+    overflow: hidden;
+    color: #000;
+    /* background: #a0daa9; */
+  }
+
+  .list-select.alta {
+    color: #fff;
+    border: none;
+    background-color: #d87678;
+  }
+
+  .list-select.média {
+    color: #fff;
+    border: none;
+    background-color: #eb7d5d;
+  }
+
+  .list-select.baixa {
+    color: #fff;
+    border: none;
+    background-color: #f6d255;
+  }
+  .list-option {
+    font-weight: 600;
+    color: #111;
+    background-color: #F5F5F5;
   }
 
   .date-div {

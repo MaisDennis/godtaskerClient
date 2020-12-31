@@ -1,10 +1,12 @@
 import styled from 'styled-components';
+import search from '~/assets/search-24px.svg';
 import { darken } from 'polished';
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: auto;
+
   max-width: 70%;
   margin: 0px auto;
   border-radius: 4px;
@@ -28,28 +30,66 @@ export const Container = styled.div`
     height: auto;
     width: 100%;
     border-radius: 4px;
-    margin-bottom: 10px;
+    margin: 4px 0 10px;
     /* background: #a0daa9; */
     @media (max-width: 620px) {
       height: auto;
     }
   }
   strong {
-    font-size: 20px;
+    max-height: 50px;
+    width: 210px;
+    font-size: 16px;
+    font-weight: 600;
+
     text-align: left;
-    margin: 25px 0;
+    margin: auto 4px;
+
     color: #58595B;
+    /* background-color: #4433ff; */
     @media (max-width: 620px) {
       font-size: 4vw;
       margin: 4px 0;
     }
   }
+
+  details {
+    font-size: 10px;
+    line-height: 32px;
+    align-self: baseline;
+    width: 100%;
+    padding: 0 14px;
+    margin: 0 4px 0 4px;
+    /* background-color: #43ff; */
+  }
+
+  input {
+    height: 44px;
+    width: auto;
+    margin: 4px;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    padding: 0 12px;
+    color: #444444;
+    background-color: #FFFFFF;
+    &::placeholder {
+      color: #DDDDDD;
+    }
+    @media (max-width: 620px) {
+      font-size: 3vw;
+      width: 96%;
+      margin: auto;
+    }
+    @media (max-width: 350px) {
+      width: 50%;
+    }
+  }
   .header-bottom-div {
     display: flex;
     justify-content: space-between;
-    height: 60px;
+    height: auto;
     width: 100%;
-    margin: 5px 0;
+    margin: 0;
     /* background: #5c44; */
   }
   .header-input {
@@ -57,6 +97,7 @@ export const Container = styled.div`
   }
   .header-button-div {
     width: auto;
+    padding: 0 4px;
     /* background: #e88; */
   }
   .back-button {
@@ -85,7 +126,7 @@ export const Container = styled.div`
     width: 108px;
     font-size: 14px;
     font-weight: bold;
-    margin: 5px 5px 0;
+    /* margin: 5px 5px 0; */
     border: 0;
     border-radius: 4px;
     color: #fff;
@@ -146,28 +187,6 @@ export const Container = styled.div`
     /* background-color: #ff87; */
   }
 
-  input {
-    height: 44px;
-    width: auto;
-    margin: 4px;
-    border: 1px solid #DDDDDD;
-    border-radius: 4px;
-    padding: 0 12px;
-    color: #444444;
-    background-color: #FFFFFF;
-    &::placeholder {
-      color: #DDDDDD;
-    }
-    @media (max-width: 620px) {
-      font-size: 3vw;
-      width: 96%;
-      margin: auto;
-    }
-    @media (max-width: 350px) {
-      width: 50%;
-    }
-  }
-
   .checkbox-input {
     height: 22px;
   }
@@ -190,10 +209,15 @@ export const Container = styled.div`
       margin: 4px 4px 4px 10px;
     }
   }
+
+  .list-span {
+    margin: 4px 32px;
+  }
   .description-textarea {
     height: 88px;
     width: auto;
     font-family: Fira Sans, sans-serif;
+    line-height: 24px;
     border: 1px solid #DDDDDD;
     border-radius: 4px;
     margin: 4px 4px;
@@ -210,9 +234,10 @@ export const Container = styled.div`
 
   .sub-task-input {
     height: auto;
-    min-height: 44px;
+    min-height: 56px;
     width: auto;
     font-family: Fira Sans, sans-serif;
+    line-height: 24px;
     border: 1px solid #DDDDDD;
     border-radius: 4px;
     margin: 4px 4px;
@@ -254,8 +279,10 @@ export const Container = styled.div`
   }
 
   .sub-task-li {
+    line-height: auto;
     margin: 20px;
-    padding: 0 12px;
+    padding: 12px;
+    border-bottom: 1px solid #CCC;
     /* background-color: #f00; */
   }
   .sub-task-dangle-list-style {
@@ -263,9 +290,9 @@ export const Container = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    height: 44px;
+    line-height: 24px;
 
-    border-bottom: 1px solid #CCC;
+    white-space: pre-line;
     color: #444444;
     /* background-color: #fff131; */
   }
@@ -290,23 +317,28 @@ export const Container = styled.div`
     flex-direction: row;
   }
 
-  .gender-select
-    {
-      background: #FFFFFF;
-      border: 1px solid #DDDDDD;
-      border-radius: 4px;
-      height: 44px;
-      width: auto;
-      padding: 0 15px;
-      color: #111;
-      margin: 4px 4px;
-      justify-content: space-between;
-      @media (max-width: 620px) {
-        font-size: 3vw;
-        width: 96%;
-        margin: auto;
-      }
+  .gender-select  {
+    background: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    height: 44px;
+    width: auto;
+    padding: 0 15px;
+    color: #111;
+    margin: 4px 4px;
+    justify-content: space-between;
+    @media (max-width: 620px) {
+      font-size: 3vw;
+      width: 96%;
+      margin: auto;
     }
+  }
+
+  .row-div {
+    display: flex;
+    flex-direction: row;
+  }
+
 `;
 
 

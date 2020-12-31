@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Rewind, CheckCircle } from 'react-feather'
 import { Link } from 'react-router-dom';
-import { startOfHour, endOfHour, parseISO, isBefore, format  } from 'date-fns';
+import { startOfHour, endOfHour, parseISO, isBefore, subHours, format  } from 'date-fns';
 import { TiEdit } from 'react-icons/ti';
 import { RiCloseCircleFill } from 'react-icons/ri';
 import { ptBR } from 'date-fns/locale';
@@ -18,9 +18,9 @@ export default function UpdateTask({ match }) {
   const [taskName, setTaskName] = useState();
   const [taskDescription, setTaskDescription] = useState();
   const [subTasks, setSubTasks] = useState([]);
-  const [ worker, setWorker ] = useState();
-
   const [startDateInputValue, setStartDateInputValue] = useState();
+  const [dueDateInputValue, setDueDateInputValue] = useState();
+  const [worker, setWorker] = useState();
 
   const [subTaskToggleEdit, setSubTaskToggleEdit] = useState(false);
   const [editSubTaskInputValue, setEditSubTasksInputValue] = useState();
@@ -31,21 +31,10 @@ export default function UpdateTask({ match }) {
   // const user_id = useSelector(state => state.user.profile.id);
   const user_id = 1;
   const task_id = match.params.id;
-  const formattedDate = fdate =>
-    fdate == null
-      ? ''
-      : format(parseISO(fdate), "yyyy'-'MM'-'dd", { locale: ptBR });
 
   useEffect(() =>{
     loadTaskInitialData('', user_id);
   },[ user_id ])
-
-  // async function loadWorkerOptionsList(nameFilter, userID) {
-  //   const workerResponse = await api.get('workers', {
-  //     params: { nameFilter, userID },
-  //   })
-  //   setWorker(workerResponse.data);
-  // }
 
   async function loadTaskInitialData( workerNameFilter, userID ) {
     const taskResponse = await api.get('tasks', {
@@ -58,45 +47,13 @@ export default function UpdateTask({ match }) {
     setTaskName(taskData.name);
     setTaskDescription(taskData.description)
     setSubTasks(taskData.sub_task_list)
+    setStartDateInputValue(taskData.start_date)
     setWorker(taskData.worker.worker_name);
+    setStartDateInputValue(format(parseISO(taskData.start_date), "yyyy-MM-dd'T'HH:mm"))
+    setDueDateInputValue(format(parseISO(taskData.due_date), "yyyy-MM-dd'T'HH:mm"))
   }
-  console.log(initialTaskData)
   const { register, handleSubmit } = useForm(
   );
-
-  const onSubmit = ({ name, description, start_date, due_date }) => {
-    const hourStart = startOfHour(parseISO(start_date));
-    // const userID = user_id;
-    const parsedDueDateByEndingHour = endOfHour(parseISO(due_date)); // This solves: start_date === end_date issue for now (2020.07.22)
-
-    if(!initialTaskData.workerphonenumber) {
-      toast.error('Por favor, escolher um funcionário.');
-    } else if (!name) {
-        toast.error('Por favor, dar um nome à tarefa.');
-    } else if (!start_date) {
-        toast.error('Por favor, colocar uma data de início.');
-    } else if (!due_date) {
-      toast.error('Por favor, colocar um prazo.');
-    } else if (isBefore(parseISO(due_date) , new Date())) {
-      toast.error('O prazo não pode ser no passado.');
-    } else if (isBefore(parsedDueDateByEndingHour , hourStart)) {
-      toast.error('O prazo está antes do início.');
-    } else {
-
-      api.put(`tasks/${task_id}`, {
-        name,
-        description,
-        sub_task_list: subTasks,
-        task_attributes: initialTaskData.task_attributes,
-        start_date,
-        due_date,
-        workerphonenumber: initialTaskData.workerphonenumber
-      }
-      );
-      history.push('/');
-      toast.success('Tarefa cadastrada com sucesso!');
-    }
-  }
 
   function handleOpenEditInput(position) {
     setSubTaskToggleEdit(!subTaskToggleEdit)
@@ -115,7 +72,49 @@ export default function UpdateTask({ match }) {
     setEditSubTaskIndex(null);
   }
 
+  function handleRemoveSubTask(position) {
+    let editedSubTasks = subTasks.filter((s, index) => index !== position)
+    setSubTasks(editedSubTasks);
+  }
 
+  const onSubmit = ({ name, description, start_date, due_date }) => {
+    const timeStart = parseISO(start_date);
+    const timeEnd = parseISO(due_date);
+
+    if(!initialTaskData.workerphonenumber) {
+      toast.error('Por favor, escolher um funcionário.');
+      return;
+    } else if (!name) {
+        toast.error('Por favor, dar um nome à tarefa.');
+      return;
+    } else if (!start_date) {
+      toast.error('Por favor, colocar uma data de início.');
+      return;
+    } else if (isBefore(timeStart, subHours(new Date(), 1))) {
+      toast.error('O início está no passado.');
+      return;
+    } else if (!due_date) {
+      toast.error('Por favor, colocar um prazo.');
+      return;
+    } else if (isBefore(timeEnd , new Date())) {
+      toast.error('O prazo não pode ser no passado.');
+      return;
+    } else if (isBefore(timeEnd , timeStart)) {
+      toast.error('O prazo está antes do início.');
+      return;
+    } else {
+      api.put(`tasks/${task_id}`, {
+        name,
+        description,
+        sub_task_list: subTasks,
+        start_date,
+        due_date,
+      }
+      );
+      history.push('/');
+      toast.success('Tarefa cadastrada com sucesso!');
+    }
+  }
   // -----------------------------------------------------------------------------
   return (
    <Container>
@@ -166,6 +165,7 @@ export default function UpdateTask({ match }) {
           <div className="sub-content-line-div">
             <ol className='sub-task-ol'>
               <label>Lista de Sub-tarefas</label>
+              <label>(ao alterar, não esquecer de salvar)</label>
               {
                 subTasks.map((s, index) => (
                   <div className='sub-task-ol-sub-div' key={index}>
@@ -215,7 +215,7 @@ export default function UpdateTask({ match }) {
                                   />
                                   <RiCloseCircleFill
                                     className='sub-task-remove-icon'
-                                    // onClick={() => handleRemoveSubTask(index)}
+                                    onClick={() => handleRemoveSubTask(index)}
                                   />
                                 </div>
                               </div>
@@ -234,22 +234,33 @@ export default function UpdateTask({ match }) {
               <label>Início<sup>*</sup></label>
               <input
                 name="start_date"
-                type="date"
+                type="datetime-local"
                 ref={register}
                 onChange={e => setStartDateInputValue(e.target.value)}
-                value={startDateInputValue}/>
+                value={startDateInputValue}
+              />
             </div>
             <div className='sub-content-line-div'>
               <label>Prazo<sup>*</sup></label>
-              <input name="due_date" type="date" ref={register} />
+              <input
+                name="due_date"
+                type="datetime-local"
+                ref={register}
+                onChange={e => setDueDateInputValue(e.target.value)}
+                value={dueDateInputValue}
+              />
             </div>
           </div>
           <br/>
           {/* Worker */}
           <div className='sub-content-line-div'>
-            <label>Funcionários<sup>*</sup></label>
+            <div className="row-div">
+            <label className='list-label'>Funcionário</label>
+            <details>O funcionário é o ID da tarefa. Se quiser delegar a outro(a), na lista de tarefas, copie a tarefa, delegue-a para outro(a), e delete esta tarefa atual.</details>
+                {/* <br/> */}
+            </div>
 
-                <span className='form-span'>{worker}</span>
+                <span className='sub-task-li'>{worker}</span>
 
           </div>
 
