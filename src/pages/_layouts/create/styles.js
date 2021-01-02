@@ -252,6 +252,14 @@ export const Container = styled.div`
     }
   }
 
+  .weige-div {
+    margin: .5rem 0;
+  }
+  .sub-task-weige-input {
+    height: 36px;
+    width: 80px;
+  }
+
   .sub-task-add-button {
     height: 36px;
     width: 214px;
@@ -299,10 +307,17 @@ export const Container = styled.div`
   .sub-task-icons {
     display: flex;
     align-items: center;
-
     font-size: 24px;
     cursor: pointer;
+    /* background-color: #fff131; */
   }
+
+  .weige-span {
+    display: flex;
+    font-size: 14px;
+    margin-right: 24px;
+  }
+
   .sub-task-edit-icon {
     color: #444444;
     margin: 0 12px;

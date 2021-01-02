@@ -35,22 +35,16 @@ export function setToken({payload }) {
 }
 // -----------------------------------------------------------------------------
 export function* signUp({ payload }) {
+  try {
     const { first_name, last_name, user_name, password, phonenumber, email, birth_date, gender } = payload;
-    // yield call(api.post, 'users', {
-    //   first_name, last_name, user_name, password, phonenumber, email, birth_date, gender, subscriber: false
-    // })
 
-    api.post('users', ({
+    yield call(api.post, 'users', {
       first_name, last_name, user_name, password, phonenumber, email, birth_date, gender, subscriber: false
-    })).then(function(response) {
-      history.push('/');
-      toast.success('Usuário cadastrado com sucesso!');
-      console.log(response)
-    }).catch((error) => {
-      toast.error('Falha no cadastro, verifique seus dados!');
-      console.log(error)
-    });
-    // yield put(signFailure());
+    })
+  } catch (error) {
+    toast.error(error.response.data.error);
+    console.log(error.response.data.error);
+  }
 }
 
 // -----------------------------------------------------------------------------

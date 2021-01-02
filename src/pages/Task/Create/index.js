@@ -17,12 +17,14 @@ export default function CreateTask() {
   const [subTasks, setSubTasks] = useState([]);
   const [subTasksCheckBox, setSubTasksCheckBox] = useState(false);
   const [subTaskToggleEdit, setSubTaskToggleEdit] = useState(false);
+  const [weige, setWeige] = useState(1);
   const [subTasksInputValue, setSubTasksInputValue] = useState([]);
   const [startDateInputValue, setStartDateInputValue] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
 
 
   const [editSubTaskInputValue, setEditSubTasksInputValue] = useState();
   const [editSubTaskIndex, setEditSubTaskIndex] = useState();
+  const [editWeigeInputValue, setEditWeigeInputValue] = useState();
 
   const [radioPriority, setRadioPriority] = useState('');
   const [radioUrgent, setRadioUrgent] = useState('');
@@ -30,6 +32,8 @@ export default function CreateTask() {
 
   const subTaskInputRef = useRef();
   const editSubTaskInputRef = useRef();
+  const weigeInputRef = useRef();
+  const editWeigeInputRef = useRef();
   const user_id = useSelector(state => state.user.profile.id);
 
   useEffect(() => {
@@ -54,23 +58,29 @@ export default function CreateTask() {
     } else {
       let subTask = {
         description: subTaskInputRef.current.value,
+        weige: weigeInputRef.current.value,
         complete: false,
       }
       setSubTasks([...subTasks, subTask])
     }
     subTaskInputRef.current.value = '';
+    // weigeInputRef.current.value = '1';
+    setWeige('1');
   }
 
   function handleOpenEditInput(position) {
     setSubTaskToggleEdit(!subTaskToggleEdit)
     setEditSubTasksInputValue(subTasks[position].description)
+    setEditWeigeInputValue(subTasks[position].weige)
     setEditSubTaskIndex(position)
+
   }
 
   function handleEditSubTask(position) {
     let editedSubTasks = subTasks.map((s, index) => {
       if (index === position) {
-        s.description = editSubTaskInputValue
+        s.description = editSubTaskInputValue;
+        s.weige = editWeigeInputValue;
       }
       return s;
     })
@@ -108,6 +118,22 @@ export default function CreateTask() {
     } else if (isBefore(timeEnd, timeStart)) {
       toast.error('O prazo está antes do início.');
     } else {
+
+      function weigeToPercentage(subTasks) {
+        let weigeSum = 0;
+        for(let i = 0; i < subTasks.length; i++) {
+          weigeSum += parseFloat(subTasks[i].weige)
+        }
+
+        for(let i = 0; i < subTasks.length; i++) {
+          subTasks[i].weige_percentage = (Math.round((parseFloat(subTasks[i].weige) / weigeSum)*1000) /10)
+        }
+        return weigeSum;
+        console.log(weigeSum)
+      }
+
+      weigeToPercentage(subTasks)
+
       phonenumbers.map(p => {
         api.post('tasks', [
           {
@@ -182,8 +208,9 @@ export default function CreateTask() {
             </label>
           </div>
           {
-            subTasksCheckBox
+            !subTasksCheckBox
             ? (
+              // Sub Tasks Add
               <div className="sub-content-line-div">
                 <textarea
                   id="test"
@@ -194,6 +221,16 @@ export default function CreateTask() {
                   ref={subTaskInputRef}
                   onChange={(e) => setSubTasksInputValue(e.target.value)}
                 />
+                <div className="weige-div">
+                  <span className="form-span">Peso:</span>
+                  <input
+                    className="sub-task-weige-input"
+                    type="number"
+                    ref={weigeInputRef}
+                    onChange={(e) => setWeige(e.target.value)}
+                    value={weige}
+                  />
+                </div>
                 <button
                   className='sub-task-add-button'
                   type="button"
@@ -216,6 +253,7 @@ export default function CreateTask() {
                                   <div className="sub-task-dangle-list-style">
                                     {s.description}
                                     <div className='sub-task-icons'>
+                                      <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
                                       <TiEdit
                                         className='sub-task-edit-icon'
                                         onClick={() => handleOpenEditInput(index)}
@@ -234,6 +272,16 @@ export default function CreateTask() {
                                     value={editSubTaskInputValue}
                                     onChange={(e) => setEditSubTasksInputValue(e.target.value)}
                                   />
+                                  <div className="weige-div">
+                                    <span className="form-span">Peso:</span>
+                                    <input
+                                      className="sub-task-weige-input"
+                                      type="number"
+                                      ref={editWeigeInputRef}
+                                      value={editWeigeInputValue}
+                                      onChange={(e) => setEditWeigeInputValue(e.target.value)}
+                                    />
+                                  </div>
                                   <button
                                     className='sub-task-add-button'
                                     type="button"
@@ -248,6 +296,7 @@ export default function CreateTask() {
                                 <div className="sub-task-dangle-list-style">
                                 {s.description}
                                 <div className='sub-task-icons'>
+                                <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
                                   <TiEdit
                                     className='sub-task-edit-icon'
                                     onClick={() => handleOpenEditInput(index)}

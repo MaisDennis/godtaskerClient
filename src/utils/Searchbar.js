@@ -16,7 +16,7 @@ const SearchBar = ({ input: keyword, onChange: setKeyword }) => {
       className="search-input"
       key="random1"
       value={keyword}
-      placeholder='Busca por Nome de Funcionário'
+      placeholder='Buscar por nome de tarefa ou funcionário'
       onChange={(e) => setKeyword(e.target.value)}
     />
   );
