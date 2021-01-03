@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import search from '~/assets/search-24px.svg';
 import { darken } from 'polished';
 
@@ -72,6 +72,7 @@ export const Container = styled.div`
   }
 
   .container-div {
+    width: 100%;
     margin: 0 8px;
     padding: 1rem;
     padding-bottom: 30px;
@@ -151,6 +152,14 @@ export const TaskListDiv = styled.div`
   .title-strong {
     width: 220px;
     max-width: 220px;
+    text-align: center;
+    margin: auto 0;
+    /* background: #ffc87c; */
+  }
+
+  .worker-strong {
+    width: 330px;
+    max-width: 330px;
     text-align: center;
     margin: auto 0;
     /* background: #ffc87c; */
@@ -568,12 +577,36 @@ export const Line = styled.div`
     /* background: #d1ffbd; */
   }
 
+  .worker-profile-div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 330px;
+    /* background: #d1ffbd; */
+  }
+
+  img {
+    height: 3rem;
+      max-height: 220px;
+      width: 3rem;
+      max-width: 120px;
+      border-radius: 50%;
+      margin: 12px 12px 4px 0;
+  }
+
   .item-label {
     width: 220px;
     max-width: 220px;
     overflow: hidden;
     margin: auto 0;
     /* background: #eac853; */
+  }
+
+  .short-label {
+    width: 110px;
+    max-width: 110px;
+    margin: auto 0;
+    /* background-color: #daf1e0; */
   }
 
   /* .photo-and-name-div {
@@ -750,7 +783,9 @@ export const Badge = styled.button`
   position: relative;
   display: flex;
   margin: auto;
-
+  ${props => props.hasUnread && css`
+    visibility:${props.hasUnread || 'hidden'};
+    /* visibility: hidden; */
     &::after {
       position: absolute;
       right: 0;
@@ -761,8 +796,8 @@ export const Badge = styled.button`
       color: #111;
       font-size: 12px;
       /* padding-top: 1px; */
-      content: '2';
+      content: '${props.hasUnread}';
       border-radius: 50%;
     }
-
+`}
 `;

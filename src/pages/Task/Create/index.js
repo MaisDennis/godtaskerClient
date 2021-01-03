@@ -18,7 +18,7 @@ export default function CreateTask() {
   const [subTasksCheckBox, setSubTasksCheckBox] = useState(false);
   const [subTaskToggleEdit, setSubTaskToggleEdit] = useState(false);
   const [weige, setWeige] = useState(1);
-  const [subTasksInputValue, setSubTasksInputValue] = useState([]);
+  const [setSubTasksInputValue] = useState([]);
   const [startDateInputValue, setStartDateInputValue] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
 
 
@@ -60,6 +60,7 @@ export default function CreateTask() {
         description: subTaskInputRef.current.value,
         weige: weigeInputRef.current.value,
         complete: false,
+        user_read: false,
       }
       setSubTasks([...subTasks, subTask])
     }

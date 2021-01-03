@@ -7,7 +7,7 @@ import { ptBR } from 'date-fns/locale';
 
 import { MdNotifications } from 'react-icons/md';
 import { GrTask } from 'react-icons/gr';
-import { BiMessageDetail } from 'react-icons/bi';
+// import { BiMessageDetail } from 'react-icons/bi';
 import { FiMessageSquare } from 'react-icons/fi';
 import { BsThreeDotsVertical, BsSearch } from 'react-icons/bs'
 import insert from '~/assets/insert_photo-24px.svg';
@@ -23,12 +23,14 @@ export default function ListTasks() {
   const [tasks, setTasks] = useState([]);
   const [defaultTasks, setDefaultTasks] = useState([]);
   const [task, setTask] = useState(tasks[0]);
+  const [ bellVisible, setBellVisible] = useState();
   const [chatMessage, setChatMessage] = useState();
   const user_id = useSelector(state => state.user.profile.id)
   const messageRef = useRef();
-  const lastMesageRef = useRef();
+  const lastMessageRef = useRef();
 
-  const scrollIntoLastMessage = () => {lastMesageRef.current.scrollIntoView(false)}
+
+  const scrollIntoLastMessage = () => {lastMessageRef.current.scrollIntoView(false)}
 
   const formattedDate = fdate =>
     fdate == null
@@ -67,6 +69,24 @@ export default function ListTasks() {
   }
 
   async function handleTaskDetails(t) {
+    let S = t.sub_task_list;
+    let editedMessages = t.messages;
+    await S.map((s) => {
+      if(s.user_read === false) {
+        s.user_read = true;
+      }
+    })
+
+    await editedMessages.map((m) => {
+      if(m.user_read === false) {
+        m.user_read = true;
+      }
+    })
+
+    await api.put(`tasks/${t.id}`, {
+      sub_task_list: S,
+      messages: editedMessages,
+    })
     setTask(t);
   }
 
@@ -101,6 +121,16 @@ export default function ListTasks() {
       }
     }
     return Math.round(weigeSum)
+  }
+
+  function hasUnread(array) {
+    let sum = 0;
+    for(let i = 0; i < array.length; i++) {
+      if(array[i].user_read === false) {
+        sum += 1
+      }
+    }
+    return sum
   }
 
   async function handleRemoveTask(task) {
@@ -193,8 +223,8 @@ export default function ListTasks() {
                       ? <label className="duedate red">{formattedDate(t.due_date)}</label>
                       : <label className="duedate green">{formattedDate(t.due_date)}</label>
                   }
-                  <label className="status-label">Entregue!
-                    {/* <div className="status-complete-div">
+                  <label className="status-label">
+                    <div className="status-complete-div">
                       <div
                         className="status-incomplete-div"
                         style={{"width": `${handleStatus(t.sub_task_list)}%`}}
@@ -202,17 +232,39 @@ export default function ListTasks() {
                     </div>
                     <span className="status-span">
                       {handleStatus(t.sub_task_list)}%
-                    </span> */}
+                    </span>
                   </label>
                   <div className="bell-label">
-                    <Badge>
-                      <MdNotifications color="#ccc" size={28}/>
-                    </Badge>
+                    {
+                      (hasUnread(t.sub_task_list) === 0)
+                      ? (
+                        <Badge style={{visibility: 'hidden'}}>
+                          <MdNotifications color="#ccc" size={28} />
+                        </Badge>
+
+                      )
+                      : (
+                        <Badge hasUnread={hasUnread(t.sub_task_list)}>
+                          <MdNotifications color="#ccc" size={28} />
+                        </Badge>
+                      )
+                    }
                   </div>
                   <div className="bell-label last">
-                    <Badge>
-                      <MdNotifications color="#ccc" size={28} />
-                    </Badge>
+                    {
+                      (hasUnread(t.messages) === 0)
+                      ? (
+                        <Badge style={{visibility: 'hidden'}}>
+                          <MdNotifications color="#ccc" size={28} />
+                        </Badge>
+
+                      )
+                      : (
+                        <Badge hasUnread={hasUnread(t.messages)}>
+                          <MdNotifications color="#ccc" size={28} />
+                        </Badge>
+                      )
+                    }
                   </div>
                 </div>
               </Line>
@@ -229,19 +281,19 @@ export default function ListTasks() {
               <label className="task-details-label">Sub-tarefas</label>
               <div className="sub-tasks-list-div">
                 { task ? (
-                  task.sub_task_list.map(s => (
-                    <div className="sub-tasks-checkbox-div">
-                    <label className="sub-tasks-checkbox-label" key={s.description}>
-                      <input classname="sub-tasks-checkbox-input" type="checkbox" checked={s.complete}/>
-                      <span className="sub-tasks-checkbox-span">{s.description}</span>
-                    </label>
-                    <span className="#">Peso:
-                      {
-                        s.weige_percentage
-                          ? ` ${JSON.stringify(s.weige_percentage).replace(".",",")}%`
-                          : ' n/a'
-                      }
-                    </span>
+                  task.sub_task_list.map((s, index) => (
+                    <div className="sub-tasks-checkbox-div" key={index}>
+                      <label className="sub-tasks-checkbox-label" key={s.description}>
+                        <input className="sub-tasks-checkbox-input" type="checkbox" defaultChecked={s.complete}/>
+                        <span className="sub-tasks-checkbox-span">{s.description}</span>
+                      </label>
+                      <span className="#">Peso:
+                        {
+                          s.weige_percentage
+                            ? ` ${JSON.stringify(s.weige_percentage).replace(".",",")}%`
+                            : ' n/a'
+                        }
+                      </span>
                     </div>
                   ))
                 )
@@ -250,7 +302,7 @@ export default function ListTasks() {
               </div>
             </div>
             <div className="sub-tasks-buttons-div">
-              <Link className='create-link' to={task ? (`/tasks/update/${task.id}`) : null}>
+              <Link className='create-link' to={task && (`/tasks/update/${task.id}`)}>
                 <button className="task-button edit">Editar</button>
               </Link>
               <button className="task-button remove" onClick={() => handleRemoveTask(task)}>Cancelar</button>
@@ -278,7 +330,7 @@ export default function ListTasks() {
           <div className="message-conversation-div">
             { task && task.messages && (
               task.messages.map((m, index) => (
-                <div className={`message-div ${m.sender}`}>
+                <div className={`message-div ${m.sender}`} key={index}>
                   {m.sender === 'user'
                     ? (
                       <>
@@ -287,7 +339,7 @@ export default function ListTasks() {
                           ? (
                             <span
                               className={`message-span ${m.sender}`}
-                              ref={lastMesageRef}
+                              ref={lastMessageRef}
                             >{m.message}</span>
                           ) : (
                             <span
