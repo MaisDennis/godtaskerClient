@@ -12,7 +12,7 @@ export function* signIn({ payload }) {
       phonenumber,
       password,
     });
-
+    console.log(response.data)
     const { token, user } = response.data;
 
     api.defaults.headers.Authorization = `Bearer ${token}`;

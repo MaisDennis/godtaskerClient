@@ -472,53 +472,112 @@ export const MessageDiv = styled.div`
     }
   }
 
-  .message-div {
-    height: auto;
+  .message-container-div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     width: 90%;
     margin: 0 auto;
-    padding: 4px 0;
+    padding: 0 0 8px 0;
     border-bottom: 1px solid #F5F5F5;
+    /* background-color: #F00; */
   }
 
-  .message-div.user {
-    text-align: right;
-
+  .message-container-div.worker {
+    align-items: flex-start;
   }
 
-  .message-div.worker {
-    text-align: left;
-    /* background-color: #ccc; */
+  .message-dropMenu-ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #443333;
+  }
+
+  .message-dropMenu-li {
+    margin: 0 4px;
+    padding: 4px 12px;
+    list-style-type: none;
+    box-shadow: 2px 2px 2px #ccc;
+    background-color: #F5F5F5;
+    /* background-color: #4433ee; */
+  }
+
+  .message-dropMenu-button {
+    color: #999;
+    border: none;
+    margin: 0 4px;
+    background-color: #F5F5F5;
+    /* background-color: #334422; */
+  }
+
+  .time-message-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /* width: 90%; */
+    margin: 4px 0;
+    /* border-bottom: 1px solid #F5F5F5; */
+    /* background-color: #F00; */
+  }
+
+  .time-message-div.user {
+    justify-content: flex-end;
+  }
+
+  .time-message-div.worker {
+    background-color: #fff;
+  }
+
+  .message-line-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: auto;
+    padding: 4px;
+    margin: 4px;
+    border-radius: 8px;
+  }
+
+  .message-line-div.user {
+    background-color: #daf1e0;
+  }
+
+  .message-line-div.worker {
+    background-color: #b4c7db;
   }
 
   .message-span {
     /* display: flex; */
     font-size: 14px;
-    line-height: 36px;
+    max-width: 85%;
     align-self: center;
-    padding: 4px 12px;
-    margin: 0 4px;
-    border-radius: 8px;
-    background-color: #fff;
+    margin: 0 8px;
+    /* background-color: #fff; */
   }
 
   .message-span.user {
-    background-color: #daf1e0;
+    background-color: none;
   }
   .message-span.worker {
-    background-color: #b4c7db;
+    background-color: none;
   }
   .message-time-span {
     font-size: 10px;
     color: #444;
   }
 
-  .message-time-span.user {
+  .temporary-message-div {
+    height: auto;
+    line-height: 24px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    /* border-bottom: 4px solid #b4c7db; */
+    /* box-shadow: 2px 2px 2px #ccc; */
+    padding: 10px 12px;
+    margin-bottom: 4px;
 
-  }
-
-
-  .message-form {
-
+    background-color: #b4c7db;
   }
 
   .message-input {
@@ -528,9 +587,7 @@ export const MessageDiv = styled.div`
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
-
   }
-
 
   .message-button {
     height: 36px;
@@ -553,7 +610,6 @@ export const MessageDiv = styled.div`
       padding: 12px;
     }
   }
-
 `;
 
 export const Line = styled.div`

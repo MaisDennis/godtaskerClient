@@ -10,10 +10,13 @@ import { GrTask } from 'react-icons/gr';
 // import { BiMessageDetail } from 'react-icons/bi';
 import { FiMessageSquare } from 'react-icons/fi';
 import { BsThreeDotsVertical, BsSearch } from 'react-icons/bs'
+import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
+import { RiArrowDownSLine } from 'react-icons/ri'
 import insert from '~/assets/insert_photo-24px.svg';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import Searchbar from '../../../utils/Searchbar';
+// import sort from '../../../utils/sort';
 import { Container, TaskListDiv, TaskDetailsDiv, MessageDiv, Line, Badge } from '~/pages/_layouts/list/styles';
 // import insert from '~/assets/insert_photo-24px.svg';
 // import whatsapplogo from '~/assets/whatsapplogo5.png'
@@ -23,12 +26,23 @@ export default function ListTasks() {
   const [tasks, setTasks] = useState([]);
   const [defaultTasks, setDefaultTasks] = useState([]);
   const [task, setTask] = useState(tasks[0]);
-  const [ bellVisible, setBellVisible] = useState();
   const [chatMessage, setChatMessage] = useState();
+  // title item sort toggles
+  const [toggleName, setToggleName] = useState();
+  const [togglePrior, setTogglePrior] = useState();
+  const [toggleWorker, setToggleWorker] = useState();
+  const [toggleUrgent, setToggleUrgent] = useState();
+  const [toggleStartDate, setToggleStartDate] = useState();
+  const [toggleDueDate, setToggleDueDate] = useState();
+  const [messageDropMenu, setMessageDropMenu] = useState();
+  const [toggleDropMenu, setToggleDropMenu] = useState(false);
+  const [replyValue, setReplyValue] = useState();
+  const [forwardValue, setForwardValue] = useState();
+
   const user_id = useSelector(state => state.user.profile.id)
   const messageRef = useRef();
   const lastMessageRef = useRef();
-
+  const messageInputRef = useRef();
 
   const scrollIntoLastMessage = () => {lastMessageRef.current.scrollIntoView(false)}
 
@@ -56,6 +70,26 @@ export default function ListTasks() {
   useEffect(() => {
     load('', user_id);
   }, [user_id]);
+
+  const handleStatus = (sub_task_list) => {
+    let weigeSum = 0;
+    for(let i = 0; i < sub_task_list.length; i++) {
+      if(sub_task_list[i].complete === true) {
+        weigeSum += (sub_task_list[i].weige_percentage)
+      }
+    }
+    return Math.round(weigeSum)
+  }
+
+  const hasUnread = (array) => {
+    let sum = 0;
+    for(let i = 0; i < array.length; i++) {
+      if(array[i].user_read === false) {
+        sum += 1
+      }
+    }
+    return sum
+  }
 
   async function load(workerNameFilter, userID) {
     const response = await api.get('tasks', {
@@ -113,25 +147,6 @@ export default function ListTasks() {
     load('', user_id);
   }
 
-  function handleStatus(sub_task_list) {
-    let weigeSum = 0;
-    for(let i = 0; i < sub_task_list.length; i++) {
-      if(sub_task_list[i].complete === true) {
-        weigeSum += (sub_task_list[i].weige_percentage)
-      }
-    }
-    return Math.round(weigeSum)
-  }
-
-  function hasUnread(array) {
-    let sum = 0;
-    for(let i = 0; i < array.length; i++) {
-      if(array[i].user_read === false) {
-        sum += 1
-      }
-    }
-    return sum
-  }
 
   async function handleRemoveTask(task) {
     await api.delete(`tasks/${task.id}`);
@@ -164,6 +179,273 @@ export default function ListTasks() {
     // }
   }
 
+  function handleMessageDropMenu(position) {
+    setMessageDropMenu(position)
+    setToggleDropMenu(!toggleDropMenu)
+  }
+
+  function handleReply(message) {
+    setReplyValue(message)
+  }
+
+  function sortName() {
+    if (!toggleName) {
+      tasks.sort(compare)
+      setToggleName(!toggleName)
+    }
+    if (toggleName) {
+      tasks.sort(reversedCompare)
+      setToggleName(!toggleName)
+    }
+    setToggleWorker(false);
+    setTogglePrior(false);
+    setToggleUrgent(false);
+    setToggleStartDate(false);
+    setToggleDueDate(false);
+    setTask()
+
+    function compare(a, b) {
+      if (a.name > b.name) {
+        return 1;
+      }
+      if (a.name < b.name) {
+        return -1;
+      }
+      return 0;
+    }
+
+    function reversedCompare(a, b) {
+      if (a.name > b.name) {
+        return -1;
+      }
+      if (a.name < b.name) {
+        return 1;
+      }
+      return 0;
+    }
+  }
+
+  function sortWorker() {
+    if (!toggleWorker) {
+      tasks.sort(compare)
+      setToggleWorker(!toggleWorker)
+    }
+    if (toggleWorker) {
+      tasks.sort(reversedCompare)
+      setToggleWorker(!toggleWorker)
+    }
+    setToggleName(false);
+    setTogglePrior(false);
+    setToggleUrgent(false);
+    setToggleStartDate(false);
+    setToggleDueDate(false);
+    setTask()
+
+    function compare(a, b) {
+      if (a.worker_name > b.worker_name) {
+        return 1;
+      }
+      if (a.worker_name < b.worker_name) {
+        return -1;
+      }
+      return 0;
+    }
+
+    function reversedCompare(a, b) {
+      if (a.worker_name > b.worker_name) {
+        return -1;
+      }
+      if (a.worker_name < b.worker_name) {
+        return 1;
+      }
+      return 0;
+    }
+  }
+
+  function sortPrior() {
+    if (!togglePrior) {
+      tasks.sort(compare)
+      setTogglePrior(!togglePrior)
+    }
+    if (togglePrior) {
+      tasks.sort(reversedCompare)
+      setTogglePrior(!togglePrior)
+    }
+    setToggleName(false);
+    setToggleWorker(false);
+    setToggleUrgent(false);
+    setToggleStartDate(false);
+    setToggleDueDate(false);
+    setTask()
+
+    function compare(a, b) {
+      if (a.task_attributes[0] > b.task_attributes[0]) {
+        return 1;
+      }
+      if (a.task_attributes[0] < b.task_attributes[0]) {
+        return -1;
+      }
+      return 0;
+    }
+
+    function reversedCompare(a, b) {
+      if (a.task_attributes[0] > b.task_attributes[0]) {
+        return -1;
+      }
+      if (a.task_attributes[0] < b.task_attributes[0]) {
+        return 1;
+      }
+      return 0;
+    }
+  }
+
+  function sortUrgent() {
+    if (!toggleUrgent) {
+      tasks.sort(compare)
+      setToggleUrgent(!toggleUrgent)
+    }
+    if (toggleUrgent) {
+      tasks.sort(reversedCompare)
+      setToggleUrgent(!toggleUrgent)
+    }
+    setToggleName(false);
+    setToggleWorker(false);
+    setTogglePrior(false);
+    setToggleStartDate(false);
+    setToggleDueDate(false);
+    setTask()
+
+    function compare(a, b) {
+      if (a.task_attributes[1] > b.task_attributes[1]) {
+        return 1;
+      }
+      if (a.task_attributes[1] < b.task_attributes[1]) {
+        return -1;
+      }
+      return 0;
+    }
+
+    function reversedCompare(a, b) {
+      if (a.task_attributes[1] > b.task_attributes[1]) {
+        return -1;
+      }
+      if (a.task_attributes[1] < b.task_attributes[1]) {
+        return 1;
+      }
+      return 0;
+    }
+  }
+
+  function sortStartDate() {
+    if (!toggleStartDate) {
+      tasks.sort(compare)
+      setToggleStartDate(!toggleStartDate)
+    }
+    if (toggleStartDate) {
+      tasks.sort(reversedCompare)
+      setToggleStartDate(!toggleStartDate)
+    }
+    setToggleName(false);
+    setToggleWorker(false);
+    setTogglePrior(false);
+    setToggleUrgent(false);
+    setToggleDueDate(false);
+    setTask()
+
+    function compare(a, b) {
+      if (a.start_date > b.start_date) {
+        return 1;
+      }
+      if (a.start_date < b.start_date) {
+        return -1;
+      }
+      return 0;
+    }
+
+    function reversedCompare(a, b) {
+      if (a.start_date > b.start_date) {
+        return -1;
+      }
+      if (a.start_date < b.start_date) {
+        return 1;
+      }
+      return 0;
+    }
+  }
+
+  function sortDueDate() {
+    if (!toggleDueDate) {
+      tasks.sort(compare)
+      setToggleDueDate(!toggleDueDate)
+    }
+    if (toggleDueDate) {
+      tasks.sort(reversedCompare)
+      setToggleDueDate(!toggleDueDate)
+    }
+    setToggleName(false);
+    setToggleWorker(false);
+    setTogglePrior(false);
+    setToggleUrgent(false);
+    setToggleStartDate(false);
+    setTask()
+
+    function compare(a, b) {
+      if (a.due_date > b.due_date) {
+        return 1;
+      }
+      if (a.due_date < b.due_date) {
+        return -1;
+      }
+      return 0;
+    }
+
+    function reversedCompare(a, b) {
+      if (a.due_date > b.due_date) {
+        return -1;
+      }
+      if (a.due_date < b.due_date) {
+        return 1;
+      }
+      return 0;
+    }
+  }
+
+  function sortMessages() {
+    if (!toggleDueDate) {
+      tasks.sort(compare)
+      setToggleDueDate(!toggleDueDate)
+    }
+    if (toggleDueDate) {
+      tasks.sort(reversedCompare)
+      setToggleDueDate(!toggleDueDate)
+    }
+    setToggleName(false);
+    setToggleWorker(false);
+    setTogglePrior(false);
+    setToggleUrgent(false);
+    setToggleStartDate(false);
+    setTask()
+
+    function compare(a, b) {
+      if (hasUnread(a) > hasUnread(b)) {
+        return 1;
+      }
+      if (hasUnread(a) < hasUnread(a)) {
+        return -1;
+      }
+      return 0;
+    }
+
+    function reversedCompare(a, b) {
+      if (hasUnread(a) > hasUnread(b)) {
+        return -1;
+      }
+      if (hasUnread(a) < hasUnread(b)) {
+        return 1;
+      }
+      return 0;
+    }
+  }
 
   // -----------------------------------------------------------------------------
   return (
@@ -179,28 +461,58 @@ export default function ListTasks() {
                 </button>
               </Link>
               <Searchbar className="header-input" input={inputState} onChange={handleUpdateInput}/>
-
             </div>
           </header>
 
           <div className='title-bar'>
-            <strong className='title-strong'>Tarefa</strong>
-            <strong className='title-strong'>Funcionário</strong>
-            <strong className='short-tag'>Prioridade</strong>
-            <strong className='short-tag'>Urgência</strong>
-            <strong className='short-tag'>Início</strong>
-            <strong className='short-tag'>Prazo</strong>
+            <strong className='title-strong' onClick={() => sortName()} style={{cursor:'pointer'}}>Tarefa
+              { toggleName
+                ? <TiArrowSortedUp style={{marginLeft: '8px'}}/>
+                : <TiArrowSortedDown style={{marginLeft: '8px', alignSelf: 'center'}}/>
+              }
+            </strong>
+            <strong className='title-strong' onClick={() => sortWorker()} style={{cursor:'pointer'}}>Funcionário
+              { toggleWorker
+                ? <TiArrowSortedUp style={{marginLeft: '8px'}}/>
+                : <TiArrowSortedDown style={{marginLeft: '8px', alignSelf: 'center'}}/>
+              }
+            </strong>
+            <strong className='short-tag' onClick={() => sortPrior()}>Prioridade
+            { togglePrior
+                ? <TiArrowSortedUp style={{marginLeft: '8px'}}/>
+                : <TiArrowSortedDown style={{marginLeft: '8px', alignSelf: 'center'}}/>
+              }
+            </strong>
+            <strong className='short-tag' onClick={() => sortUrgent()} style={{cursor:'pointer'}}>Urgência
+              { toggleUrgent
+                ? <TiArrowSortedUp style={{marginLeft: '8px'}}/>
+                : <TiArrowSortedDown style={{marginLeft: '8px', alignSelf: 'center'}}/>
+              }
+            </strong>
+            <strong className='short-tag'onClick={() => sortStartDate()} style={{cursor:'pointer'}}>Início
+              { toggleStartDate
+                ? <TiArrowSortedUp style={{marginLeft: '8px'}}/>
+                : <TiArrowSortedDown style={{marginLeft: '8px', alignSelf: 'center'}}/>
+              }
+            </strong>
+            <strong className='short-tag' onClick={() => sortDueDate()} style={{cursor:'pointer'}}>Prazo
+              { toggleDueDate
+                ? <TiArrowSortedUp style={{marginLeft: '8px'}}/>
+                : <TiArrowSortedDown style={{marginLeft: '8px', alignSelf: 'center'}}/>
+              }
+            </strong>
             <strong className='short-tag'>Status</strong>
             <div className='bell-tag'><GrTask size={18}/></div>
-            <div className='bell-tag last'><FiMessageSquare size={18}/></div>
+            <div className='bell-tag last' onClick={() => sortMessages()} style={{cursor:'pointer'}}><FiMessageSquare size={18}/></div>
           </div>
-
+          {/* Task List */}
           <ul className='item-list'>
             {tasks.map((t) =>
               <Line key={t.id} className='item-list-row'>
                 <div className="line-div" onClick={() => handleTaskDetails(t)}>
                   <label className="item-label">{t.name}</label>
                   <label className="item-label">{t.worker.worker_name}</label>
+                  {/* Task selects */}
                   <select
                     className={`list-select ${t.task_attributes[0]}`}
                     onChange={e => handleSelect(e, t.id, t.task_attributes, 'Prior')}
@@ -217,12 +529,13 @@ export default function ListTasks() {
                       <option key={s} className="list-option" value={s}>{s}</option>
                     )}
                   </select>
+                  {/* Task Dates */}
                   <label className="startdate">{formattedDate(t.start_date)}</label>
-                  {
-                    isBefore(parseISO(t.due_date), new Date())
-                      ? <label className="duedate red">{formattedDate(t.due_date)}</label>
-                      : <label className="duedate green">{formattedDate(t.due_date)}</label>
+                  { isBefore(parseISO(t.due_date), new Date())
+                    ? <label className="duedate red">{formattedDate(t.due_date)}</label>
+                    : <label className="duedate green">{formattedDate(t.due_date)}</label>
                   }
+                  {/* Task Status */}
                   <label className="status-label">
                     <div className="status-complete-div">
                       <div
@@ -234,33 +547,30 @@ export default function ListTasks() {
                       {handleStatus(t.sub_task_list)}%
                     </span>
                   </label>
+                  {/* Task Bells */}
                   <div className="bell-label">
-                    {
-                      (hasUnread(t.sub_task_list) === 0)
+                    { (hasUnread(t.sub_task_list) === 0)
                       ? (
-                        <Badge style={{visibility: 'hidden'}}>
+                        <Badge style={{visibility: 'hidden'}} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
                           <MdNotifications color="#ccc" size={28} />
                         </Badge>
-
                       )
                       : (
-                        <Badge hasUnread={hasUnread(t.sub_task_list)}>
+                        <Badge hasUnread={hasUnread(t.sub_task_list)} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
                           <MdNotifications color="#ccc" size={28} />
                         </Badge>
                       )
                     }
                   </div>
                   <div className="bell-label last">
-                    {
-                      (hasUnread(t.messages) === 0)
+                    { (hasUnread(t.messages) === 0)
                       ? (
-                        <Badge style={{visibility: 'hidden'}}>
+                        <Badge style={{visibility: 'hidden'}} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
                           <MdNotifications color="#ccc" size={28} />
                         </Badge>
-
                       )
                       : (
-                        <Badge hasUnread={hasUnread(t.messages)}>
+                        <Badge hasUnread={hasUnread(t.messages)} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
                           <MdNotifications color="#ccc" size={28} />
                         </Badge>
                       )
@@ -271,7 +581,7 @@ export default function ListTasks() {
             )}
           </ul>
         </TaskListDiv>
-
+        {/* Task Detail */}
         <TaskDetailsDiv>
           <div className="task-details-div">
             <strong className="task-details-strong">Detalhes da tarefa: {task && task.name}</strong>
@@ -280,24 +590,22 @@ export default function ListTasks() {
             <div className="sub-tasks-div">
               <label className="task-details-label">Sub-tarefas</label>
               <div className="sub-tasks-list-div">
-                { task ? (
-                  task.sub_task_list.map((s, index) => (
+                { task
+                  ? ( task.sub_task_list.map((s, index) => (
                     <div className="sub-tasks-checkbox-div" key={index}>
                       <label className="sub-tasks-checkbox-label" key={s.description}>
                         <input className="sub-tasks-checkbox-input" type="checkbox" defaultChecked={s.complete}/>
                         <span className="sub-tasks-checkbox-span">{s.description}</span>
                       </label>
                       <span className="#">Peso:
-                        {
-                          s.weige_percentage
+                        { s.weige_percentage
                             ? ` ${JSON.stringify(s.weige_percentage).replace(".",",")}%`
                             : ' n/a'
                         }
                       </span>
                     </div>
-                  ))
-                )
-                : null
+                  )))
+                  : null
                 }
               </div>
             </div>
@@ -311,7 +619,7 @@ export default function ListTasks() {
           </div>
         </TaskDetailsDiv>
       </div>
-
+    {/* Chat */}
     <div className="container-div right">
       <MessageDiv>
         <header className='message-header'>
@@ -330,39 +638,79 @@ export default function ListTasks() {
           <div className="message-conversation-div">
             { task && task.messages && (
               task.messages.map((m, index) => (
-                <div className={`message-div ${m.sender}`} key={index}>
-                  {m.sender === 'user'
+                <div className={`message-container-div ${m.sender}`} key={index}>
+                  { m.sender === 'user'
                     ? (
-                      <>
-                        <span className={`message-time-span ${m.sender}`}>{m.timestamp}</span>
-                        { index
+                      <div className={`time-message-div ${m.sender}`}>
+                        <span className={`message-time-span`}>{m.timestamp}</span>
+
+                        { index // View goes to last message
                           ? (
-                            <span
-                              className={`message-span ${m.sender}`}
-                              ref={lastMessageRef}
-                            >{m.message}</span>
+                            <div className={`message-line-div ${m.sender}`} >
+                              <span
+                                className={`message-span ${m.sender}`}
+                                ref={lastMessageRef}
+                              >{m.message}</span>
+                              <RiArrowDownSLine
+                                onClick={() => handleMessageDropMenu(index)}
+                                style={{cursor:'pointer'}}
+                              />
+                            </div>
                           ) : (
-                            <span
-                              className={`message-span ${m.sender}`}
-                              id={index}
-                            >{m.message}</span>
+                            <div className={`message-line-div ${m.sender}`}>
+                              <span
+                                className={`message-span ${m.sender}`}
+                              >{m.message}</span>
+                              <RiArrowDownSLine/>
+                            </div>
                           )
                         }
-                      </>
+                      </div>
                     )
                     : (
-                      <>
-                        <span className={`message-span ${m.sender}`}>{m.message}</span>
-                    <span className={`message-time-span ${m.sender}`}>{m.timestamp}</span>
-                      </>
+                      <div className={`time-message-div ${m.sender}`}>
+                        <div className={`message-line-div ${m.sender}`}>
+                          <span className={`message-span ${m.sender}`}>{m.message}</span>
+                          <RiArrowDownSLine
+                            onClick={() => handleMessageDropMenu(index)}
+                            style={{cursor:'pointer'}}
+                          />
+                        </div>
+                        <span className={`message-time-span`}>{m.timestamp}</span>
+                      </div>
                     )
                   }
-
+                  { (messageDropMenu === index) && (toggleDropMenu === true) && (
+                    <ul classname="message-dropMenu-ul">
+                      <li className="message-dropMenu-li">
+                        <button
+                          className="message-dropMenu-button"
+                          onClick={() => handleReply(m.message)}
+                        >Responder</button>
+                      </li>
+                      <li className="message-dropMenu-li">
+                        <button className="message-dropMenu-button">Encaminhar</button>
+                      </li>
+                      { m.sender === 'user' && (
+                        <li className="message-dropMenu-li">
+                          <button className="message-dropMenu-button">Deletar</button>
+                        </li>
+                      )}
+                    </ul>
+                  )}
                 </div>
               ))
             )}
           </div>
           <form onSubmit={handleMessageSubmit}>
+            {
+              replyValue && (
+                <div className="temporary-message-div">
+                  {replyValue}
+                </div>
+              )
+            }
+
             <textarea
               type="text"
               className="message-input"

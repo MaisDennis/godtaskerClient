@@ -28,8 +28,8 @@ export default function UpdateTask({ match }) {
 
   const editSubTaskInputRef = useRef();
 
-  // const user_id = useSelector(state => state.user.profile.id);
-  const user_id = 1;
+  const user_id = useSelector(state => state.user.profile.id);
+  // const user_id = 1;
   const task_id = match.params.id;
 
   useEffect(() =>{
@@ -135,7 +135,7 @@ export default function UpdateTask({ match }) {
             </div>
           </div>
         </header>
-          {/* Task Name */}
+        {/* Task Name */}
         <div className="form-body-div">
           <div className="sub-content-line-div">
             <label>Tarefa<sup>*</sup></label>
@@ -166,62 +166,60 @@ export default function UpdateTask({ match }) {
             <ol className='sub-task-ol'>
               <label>Lista de Sub-tarefas</label>
               <label>(ao alterar, não esquecer de salvar)</label>
-              {
-                subTasks.map((s, index) => (
+              { subTasks.map((s, index) => (
                   <div className='sub-task-ol-sub-div' key={index}>
-                    {
-                      subTaskToggleEdit && (editSubTaskIndex === index)
-                        ? (
-                          <>
-                            <li className='sub-task-li'>
-                              <div className="sub-task-dangle-list-style">
-                                {s.description}
-                                <div className='sub-task-icons'>
-                                  <TiEdit
-                                    className='sub-task-edit-icon'
-                                    onClick={() => handleOpenEditInput(index)}
-                                  />
-                                  <RiCloseCircleFill
-                                    className='sub-task-remove-icon'
-                                    // onClick={() => handleRemoveSubTask(index)}
-                                  />
-                                </div>
+                    { subTaskToggleEdit && (editSubTaskIndex === index)
+                      ? (
+                        <>
+                          <li className='sub-task-li'>
+                            <div className="sub-task-dangle-list-style">
+                              {s.description}
+                              <div className='sub-task-icons'>
+                                <TiEdit
+                                  className='sub-task-edit-icon'
+                                  onClick={() => handleOpenEditInput(index)}
+                                />
+                                <RiCloseCircleFill
+                                  className='sub-task-remove-icon'
+                                  // onClick={() => handleRemoveSubTask(index)}
+                                />
                               </div>
-                            </li>
-                            <div className='sub-content-line-div'>
-                            <textarea
-                              className='sub-task-input'
-                              ref={editSubTaskInputRef}
-                              value={editSubTaskInputValue}
-                              onChange={(e) => setEditSubTasksInputValue(e.target.value)}
-                            />
-                            <button
-                              className='sub-task-add-button'
-                              type="button"
-                              onClick={() => handleEditSubTask(index)}
-                            >{`Alterar a sub-tarefa ???`}</button>
-                          </div>
-                        </>
-                        )
-                        : (
-                          <>
-                            <li className='sub-task-li'>
-                              <div className="sub-task-dangle-list-style">
-                                {s.description}
-                                <div className='sub-task-icons'>
-                                  <TiEdit
-                                    className='sub-task-edit-icon'
-                                    onClick={() => handleOpenEditInput(index)}
-                                  />
-                                  <RiCloseCircleFill
-                                    className='sub-task-remove-icon'
-                                    onClick={() => handleRemoveSubTask(index)}
-                                  />
-                                </div>
+                            </div>
+                          </li>
+                          <div className='sub-content-line-div'>
+                          <textarea
+                            className='sub-task-input'
+                            ref={editSubTaskInputRef}
+                            value={editSubTaskInputValue}
+                            onChange={(e) => setEditSubTasksInputValue(e.target.value)}
+                          />
+                          <button
+                            className='sub-task-add-button'
+                            type="button"
+                            onClick={() => handleEditSubTask(index)}
+                          >{`Alterar a sub-tarefa ???`}</button>
+                        </div>
+                      </>
+                      )
+                      : (
+                        <>
+                          <li className='sub-task-li'>
+                            <div className="sub-task-dangle-list-style">
+                              {s.description}
+                              <div className='sub-task-icons'>
+                                <TiEdit
+                                  className='sub-task-edit-icon'
+                                  onClick={() => handleOpenEditInput(index)}
+                                />
+                                <RiCloseCircleFill
+                                  className='sub-task-remove-icon'
+                                  onClick={() => handleRemoveSubTask(index)}
+                                />
                               </div>
-                            </li>
+                            </div>
+                          </li>
                         </>
-                        )
+                      )
                     }
                   </div>
                 ))
@@ -255,15 +253,12 @@ export default function UpdateTask({ match }) {
           {/* Worker */}
           <div className='sub-content-line-div'>
             <div className="row-div">
-            <label className='list-label'>Funcionário</label>
-            <details>O funcionário é o ID da tarefa. Se quiser delegar a outro(a), na lista de tarefas, copie a tarefa, delegue-a para outro(a), e delete esta tarefa atual.</details>
-                {/* <br/> */}
+              <label className='list-label'>Funcionário</label>
+              <details>O funcionário é o ID da tarefa. Se quiser delegar a outro(a), na lista de tarefas, copie a tarefa, delegue-a para outro(a), e delete esta tarefa atual.</details>
+              {/* <br/> */}
             </div>
-
-                <span className='sub-task-li'>{worker}</span>
-
+            <span className='sub-task-li'>{worker}</span>
           </div>
-
         </div>
      </form>
    </Container>

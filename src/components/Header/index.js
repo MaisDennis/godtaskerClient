@@ -28,7 +28,7 @@ export default function Header() {
           <Profile>
             <div>
               <strong>
-                {profile.name}
+                {profile.user_name}
               </strong>
               <Link to="/profile">
                 Meu perfil

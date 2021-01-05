@@ -27,11 +27,9 @@ export default function CreateWorker() {
       })
       // history.push('/workers/list');
       toast.success('Funcionário cadastrado com sucesso!');
-
     } catch {
       toast.error('Por favor preencher os campos com (*)');
     }
-
   }
   // -----------------------------------------------------------------------------
   return (

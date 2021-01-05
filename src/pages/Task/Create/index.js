@@ -18,9 +18,8 @@ export default function CreateTask() {
   const [subTasksCheckBox, setSubTasksCheckBox] = useState(false);
   const [subTaskToggleEdit, setSubTaskToggleEdit] = useState(false);
   const [weige, setWeige] = useState(1);
-  const [setSubTasksInputValue] = useState([]);
+  const [subTasksInputValue, setSubTasksInputValue] = useState([]); // don't delete subTaskInputValue.
   const [startDateInputValue, setStartDateInputValue] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
-
 
   const [editSubTaskInputValue, setEditSubTasksInputValue] = useState();
   const [editSubTaskIndex, setEditSubTaskIndex] = useState();
@@ -46,10 +45,6 @@ export default function CreateTask() {
 
   function handleToggleSubTasksDiv() {
     setSubTasksCheckBox(!subTasksCheckBox)
-    // console.log(`1-${radioPriority}`)
-    // console.log(`2-${radioUrgent}`)
-    // console.log(`3-${radioComplex}`)
-    // console.log('---')
   }
 
   function handleAddSubTask() {
@@ -94,6 +89,18 @@ export default function CreateTask() {
     setSubTasks(editedSubTasks);
   }
 
+  function weigeToPercentage(subTasks) {
+    let weigeSum = 0;
+    for(let i = 0; i < subTasks.length; i++) {
+      weigeSum += parseFloat(subTasks[i].weige)
+    }
+
+    for(let i = 0; i < subTasks.length; i++) {
+      subTasks[i].weige_percentage = (Math.round((parseFloat(subTasks[i].weige) / weigeSum)*1000) /10)
+    }
+    return weigeSum;
+  }
+
   const { register, handleSubmit } = useForm();
 
   const onSubmit = ({ name, description, start_date, due_date, phonenumbers }) => {
@@ -119,20 +126,6 @@ export default function CreateTask() {
     } else if (isBefore(timeEnd, timeStart)) {
       toast.error('O prazo está antes do início.');
     } else {
-
-      function weigeToPercentage(subTasks) {
-        let weigeSum = 0;
-        for(let i = 0; i < subTasks.length; i++) {
-          weigeSum += parseFloat(subTasks[i].weige)
-        }
-
-        for(let i = 0; i < subTasks.length; i++) {
-          subTasks[i].weige_percentage = (Math.round((parseFloat(subTasks[i].weige) / weigeSum)*1000) /10)
-        }
-        return weigeSum;
-        console.log(weigeSum)
-      }
-
       weigeToPercentage(subTasks)
 
       phonenumbers.map(p => {
@@ -197,8 +190,7 @@ export default function CreateTask() {
             <label className='checkbox-label'>
               <input className='checkbox-input' type="checkbox" onClick={handleToggleSubTasksDiv}/>
               <span className='form-span'>Incluir sub-tarefas</span>
-              {
-                !subTasksCheckBox && (subTasks[0] !== undefined)
+              { !subTasksCheckBox && (subTasks[0] !== undefined)
                 ? (
                   <span className='observations-span'>
                     <sup>*</sup>Selecionar, ou as sub-tarefas não serão inclusas.
@@ -208,8 +200,7 @@ export default function CreateTask() {
               }
             </label>
           </div>
-          {
-            !subTasksCheckBox
+          { !subTasksCheckBox
             ? (
               // Sub Tasks Add
               <div className="sub-content-line-div">
@@ -238,83 +229,80 @@ export default function CreateTask() {
                   onClick={handleAddSubTask}
                 >Adicionar a sub-tarefa à lista</button><br/>
                 <ol className='sub-task-ol'>
-                  {
-                    subTasksCheckBox && (subTasks[0] !== undefined)
-                      ?  <label>Lista de Sub-tarefas</label>
-                      : null
+                  { subTasksCheckBox && (subTasks[0] !== undefined)
+                    ?  <label>Lista de Sub-tarefas</label>
+                    : null
                   }
-                  {
-                    subTasks.map((s, index) => (
-                      <div className='sub-task-ol-sub-div' key={index}>
-                        {
-                          subTaskToggleEdit && (editSubTaskIndex === index)
-                            ? (
-                              <>
-                                <li className='sub-task-li'>
-                                  <div className="sub-task-dangle-list-style">
-                                    {s.description}
-                                    <div className='sub-task-icons'>
-                                      <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
-                                      <TiEdit
-                                        className='sub-task-edit-icon'
-                                        onClick={() => handleOpenEditInput(index)}
-                                      />
-                                      <RiCloseCircleFill
-                                        className='sub-task-remove-icon'
-                                        onClick={() => handleRemoveSubTask(index)}
-                                      />
-                                    </div>
-                                  </div>
-                                </li>
-                                <div className='sub-content-line-div'>
-                                  <textarea
-                                    className='sub-task-input'
-                                    ref={editSubTaskInputRef}
-                                    value={editSubTaskInputValue}
-                                    onChange={(e) => setEditSubTasksInputValue(e.target.value)}
-                                  />
-                                  <div className="weige-div">
-                                    <span className="form-span">Peso:</span>
-                                    <input
-                                      className="sub-task-weige-input"
-                                      type="number"
-                                      ref={editWeigeInputRef}
-                                      value={editWeigeInputValue}
-                                      onChange={(e) => setEditWeigeInputValue(e.target.value)}
-                                    />
-                                  </div>
-                                  <button
-                                    className='sub-task-add-button'
-                                    type="button"
-                                    onClick={() => handleEditSubTask(index)}
-                                  >{`Alterar a sub-tarefa ${index+1}.`}</button>
-                                </div>
-                              </>
-                            )
-                          : (
+                  { subTasks.map((s, index) => (
+                    <div className='sub-task-ol-sub-div' key={index}>
+                      {
+                        subTaskToggleEdit && (editSubTaskIndex === index)
+                          ? (
                             <>
                               <li className='sub-task-li'>
                                 <div className="sub-task-dangle-list-style">
-                                {s.description}
-                                <div className='sub-task-icons'>
-                                <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
-                                  <TiEdit
-                                    className='sub-task-edit-icon'
-                                    onClick={() => handleOpenEditInput(index)}
-                                  />
-                                  <RiCloseCircleFill
-                                    className='sub-task-remove-icon'
-                                    onClick={() => handleRemoveSubTask(index)}
-                                  />
-                                </div>
+                                  {s.description}
+                                  <div className='sub-task-icons'>
+                                    <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
+                                    <TiEdit
+                                      className='sub-task-edit-icon'
+                                      onClick={() => handleOpenEditInput(index)}
+                                    />
+                                    <RiCloseCircleFill
+                                      className='sub-task-remove-icon'
+                                      onClick={() => handleRemoveSubTask(index)}
+                                    />
+                                  </div>
                                 </div>
                               </li>
+                              <div className='sub-content-line-div'>
+                                <textarea
+                                  className='sub-task-input'
+                                  ref={editSubTaskInputRef}
+                                  value={editSubTaskInputValue}
+                                  onChange={(e) => setEditSubTasksInputValue(e.target.value)}
+                                />
+                                <div className="weige-div">
+                                  <span className="form-span">Peso:</span>
+                                  <input
+                                    className="sub-task-weige-input"
+                                    type="number"
+                                    ref={editWeigeInputRef}
+                                    value={editWeigeInputValue}
+                                    onChange={(e) => setEditWeigeInputValue(e.target.value)}
+                                  />
+                                </div>
+                                <button
+                                  className='sub-task-add-button'
+                                  type="button"
+                                  onClick={() => handleEditSubTask(index)}
+                                >{`Alterar a sub-tarefa ${index+1}.`}</button>
+                              </div>
                             </>
                           )
-                        }
-                      </div>
-                    ))
-                  }
+                        : (
+                          <>
+                            <li className='sub-task-li'>
+                              <div className="sub-task-dangle-list-style">
+                              {s.description}
+                              <div className='sub-task-icons'>
+                              <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
+                                <TiEdit
+                                  className='sub-task-edit-icon'
+                                  onClick={() => handleOpenEditInput(index)}
+                                />
+                                <RiCloseCircleFill
+                                  className='sub-task-remove-icon'
+                                  onClick={() => handleRemoveSubTask(index)}
+                                />
+                              </div>
+                              </div>
+                            </li>
+                          </>
+                        )
+                      }
+                    </div>
+                  ))}
                   <br/>
                 </ol>
               </div>
@@ -491,7 +479,7 @@ export default function CreateTask() {
           {/* Workers */}
           <div className='sub-content-line-div'>
             <label>Enviar a Funcionários<sup>*</sup></label>
-            {worker.map((w) =>
+            { worker.map((w) =>
               <label  className='checkbox-label' key={w.worker_name}>
                 <input
                   className='checkbox-input'
