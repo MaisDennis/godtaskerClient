@@ -37,9 +37,11 @@ export default function ListTasks() {
   const [messageDropMenu, setMessageDropMenu] = useState();
   const [toggleDropMenu, setToggleDropMenu] = useState(false);
   const [replyValue, setReplyValue] = useState();
+  const [replySender, setReplySender] = useState();
   const [forwardValue, setForwardValue] = useState();
 
   const user_id = useSelector(state => state.user.profile.id)
+  const user_name = useSelector(state => state.user.profile.user_name)
   const messageRef = useRef();
   const lastMessageRef = useRef();
   const messageInputRef = useRef();
@@ -159,14 +161,29 @@ export default function ListTasks() {
       let pushMessage = task.messages
       let formattedTimeStamp = formattedMessageDate(new Date())
       const id = task.id
-
-      pushMessage.push({
-        "message": chatMessage,
-        "sender": "user",
-        "user_read": false,
-        "worker_read": false,
-        "timestamp": formattedTimeStamp
-      })
+      if (replyValue) {
+        pushMessage.push({
+          "message": chatMessage,
+          "sender": "user",
+          "user_read": false,
+          "worker_read": false,
+          "timestamp": formattedTimeStamp,
+          "reply_message": replyValue,
+          "reply_sender": replySender,
+          "forward_message": false,
+        })
+      } else {
+        pushMessage.push({
+          "message": chatMessage,
+          "sender": "user",
+          "user_read": false,
+          "worker_read": false,
+          "timestamp": formattedTimeStamp,
+          "reply_message": '',
+          "reply_sender": '',
+          "forward_message": false,
+        })
+      }
 
       await api.put(`tasks/messages/${id}`,
         pushMessage
@@ -184,8 +201,10 @@ export default function ListTasks() {
     setToggleDropMenu(!toggleDropMenu)
   }
 
-  function handleReply(message) {
+  function handleReply(message, sender) {
     setReplyValue(message)
+    setReplySender(sender)
+    setToggleDropMenu(false)
   }
 
   function sortName() {
@@ -627,7 +646,7 @@ export default function ListTasks() {
           <div className="list-header">
             <div className="worker-profile-div">
                 <img src={insert} alt="Worker"/>
-              <label className="worker-profile-label">Worker 1</label>
+              <label className="worker-profile-label">Fix Me!</label>
             </div>
             <div className="message-menu-div">
               <button className="message-menu-button"><BsSearch size={16}/></button>
@@ -643,28 +662,36 @@ export default function ListTasks() {
                     ? (
                       <div className={`time-message-div ${m.sender}`}>
                         <span className={`message-time-span`}>{m.timestamp}</span>
+                        <div className={`message-line-div ${m.sender}`} >
+                          { m.reply_message
+                            ? (
+                              <div className="reply-on-top-div">
+                                { m.reply_sender === 'worker'
+                                  ? (
+                                    <span className="reply-name-span">{task.worker.worker_name}</span>
+                                  )
+                                  : (
+                                    <span className="reply-name-span">{user_name}</span>
+                                  )
+                                }
 
-                        { index // View goes to last message
-                          ? (
-                            <div className={`message-line-div ${m.sender}`} >
-                              <span
-                                className={`message-span ${m.sender}`}
-                                ref={lastMessageRef}
-                              >{m.message}</span>
-                              <RiArrowDownSLine
-                                onClick={() => handleMessageDropMenu(index)}
-                                style={{cursor:'pointer'}}
-                              />
-                            </div>
-                          ) : (
-                            <div className={`message-line-div ${m.sender}`}>
-                              <span
-                                className={`message-span ${m.sender}`}
-                              >{m.message}</span>
-                              <RiArrowDownSLine/>
-                            </div>
-                          )
-                        }
+                            <span className="reply-on-top-span">{m.reply_message}</span>
+                              </div>
+                            )
+                            : null
+
+                          }
+                          <div className="message-arrow-div">
+                            <span
+                              className={`message-span ${m.sender}`}
+                              ref={lastMessageRef}
+                            >{m.message}</span>
+                            <RiArrowDownSLine
+                              onClick={() => handleMessageDropMenu(index)}
+                              style={{cursor:'pointer'}}
+                            />
+                          </div>
+                        </div>
                       </div>
                     )
                     : (
@@ -685,7 +712,7 @@ export default function ListTasks() {
                       <li className="message-dropMenu-li">
                         <button
                           className="message-dropMenu-button"
-                          onClick={() => handleReply(m.message)}
+                          onClick={() => handleReply(m.message, m.sender)}
                         >Responder</button>
                       </li>
                       <li className="message-dropMenu-li">
@@ -710,7 +737,6 @@ export default function ListTasks() {
                 </div>
               )
             }
-
             <textarea
               type="text"
               className="message-input"

@@ -531,11 +531,11 @@ export const MessageDiv = styled.div`
 
   .message-line-div {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+
     height: auto;
-    padding: 4px;
     margin: 4px;
+    padding: 4px;
     border-radius: 8px;
   }
 
@@ -545,6 +545,38 @@ export const MessageDiv = styled.div`
 
   .message-line-div.worker {
     background-color: #b4c7db;
+  }
+
+  .reply-on-top-div {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+    padding: 8px;
+    opacity: .9;
+    background-color: #F5F5F5;
+
+    border-radius: 4px;
+  }
+
+  .reply-name-span {
+    font-size: 13px;
+    color: blue;
+    margin-bottom: 8px;
+  }
+
+  .reply-on-top-span {
+
+  }
+
+  .message-arrow-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+
+
+    /* background-color: #4433ee; */
   }
 
   .message-span {
