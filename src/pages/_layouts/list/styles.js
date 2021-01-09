@@ -574,9 +574,12 @@ export const MessageDiv = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 4px 0;
-
-
     /* background-color: #4433ee; */
+  }
+
+  .message-arrow-div.removed {
+    padding-left: 4px;
+    /* background-color: #f00; */
   }
 
   .message-span {
@@ -594,9 +597,16 @@ export const MessageDiv = styled.div`
   .message-span.worker {
     background-color: none;
   }
+
   .message-time-span {
     font-size: 10px;
     color: #444;
+  }
+  .temporary-message-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .temporary-message-div {
@@ -604,12 +614,13 @@ export const MessageDiv = styled.div`
     line-height: 24px;
     border-radius: 4px;
     border: 1px solid #ccc;
+    width: 100%;
     /* border-bottom: 4px solid #b4c7db; */
     /* box-shadow: 2px 2px 2px #ccc; */
     padding: 10px 12px;
     margin-bottom: 4px;
 
-    background-color: #b4c7db;
+    background-color: #F5F5F5;
   }
 
   .message-input {

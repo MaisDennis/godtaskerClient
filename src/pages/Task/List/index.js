@@ -11,7 +11,8 @@ import { GrTask } from 'react-icons/gr';
 import { FiMessageSquare } from 'react-icons/fi';
 import { BsThreeDotsVertical, BsSearch } from 'react-icons/bs'
 import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
-import { RiArrowDownSLine } from 'react-icons/ri'
+import { RiArrowDownSLine, RiCloseLine } from 'react-icons/ri'
+import { TiCancel } from 'react-icons/ti'
 import insert from '~/assets/insert_photo-24px.svg';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
@@ -45,9 +46,9 @@ export default function ListTasks() {
   const messageRef = useRef();
   const lastMessageRef = useRef();
   const messageInputRef = useRef();
-
-  const scrollIntoLastMessage = () => {lastMessageRef.current.scrollIntoView(false)}
-
+  function scrollIntoLastMessage() { // if there are no messages, scrollIntoView has error.
+     return lastMessageRef.current.scrollIntoView(false)
+  }
   const formattedDate = fdate =>
     fdate == null
       ? ''
@@ -100,7 +101,7 @@ export default function ListTasks() {
     setTasks(response.data);
     setDefaultTasks(response.data)
     setTask(response.data[0])
-    scrollIntoLastMessage()
+    if (!response.data[0].messages) scrollIntoLastMessage() // this seems to fix the scrollIntoView
     // console.log(response.data)
   }
 
@@ -149,11 +150,25 @@ export default function ListTasks() {
     load('', user_id);
   }
 
+  async function handleMessageDelete(position) {
+    const editedTaskMessages = task.messages;
+    // editedTaskMessages.splice(position, 1)
+    editedTaskMessages[position].removed_message = editedTaskMessages[position].message;
+    editedTaskMessages[position].message = 'mensagem removida'
+    await api.put(`tasks/${task.id}`, {
+      messages:  editedTaskMessages
+    });
+    setTask(task)
+    setToggleDropMenu(false)
+
+  }
 
   async function handleRemoveTask(task) {
     await api.delete(`tasks/${task.id}`);
     load('', user_id);
   }
+
+
 
   async function handleMessageSubmit(e) {
     // if ( e.key === 'Enter' ) {
@@ -206,6 +221,8 @@ export default function ListTasks() {
     setReplySender(sender)
     setToggleDropMenu(false)
   }
+
+
 
   function sortName() {
     if (!toggleName) {
@@ -663,7 +680,7 @@ export default function ListTasks() {
                       <div className={`time-message-div ${m.sender}`}>
                         <span className={`message-time-span`}>{m.timestamp}</span>
                         <div className={`message-line-div ${m.sender}`} >
-                          { m.reply_message
+                          { m.reply_message && !m.removed_message
                             ? (
                               <div className="reply-on-top-div">
                                 { m.reply_sender === 'worker'
@@ -674,34 +691,47 @@ export default function ListTasks() {
                                     <span className="reply-name-span">{user_name}</span>
                                   )
                                 }
-
-                            <span className="reply-on-top-span">{m.reply_message}</span>
+                                <span className="reply-on-top-span">{m.reply_message}</span>
                               </div>
                             )
                             : null
-
                           }
-                          <div className="message-arrow-div">
-                            <span
-                              className={`message-span ${m.sender}`}
-                              ref={lastMessageRef}
-                            >{m.message}</span>
-                            <RiArrowDownSLine
-                              onClick={() => handleMessageDropMenu(index)}
-                              style={{cursor:'pointer'}}
-                            />
-                          </div>
+                          { m.removed_message
+                            ? (
+                              <div className="message-arrow-div removed">
+                                <TiCancel size={24} color={'#999'}/>
+                                <span className={`message-span ${m.sender}`} style={{color: '#999'}}>{m.message}</span>
+                                <RiArrowDownSLine
+                                  color={'#999'}
+                                />
+                              </div>
+                            )
+                            : (
+                              <div className="message-arrow-div">
+                                <span
+                                  className={`message-span ${m.sender}`}
+                                  ref={lastMessageRef}
+                                >{m.message}</span>
+                                <RiArrowDownSLine
+                                  onClick={() => handleMessageDropMenu(index)}
+                                  style={{cursor:'pointer'}}
+                                />
+                              </div>
+                            )
+                          }
                         </div>
                       </div>
                     )
                     : (
                       <div className={`time-message-div ${m.sender}`}>
                         <div className={`message-line-div ${m.sender}`}>
-                          <span className={`message-span ${m.sender}`}>{m.message}</span>
-                          <RiArrowDownSLine
-                            onClick={() => handleMessageDropMenu(index)}
-                            style={{cursor:'pointer'}}
-                          />
+                          <div className="message-arrow-div">
+                            <span className={`message-span ${m.sender}`}>{m.message}</span>
+                            <RiArrowDownSLine
+                              onClick={() => handleMessageDropMenu(index)}
+                              style={{cursor:'pointer'}}
+                            />
+                          </div>
                         </div>
                         <span className={`message-time-span`}>{m.timestamp}</span>
                       </div>
@@ -720,7 +750,10 @@ export default function ListTasks() {
                       </li>
                       { m.sender === 'user' && (
                         <li className="message-dropMenu-li">
-                          <button className="message-dropMenu-button">Deletar</button>
+                          <button
+                            className="message-dropMenu-button"
+                            onClick={() => handleMessageDelete(index)}
+                          >Deletar</button>
                         </li>
                       )}
                     </ul>
@@ -732,8 +765,17 @@ export default function ListTasks() {
           <form onSubmit={handleMessageSubmit}>
             {
               replyValue && (
+                <div className="temporary-message-container">
                 <div className="temporary-message-div">
                   {replyValue}
+                </div>
+                <RiCloseLine
+                  size={24}
+                  style={{margin: '4px'}}
+                  color={'#ccc'}
+                  cursor='pointer'
+                  onClick={() => setReplyValue()}
+                />
                 </div>
               )
             }
