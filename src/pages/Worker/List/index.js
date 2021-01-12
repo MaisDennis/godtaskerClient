@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Plus } from 'react-feather'
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
-import { Container, TaskListDiv, Line } from '~/pages/_layouts/list/styles';
+import { Container, ListDiv, Line } from '~/pages/_layouts/list/styles';
 import Searchbar from '../../../utils/Searchbar';
 import insert from '~/assets/insert_photo-24px.svg';
 // import insert from '~/assets/insert_photo-24px.svg';
@@ -37,15 +37,6 @@ export default function ListWorkers() {
     setInputState(input)
   }
 
-  function handleInputChange(e) {
-    setQueryInput(e.target.value);
-  }
-
-  function handleQueryInput(e) {
-    if ( e.key === 'Enter')
-    loadWorkers(queryInput, user_id);
-  }
-
   let formattedPhoneNumber = (str) => {
     //Filter only numbers from the input
     let cleaned = ('' + str).replace(/\D/g, '');
@@ -61,7 +52,7 @@ export default function ListWorkers() {
   return (
    <Container>
     <div className="container-div">
-    <TaskListDiv>
+    <ListDiv>
       <header className="list-header">
         <strong>Funcionários</strong>
         <div className='list-header-div'>
@@ -115,7 +106,7 @@ export default function ListWorkers() {
           </Line>
         )}
       </ul>
-    </TaskListDiv>
+    </ListDiv>
     </div>
    </Container>
   );

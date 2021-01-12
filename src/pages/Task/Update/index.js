@@ -4,10 +4,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Rewind, CheckCircle } from 'react-feather'
 import { Link } from 'react-router-dom';
-import { startOfHour, endOfHour, parseISO, isBefore, subHours, format  } from 'date-fns';
+import { parseISO, isBefore, subHours, format  } from 'date-fns';
 import { TiEdit } from 'react-icons/ti';
-import { RiCloseCircleFill } from 'react-icons/ri';
-import { ptBR } from 'date-fns/locale';
+import { RiCloseCircleFill, RiSkipBackFill, RiCheckLine } from 'react-icons/ri';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import { Container } from '~/pages/_layouts/create/styles';
@@ -30,18 +29,19 @@ export default function UpdateTask({ match }) {
 
   const user_id = useSelector(state => state.user.profile.id);
   // const user_id = 1;
-  const task_id = match.params.id;
+  const task_id = parseInt(match.params.id);
 
   useEffect(() =>{
     loadTaskInitialData('', user_id);
   },[ user_id ])
 
   async function loadTaskInitialData( workerNameFilter, userID ) {
-    const taskResponse = await api.get('tasks', {
+
+    const taskResponse = await api.get('tasks/user/unfinished', {
       params: { workerNameFilter, userID },
     })
-    const taskData = taskResponse.data.find(
-      t => t.id == task_id
+    const taskData = await taskResponse.data.find(
+      t => t.id === task_id
     )
     setInitialTaskData(taskData);
     setTaskName(taskData.name);
@@ -52,8 +52,6 @@ export default function UpdateTask({ match }) {
     setStartDateInputValue(format(parseISO(taskData.start_date), "yyyy-MM-dd'T'HH:mm"))
     setDueDateInputValue(format(parseISO(taskData.due_date), "yyyy-MM-dd'T'HH:mm"))
   }
-  const { register, handleSubmit } = useForm(
-  );
 
   function handleOpenEditInput(position) {
     setSubTaskToggleEdit(!subTaskToggleEdit)
@@ -76,6 +74,8 @@ export default function UpdateTask({ match }) {
     let editedSubTasks = subTasks.filter((s, index) => index !== position)
     setSubTasks(editedSubTasks);
   }
+
+  const { register, handleSubmit } = useForm();
 
   const onSubmit = ({ name, description, start_date, due_date }) => {
     const timeStart = parseISO(start_date);
@@ -126,11 +126,11 @@ export default function UpdateTask({ match }) {
             <div className='header-button-div'>
               <Link to='/'>
                 <button className="back-button" type="button">
-                  <Rewind size={11} color='#FFF' /> Voltar
+                  <RiSkipBackFill size={18} color='#FFF'/> Voltar
                 </button>
               </Link>
               <button className="save-button" type="submit">
-                <CheckCircle size={11} color='#FFF' /> Salvar
+                <RiCheckLine size={18} color='#FFF' /> Salvar
               </button>
             </div>
           </div>

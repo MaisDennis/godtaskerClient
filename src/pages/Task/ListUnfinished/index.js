@@ -9,7 +9,7 @@ import TaskListDiv from '../../../components/TaskListDiv'
 import TaskDetailsDiv from '../../../components/TaskDetailsDiv';
 import MessageDiv from '../../../components/MessageDiv';
 // -----------------------------------------------------------------------------
-export default function ListTasks() {
+export default function ListTasksFinished() {
   const user_id = useSelector(state => state.user.profile.id)
   const user_name = useSelector(state => state.user.profile.user_name)
   // task states
@@ -19,13 +19,13 @@ export default function ListTasks() {
   const [chatMessage, setChatMessage] = useState(); // chat message state stays here in order (instead of MessageDiv) to update new message bell.
   // message states
   const [forwardValue, setForwardValue] = useState();
-  const [taskMessages, setTaskMessages] = useState();
+
   const messageRef = useRef();
   const lastMessageRef = useRef();
 
   // var devices = navigator.mediaDevices.getUserMedia({audio:true})
   useEffect(() => {
-    load('', user_id, 1);
+    load('', user_id);
   }, [user_id]);
 
   const formattedMessageDate = fdate =>
@@ -33,42 +33,22 @@ export default function ListTasks() {
     ? ''
     : format(fdate, "dd'/'MMM'/'yyyy HH:mm", { locale: ptBR });
 
-  let response = null
+  async function load(workerNameFilter, userID) {
+    console.log(userID)
+    const response = await api.get(`tasks/user/finished`, {
+      params: { workerNameFilter, userID }
+    })
 
-  async function load(workerNameFilter, userID, listState) {
-
-    if(listState === 1) {
-      response = await api.get(`tasks/user/unfinished`, {
-        params: { workerNameFilter, userID }
-      })
-      setTasks(response.data); setDefaultTasks(response.data); setTask(response.data[0]); setTaskMessages(response.data[0].messages);
-    }
-    if(listState === 2) {
-      response = await api.get(`tasks/user/finished`, {
-        params: { workerNameFilter, userID }
-      })
-      setTasks(response.data); setDefaultTasks(response.data); setTask(response.data[0]); setTaskMessages(response.data[0].messages);
-    }
-    if(listState === 3) {
-      response = await api.get(`tasks/user/canceled`, {
-        params: { workerNameFilter, userID }
-      })
-      setTasks(response.data); setDefaultTasks(response.data); setTask(response.data[0]); setTaskMessages(response.data[0].messages);
-    }
-    if(listState === 4) {
-      response = await api.get(`tasks`, {
-        params: { workerNameFilter, userID }
-      })
-      setTasks(response.data); setDefaultTasks(response.data); setTask(response.data[0]); setTaskMessages(response.data[0].messages);
-    }
-
-    if (response.data && !response.data[0].messages) scrollIntoLastMessage() // this seems to fix the scrollIntoView
+    setTasks(response.data);
+    setDefaultTasks(response.data)
+    setTask(response.data[0])
+    // if (!response.data[0].messages) scrollIntoLastMessage() // this seems to fix the scrollIntoView
     // console.log(response.data)
   }
 
   function scrollIntoLastMessage() { // if there are no messages, scrollIntoView has error.
     return lastMessageRef.current.scrollIntoView(false)
-  }
+ }
 
   async function handleTaskDetails(t) {
     let S = t.sub_task_list;
@@ -104,7 +84,6 @@ export default function ListTasks() {
       messages: editedMessages,
     })
     setTask(t);
-    setTaskMessages(t.messages)
   }
 
   // -----------------------------------------------------------------------------
@@ -140,8 +119,6 @@ export default function ListTasks() {
           messageRef={messageRef}
           lastMessageRef={lastMessageRef}
           scrollIntoLastMessage={scrollIntoLastMessage}
-          taskMessages={taskMessages}
-          setTaskMessages={setTaskMessages}
         />
       </div>
     </Container>

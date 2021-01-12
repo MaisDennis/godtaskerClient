@@ -129,8 +129,6 @@ export default function ListMessages() {
               )
               : null
             }
-
-
           </Line>
         )}
       </ul>

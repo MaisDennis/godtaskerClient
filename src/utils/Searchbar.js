@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SearchBar = ({ input: keyword, onChange: setKeyword }) => {
+const SearchBar = ({ input: keyword, onChange: setKeyword, placeholder: keyPlaceHolder }) => {
   const BarStyling = {
     height: "36px",
     width: "100%",
@@ -16,7 +16,7 @@ const SearchBar = ({ input: keyword, onChange: setKeyword }) => {
       className="search-input"
       key="random1"
       value={keyword}
-      placeholder='Buscar por nome de tarefa ou funcionário'
+      placeholder={keyPlaceHolder}
       onChange={(e) => setKeyword(e.target.value)}
     />
   );

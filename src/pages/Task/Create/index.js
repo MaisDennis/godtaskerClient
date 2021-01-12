@@ -6,7 +6,7 @@ import { Rewind, CheckCircle } from 'react-feather'
 import { Link } from 'react-router-dom';
 import { parseISO, isBefore , subHours, format } from 'date-fns';
 import { TiEdit } from 'react-icons/ti';
-import { RiCloseCircleFill } from 'react-icons/ri';
+import { RiCloseCircleFill,  RiSkipBackFill, RiCheckLine } from 'react-icons/ri';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import { Container } from '~/pages/_layouts/create/styles';
@@ -140,7 +140,7 @@ export default function CreateTask() {
             workerphonenumber: p
           }, user_id
         ])
-
+        return p
       })
       // history.push('/');
       toast.success('Tarefa cadastrada com sucesso!');
@@ -158,11 +158,11 @@ export default function CreateTask() {
             <div className='header-button-div'>
               <Link to='/'>
                 <button className="back-button" type="button">
-                  <Rewind size={11} color='#FFF' /> Voltar
+                  <RiSkipBackFill size={18} color='#FFF' /> Voltar
                 </button>
               </Link>
               <button className="save-button" type="submit">
-                <CheckCircle size={11} color='#FFF' /> Salvar
+                <RiCheckLine size={18} color='#FFF' /> Salvar
               </button>
             </div>
           </div>

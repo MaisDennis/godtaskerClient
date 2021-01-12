@@ -6,13 +6,14 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
-  height: 5vh;
-  max-width: 900px;
+  height: 6vh;
+  /* max-width: 900px; */
+  width: 66%;
   margin: 1vh auto;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
-/* background: #5edc1f; */
+  /* background: #5edc1f; */
   @media (max-width: 620px) {
     display: block;
     max-width: 100%;
@@ -24,18 +25,19 @@ export const Content = styled.div`
     width: 100%;
     /* background: #5edc1f; */
     img {
-      height: 4rem;
+      height: 3rem;
       max-height: 220px;
-      width: 4rem;
+      width: 3rem;
       max-width: 120px;
+      margin-right: 24px;
       border-radius: 50%;
+
       /* background: #5edc1f; */
       @media (max-width: 620px) {
         height: 40px;
       }
     }
     ul {
-      margin: auto;
       width: auto;
       /* background: #5edc1f; */
       li {
@@ -66,6 +68,7 @@ export const Content = styled.div`
 
   aside {
     display: flex;
+    justify-content: space-between;
     width: 30%;
     /* background: #5edc; */
     @media (max-width: 620px) {
@@ -76,8 +79,9 @@ export const Content = styled.div`
 `;
 export const Profile = styled.div`
   display: flex;
-  margin: auto;
-  /* background: #5edc1f; */
+  align-items: center;
+  /* margin: auto; */
+  /* background: #f00; */
   @media (max-width: 620px) {
       width: 100%;
       margin-left: 30px;
@@ -114,6 +118,7 @@ export const Profile = styled.div`
     max-height: 44px;
     max-width: 44px;
     border-radius: 50%;
+    margin: 0 0 0 8px;
     background: #F5F5F5;
     @media (max-width: 620px) {
         margin: auto;

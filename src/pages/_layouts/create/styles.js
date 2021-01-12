@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import search from '~/assets/search-24px.svg';
 import { darken } from 'polished';
 
 export const Container = styled.div`
@@ -96,16 +95,22 @@ export const Container = styled.div`
     visibility: hidden;
   }
   .header-button-div {
+    display: flex;
+    flex-direction: row;
     width: auto;
     padding: 0 4px;
     /* background: #e88; */
   }
   .back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 36px;
     width: 108px;
     font-size: 14px;
     font-weight: bold;
-    margin: 5px 5px 0;
+    margin: auto;
+    padding: auto;
     border: 0;
     border-radius: 4px;
     transition: background 0.2s;
@@ -122,18 +127,23 @@ export const Container = styled.div`
     }
   }
   .save-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 36px;
     width: 108px;
     font-size: 14px;
     font-weight: bold;
     /* margin: 5px 5px 0; */
+    margin: 0 0 0 8px;
+    padding: auto;
     border: 0;
     border-radius: 4px;
     color: #fff;
-    background: #f64C75;
+    background: #007f66;
     transition: background 0.2s;
     &:hover {
-      background: ${darken(0.08, '#f64C75')};
+      background: ${darken(0.08, '#007f66')};
     }
     @media (max-width: 620px) {
       width: auto;

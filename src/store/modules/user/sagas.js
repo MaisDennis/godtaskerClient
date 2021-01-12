@@ -6,26 +6,52 @@ import { updateProfileSuccess, updateProfileFailure } from './actions';
 // -----------------------------------------------------------------------------
 export function* updateProfile({ payload }) {
   try {
-    const { name, email, phonenumber, gender, image, ...rest } = payload.data;
+    const { first_name, last_name, user_name, oldPassword, password, confirmPassword, phonenumber, birth_date, gender, image } = payload;
+    console.log(payload)
 
-    const imageResponse = yield call(api.get, 'files', {
-      params: { image },
-    })
-    const avatar_id = imageResponse.data[0].id
 
-    const profile = Object.assign(
-      { name, email, phonenumber, gender, avatar_id },
-      rest.oldPassword ? rest : {});
+    let response = null
+    if (!image) {
+      response = yield call(api.put, 'users/no-photo', {
+        first_name,
+        last_name,
+        user_name,
+        oldPassword,
+        password,
+        confirmPassword,
+        phonenumber,
+        birth_date,
+        gender,
+        // avatar_id
+      });
+    } else {
+      const imageResponse = yield call(api.get, 'files', {
+        params: { image },
+      })
+      const avatar_id = imageResponse.data[0].id
+      response = yield call(api.put, 'users', {
+        first_name,
+        last_name,
+        user_name,
+        oldPassword,
+        password,
+        confirmPassword,
+        phonenumber,
+        birth_date,
+        gender,
+        avatar_id
+      });
+    }
 
-    const response = yield call(api.put, 'users', profile);
     toast.success('Perfil atualizado com sucesso!');
-
+    console.log(response.data);
     yield put(updateProfileSuccess(response.data));
 
-  } catch (err) {
-
-    toast.error('Erro ao atualizar perfil, confira os seus dados!');
-    yield put(updateProfileFailure());
+  } catch (error) {
+    toast.error(error.response.data.error);
+    console.log(error.response.data.error);
+    // toast.error('Erro ao atualizar perfil, confira os seus dados!');
+    // yield put(updateProfileFailure());
   }
 }
 // -----------------------------------------------------------------------------

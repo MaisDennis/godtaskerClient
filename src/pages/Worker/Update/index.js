@@ -18,7 +18,6 @@ export default function UpdateWorker({ match }) {
 
   useEffect(() => {
     loadWorkerInitialData('', user_id);
-
   },[ user_id ]);
 
   async function loadWorkerInitialData( nameFilter, userID ) {
@@ -26,7 +25,7 @@ export default function UpdateWorker({ match }) {
       params: { nameFilter, userID },
     })
     const workerData = response.data.find(
-      w => w.id == id
+      w => w.id === id
     )
     setWorkerInitialData(workerData);
   }
@@ -44,7 +43,6 @@ export default function UpdateWorker({ match }) {
         await api.put(`workers/${id}`, workerProfile);
         history.push('/workers/list');
         toast.success('Funcionário atualizado com sucesso!');
-
       } catch {
         toast.error('Por favor, verificar se o número de telefone é válido.');
       }

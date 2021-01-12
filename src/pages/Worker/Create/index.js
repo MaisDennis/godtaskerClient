@@ -5,11 +5,11 @@ import { Form, Input } from '@rocketseat/unform';
 import InputMask from 'react-input-mask';
 import { toast } from 'react-toastify';
 import { Rewind, CheckCircle } from 'react-feather'
-import { Select } from '@rocketseat/unform';
+// import { Select } from '@rocketseat/unform';
 // -----------------------------------------------------------------------------
 import { Container } from '~/pages/_layouts/create/styles';
 import api from '~/services/api';
-import history from '~/services/history';
+// import history from '~/services/history';
 // -----------------------------------------------------------------------------
 export default function CreateWorker() {
     const [masked, setMasked] = useState(' ');

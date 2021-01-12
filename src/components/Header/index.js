@@ -34,7 +34,7 @@ export default function Header() {
                 Meu perfil
               </Link>
             </div>
-            {profile.avatar === null
+            {!profile.avatar
               ? <img src={insert} alt="User"/>
               : <img src={profile.avatar.url} alt="User"/>
             }
