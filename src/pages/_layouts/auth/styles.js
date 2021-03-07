@@ -1,38 +1,62 @@
 import styled from 'styled-components';
 import { darken } from 'polished';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+
+export const StyledPhoneInput = styled(PhoneInput).attrs(props => {
+  props.inputStyle = {
+    backgroundColor: '#4433ee',
+    width: '22px',
+  }
+
+})`
+background-color: #f00;
+`;
+
 export const Wrapper = styled.div`
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  height: auto;
-  min-height: 100%;
-  background: #222;
   display: flex;
   justify-content: center;
   align-items: center;
+/* font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; */
+  font-family: sans-serif;
+  height: auto;
+  min-height: 100%;
+  background: #222;
 `;
 
 export const Content = styled.div`
-  width: 100%;
-  max-width: 315px;
+  width: auto;
+  max-width: 320px;
   height: auto;
   text-align: center;
+  /* background-color: #F5f; */
 
-
-  /* background: #F5f; */
-  img.logo {
-    width: 66.6%;
+  .logo-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+      background-color: #F00;
+  }
+  .logo {
+    width: 50%;
     height: auto;
     @media (max-width: 620px) {
     width: 44.4%;
     margin-top: 24px;
     }
   }
-  img.godtasker {
+  .logo-sign-up {
+    width: 25%;
+    height: auto;
+  }
+  .godtasker {
     border-radius: 4px;
     opacity: 1;
     width: 100%;
-    margin: auto;
     height: auto;
-    color: white;
+    margin: auto;
     @media (max-width: 620px) {
       margin: auto;
       width: 66.6%;
@@ -40,24 +64,37 @@ export const Content = styled.div`
       /* background: #868; */
     }
   }
+  .godtasker-sign-up {
+    border-radius: 4px;
+    opacity: 1;
+    width: 50%;
+    height: auto;
+    margin: auto;
+  }
   p {
     font-family: 'Fira Sans', sans-serif;
     font-weight: bold;
-    font-size: 22px;
-    color: #58595B;
-    /* height: 500px; */
-    margin: 24px auto;
+    font-size: 21px;
+    margin: 12px auto;
+    color: #666;
   }
 
   form {
     display: flex;
     flex-direction: column;
-    margin: 30px 0;
+    align-items: center;
+    width: auto;
+    margin: 48px auto;
+    padding: auto;
+    /* background-color: #ff892e; */
+
     @media (max-width: 620px) {
       margin-top: 0px;
       margin-bottom: 30px;
     }
-    span {
+  }
+
+  span {
       color: #ff892e;
       font-size: 12px;
       width: 100%;
@@ -67,13 +104,14 @@ export const Content = styled.div`
       padding-left: 15px;
     }
     input, select {
+      height: 44px;
+      width: 100%;
       background: rgba(0,0,0,0.3);
       border: 0;
       border-radius: 4px;
-      height: 44px;
       padding: 0 15px;
+      margin: 8px 0;
       color: #fff;
-      margin: 0 0 10px;
       &::placeholder {
         color: ${darken(0.3, '#fff')};
       }
@@ -91,9 +129,10 @@ export const Content = styled.div`
     }
 
     button {
-      margin: 5px 0 0;
+      margin: 16px 0 0;
       height: 44px;
-      background: #58595B;
+      width: 100%;
+      background: #4433ee;
       font-weight: bold;
       color: #fff;
       border: 0;
@@ -101,7 +140,7 @@ export const Content = styled.div`
       font-size: 16px;
       transition: background 0.2s;
       &:hover {
-        background: ${darken(0.03, '#58595B')};
+        background: ${darken(0.03, '#4433ee')};
       }
     }
     a {
@@ -113,5 +152,4 @@ export const Content = styled.div`
         opacity: 1;
       }
     }
-  }
 `;

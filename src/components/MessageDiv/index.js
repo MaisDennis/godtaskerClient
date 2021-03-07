@@ -1,62 +1,90 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { BsThreeDotsVertical, BsSearch } from 'react-icons/bs'
 import { IoReturnDownForward } from 'react-icons/io5'
 import { TiCancel } from 'react-icons/ti'
 import { RiArrowDownSLine, RiCloseLine } from 'react-icons/ri'
+import { parseISO } from 'date-fns'
+
+import 'firebase/firestore'
+import 'firebase/auth'
 //------------------------------------------------------------------------------
 import api from '~/services/api';
 import Searchbar from '../../utils/Searchbar';
-import { Container} from './styles'
+import { MessageDivision } from './styles'
 import insert from '~/assets/insert_photo-24px.svg';
+import firebase from '~/services/firebase'
 
 function MessageDiv({
-  task,
-  setTask,
+  task, setTask,
   setForwardValue,
-  chatMessage,
-  setChatMessage,
+  chatMessage, setChatMessage,
   user_name,
   formattedMessageDate,
   messageRef,
-  lastMessageRef,
   scrollIntoLastMessage,
-  taskMessages,
-  setTaskMessages,
+  toggleHeaderDropMenu, setToggleHeaderDropMenu,
+
+
+
 }) {
   const [messageDropMenu, setMessageDropMenu] = useState();
-
   const [toggleDropMenu, setToggleDropMenu] = useState(false);
   const [replyValue, setReplyValue] = useState();
   const [replySender, setReplySender] = useState();
   const [toggleMessageSearch, setToggleMessageSearch] = useState();
-  const [inputState, setInputState] = useState('');
-  const [ messageArray, setMessageArray] = useState(task);
-  const [ defaultMessageArray, setDefaultMessageArray] = useState(task);
+  const [workerData, setWorkerData] = useState();
+  const [messages, setMessages] = useState();
+  const [defaultMessages, setDefaultMessages] = useState();
+  const [load, setLoad] = useState();
+
+  const [inputState, setInputState] = useState(); // chat message state stays here in order (instead of MessageDiv) to update new message bell.
+  const [resetMessages, setResetMessages] = useState();
+
+  const phonenumber = task.worker.phonenumber
+  // const auth = firebase.auth()
+  const firestore = firebase.firestore()
+
+  const messagesRef = firestore.collection(`messagesTask${task.id}`)
+
+  const lastMessageRef = useRef();
 
   useEffect(() => {
-    setDefaultMessageArray(task)
-    setMessageArray(task);
-    console.log(taskMessages)
-  }, [task]);
+    getPhoto(phonenumber)
+    getMessages()
+  }, [resetMessages, task]);
 
-  const handleUpdateInput = async (input) => {
-    console.log(input)
-    const filteredList = defaultMessageArray.messages.filter(t => {
-      let workerName = t.message
-      return workerName.toLowerCase().includes(input.toLowerCase())
+  async function getMessages() {
+    // const response = await api.get(`messages/${task.message_id}`)
+    // setMessages(response.data.messages)
+    // setDefaultMessages(response.data.messages)
+    // let messagesArray = []
+
+    const unsubscribe = await messagesRef
+      .orderBy('createdAt')
+      .onSnapshot((querySnapshot) => {
+        // querySnapshot.forEach((doc) => {
+        //   messagesArray.push(doc.data())
+       // })
+
+        const data = querySnapshot.docs.map(d => ({
+          ...d.data(),
+        }));
+        setMessages(data)
+        setDefaultMessages(data)
+      })
+    return unsubscribe;
+  }
+
+  async function getPhoto(phonenumber) {
+    const worker = await api.get('workers/individual', {
+      params: {phonenumber: phonenumber},
     })
-    setTaskMessages(filteredList)
-    console.log(taskMessages)
-    setInputState(input)
+    setWorkerData(worker.data)
   }
 
   function handleMessageDropMenu(position) {
-    console.log(position)
     setMessageDropMenu(position)
     setToggleDropMenu(!toggleDropMenu)
-
-    console.log(messageDropMenu)
-    console.log(toggleDropMenu)
   }
 
   function handleReply(message, sender) {
@@ -70,70 +98,110 @@ function MessageDiv({
     setToggleDropMenu(false)
   }
 
-  async function handleMessageDelete(position) {
-    const editedTaskMessages = task.messages;
-    editedTaskMessages[position].removed_message = editedTaskMessages[position].message;
-    editedTaskMessages[position].message = 'mensagem removida'
-    await api.put(`tasks/${task.id}`, {
-      messages:  editedTaskMessages
+  async function handleMessageDelete(id) {
+    await api.put(`messages/remove/${task.message_id}`, {
+      message_id: id
     });
-    setTask(task)
+    setResetMessages(new Date());
     setToggleDropMenu(false)
-
   }
 
   async function handleMessageSubmit(e) {
-    // if ( e.key === 'Enter' ) {
+      setLoad(true)
       e.preventDefault()
-      let pushMessage = task.messages
+      let newMessage = null;
+      const message_id = Math.floor(Math.random() * 1000000)
+
       let formattedTimeStamp = formattedMessageDate(new Date())
-      const id = task.id
       if (replyValue) {
-        pushMessage.push({
-          "message": chatMessage,
-          "sender": "user",
-          "user_read": false,
-          "worker_read": false,
-          "timestamp": formattedTimeStamp,
-          "reply_message": replyValue,
-          "reply_sender": replySender,
-          "forward_message": false,
-        })
+        newMessage = {
+          id: message_id,
+          message: chatMessage,
+          sender: "user",
+          user_read: true,
+          worker_read: false,
+          timestamp: formattedTimeStamp,
+          reply_message: replyValue,
+          reply_sender: replySender,
+          forward_message: false,
+          visible: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }
       } else {
-        pushMessage.push({
-          "message": chatMessage,
-          "sender": "user",
-          "user_read": false,
-          "worker_read": false,
-          "timestamp": formattedTimeStamp,
-          "reply_message": '',
-          "reply_sender": '',
-          "forward_message": false,
-        })
+        newMessage = {
+          id: message_id,
+          message: chatMessage,
+          sender: "user",
+          user_read: true,
+          worker_read: false,
+          timestamp: formattedTimeStamp,
+          reply_message: '',
+          reply_sender: '',
+          forward_message: false,
+          visible: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }
       }
 
-      await api.put(`tasks/messages/${id}`,
-        pushMessage
-      );
+      await api.put(`messages/${task.message_id}`, {
+        messages: newMessage,
+      });
+      // Firebase Messaging ****************************************************
+      await messagesRef.add(newMessage)
+        .then(() => {
+          console.log("Document successfully written!");
+        })
+        .catch((error) => {
+          console.log("Error writing document: ", error);
+        });
+
+      await api.put(`tasks/${task.id}`, {
+        messaged_at: new Date(),
+      })
+
       setChatMessage(); // adds latest message to chat.
       setReplyValue();
-      if(pushMessage.length > 3) scrollIntoLastMessage()
+      // setResetMessages(new Date());
+
+      // scroll into view ******************************************************
+      // lastMessageRef.current.scrollIntoView(false, { behavior: 'smooth' });
+
+      // if(messages && messages.length > 3) scrollIntoLastMessage()
       messageRef.current.value = '';
       messageRef.current.focus()
+      setLoad(false)
     // }
   }
 
+  const handleUpdateInput = async (input) => {
+    const filteredList = defaultMessages.filter(t => {
+      let messageSearch = t.message
+      return messageSearch.toLowerCase().includes(input.toLowerCase())
+    });
+    setMessages(filteredList);
+  }
+
+  async function handleClearMessages() {
+    const editedTaskMessages = messages;
+    editedTaskMessages.map(e => {
+      e.visible = false;
+      return e
+    })
+    await api.put(`messages/update/${task.message_id}`, {
+      messages:  editedTaskMessages
+    });
+    setChatMessage();
+    setToggleHeaderDropMenu(false)
+  }
   //----------------------------------------------------------------------------
   return (
-    <Container>
+    <MessageDivision>
       <header className='message-header'>
-        <strong>Conversa</strong>
+        <strong className="message-header-strong">Conversa</strong>
         <div className="list-header">
           <div className="worker-profile-div">
-            {
-              toggleMessageSearch
+            { toggleMessageSearch
               ? (
-                // <input className="message-search-input"/>
                 <Searchbar
                   className="header-input"
                   input={inputState}
@@ -144,132 +212,159 @@ function MessageDiv({
               :
               (
                 <div className="worker-tag">
-                  <img src={insert} alt="Worker"/>
+                  { workerData === undefined || workerData.avatar === null
+                    ? <img src={insert} alt="Worker"/>
+                    : <img src={workerData.avatar.url} alt="Worker"/>
+                  }
                   <label className="worker-profile-label">{task && task.worker.worker_name}</label>
                 </div>
               )
             }
-
           </div>
           <div className="message-menu-div">
-            <button className="message-menu-button" onClick={() => setToggleMessageSearch(!toggleMessageSearch)}><BsSearch size={16}/></button>
-            <button className="message-menu-button"><BsThreeDotsVertical size={16}/></button>
+            <button
+              className="message-menu-button"
+              onClick={() => setToggleMessageSearch(!toggleMessageSearch)}
+            >
+              <BsSearch className='message-menu-icon'/>
+            </button>
+            <div className="others-menu-div">
+              <button
+                className="message-menu-button"
+                onClick={() => setToggleHeaderDropMenu(!toggleHeaderDropMenu)}
+              >
+                <BsThreeDotsVertical className='message-menu-icon'/>
+              </button>
+              { toggleHeaderDropMenu
+                ? (
+                  <ul
+                    className="others-drop-menu-ul"
+                    // className="message-dropMenu-ul"
+                  >
+                    <li className="others-drop-menu-li">
+                      <button className="others-drop-menu-button"
+                        onClick={() => handleClearMessages()}
+                      >Limpar a conversa</button>
+                    </li>
+                  </ul>
+                )
+                : (
+                  null
+                )
+              }
+            </div>
           </div>
         </div>
       </header>
+      {/* messages */}
       <div className="message-conversation-div">
+        { messages
+          ? (messages.map((m, index) => (
+            <>
+              { m.visible === true && (
+                <div className={`message-container-div ${m.sender}`} key={index}>
+                  <div className={`time-message-div ${m.sender}`}>
+                    { m.sender === 'user' && (
+                      <span className={`message-time-span`}>{m.timestamp}</span>
+                    )}
+                      <div className={`message-line-div ${m.sender}`} >
+                        { m.reply_message && !m.removed_message
+                          ? (
+                            <div className="reply-on-top-div">
+                              { m.reply_sender === 'worker'
+                                ? (
+                                  <span className="reply-name-span">{task.worker.worker_name}</span>
+                                )
+                                : (
+                                  <span className="reply-name-span">{user_name}</span>
+                                )
+                              }
+                              <span className="reply-on-top-span">{m.reply_message}</span>
+                            </div>
+                          )
+                          : null
+                        }
+                        { m.forward_message && !m.removed_message
+                          ? (
+                            <div className="forward-on-top-div">
+                              <IoReturnDownForward size={18} color={'#999'}/>
+                              <span className={`message-span ${m.sender}`}>
+                                Mens. encaminhada
+                              </span>
+                            </div>
+                          )
+                          : null
+                        }
+                        { m.removed_message
+                          ? (
+                            <div className="message-arrow-div removed">
+                              <TiCancel size={24} color={'#999'}/>
+                              <span
+                                className={`message-span ${m.sender}`}
+                                style={{color: '#999'}}
+                              >{m.message}</span>
+                              <RiArrowDownSLine
+                                color={'#999'}
+                              />
+                            </div>
+                          )
+                          : (
+                            <div className="message-arrow-div">
+                              <span
+                                className={`message-span ${m.sender}`}
+                                // ref={lastMessageRef}
+                              >{m.message}</span>
+                              <RiArrowDownSLine
+                                onClick={() => handleMessageDropMenu(index)}
+                                style={{cursor:'pointer'}}
+                              />
 
-        { task && taskMessages && (taskMessages.map((m, index) => (
-          <div className={`message-container-div ${m.sender}`} key={index}>
-            { m.sender === 'user'
-              ? (
-                <div className={`time-message-div ${m.sender}`}>
-                  <span className={`message-time-span`}>{m.timestamp}</span>
-                  <div className={`message-line-div ${m.sender}`} >
-                    { m.reply_message && !m.removed_message
-                      ? (
-                        <div className="reply-on-top-div">
-                          { m.reply_sender === 'worker'
-                            ? (
-                              <span className="reply-name-span">{task.worker.worker_name}</span>
-                            )
-                            : (
-                              <span className="reply-name-span">{user_name}</span>
-                            )
-                          }
-                          <span className="reply-on-top-span">{m.reply_message}</span>
-                        </div>
-                      )
-                      : null
-                    }
-                    { m.forward_message && !m.removed_message
-                      ? (
-                        <div className="forward-on-top-div">
-                          <IoReturnDownForward size={18} color={'#999'}/>
-                          <span className={`message-span ${m.sender}`}>
-
-                            Mens. encaminhada</span>
-
-                        </div>
-                      )
-                      : null
-                    }
-                    { m.removed_message
-                      ? (
-                        <div className="message-arrow-div removed">
-                          <TiCancel size={24} color={'#999'}/>
-                          <span
-                            className={`message-span ${m.sender}`}
-                            style={{color: '#999'}}
-                          >{m.message}</span>
-                          <RiArrowDownSLine
-                            color={'#999'}
-                          />
-                        </div>
-                      )
-                      : (
-                        <div className="message-arrow-div">
-                          <span
-                            className={`message-span ${m.sender}`}
-                            ref={lastMessageRef}
-                          >{m.message}</span>
-                          <RiArrowDownSLine
-                            onClick={() => handleMessageDropMenu(index)}
-                            style={{cursor:'pointer'}}
-                          />
-                        </div>
-                      )
-                    }
+                            </div>
+                          )
+                        }
+                      </div>
+                      { m.sender === 'worker' && (
+                        <span className={`message-time-span`}>{m.timestamp}</span>
+                      )}
+                      <span ref={lastMessageRef}></span>
                   </div>
+
+                  {/* message buttons */}
+                  { (messageDropMenu === index) && (toggleDropMenu === true) && (
+                    <ul classname="message-dropMenu-ul">
+                      <li className="message-dropMenu-li">
+                        <button
+                          className="message-dropMenu-button"
+                          onClick={() => handleReply(m.message, m.sender)}
+                        >Responder</button>
+                      </li>
+                      <li className="message-dropMenu-li">
+                        <button
+                          className="message-dropMenu-button"
+                          onClick={() => handleForward(m.message)}
+                        >Encaminhar</button>
+                      </li>
+                      { m.sender === 'user' && (
+                        <li className="message-dropMenu-li">
+                          <button
+                            className="message-dropMenu-button"
+                            onClick={() => handleMessageDelete(m.id)}
+                          >Deletar</button>
+                        </li>
+                      )}
+                    </ul>
+                  )}
                 </div>
-              )
-              : (
-                <div className={`time-message-div ${m.sender}`}>
-                  <div className={`message-line-div ${m.sender}`}>
-                    <div className="message-arrow-div">
-                      <span className={`message-span ${m.sender}`}>{m.message}</span>
-                      <RiArrowDownSLine
-                        onClick={() => handleMessageDropMenu(index)}
-                        style={{cursor:'pointer'}}
-                      />
-                    </div>
-                  </div>
-                  <span className={`message-time-span`}>{m.timestamp}</span>
-                </div>
-              )
-            }
-            {/* message buttons */}
-            { (messageDropMenu === index) && (toggleDropMenu === true) && (
-              <ul classname="message-dropMenu-ul">
-                <li className="message-dropMenu-li">
-                  <button
-                    className="message-dropMenu-button"
-                    onClick={() => handleReply(m.message, m.sender)}
-                  >Responder</button>
-                </li>
-                <li className="message-dropMenu-li">
-                  <button
-                    className="message-dropMenu-button"
-                    onClick={() => handleForward(m.message)}
-                  >Encaminhar</button>
-                </li>
-                { m.sender === 'user' && (
-                  <li className="message-dropMenu-li">
-                    <button
-                      className="message-dropMenu-button"
-                      onClick={() => handleMessageDelete(index)}
-                    >Deletar</button>
-                  </li>
-                )}
-              </ul>
-            )}
-          </div>
-        )))}
+              )}
+            </>
+          )))
+          : null
+        }
       </div>
+
       <form onSubmit={handleMessageSubmit}>
-        {
-          replyValue && (
-            <div className="temporary-message-container">
+        { replyValue && (
+          <div className="temporary-message-container">
             <div className="temporary-message-div">
               {replyValue}
             </div>
@@ -280,9 +375,8 @@ function MessageDiv({
               cursor='pointer'
               onClick={() => setReplyValue()}
             />
-            </div>
-          )
-        }
+          </div>
+        )}
         <textarea
           type="text"
           className="message-input"
@@ -290,18 +384,22 @@ function MessageDiv({
           onChange={e => setChatMessage(e.target.value)}
           // onKeyDown={handleMessageSubmit}
         />
-        {
-          inputState
+        { !chatMessage
           ? (
-            <button className='message-button' type='submit' disabled={true}>Desabilitado</button>
+            null
           )
           : (
-            <button className='message-button' type='submit'>Enviar</button>
+            <button
+              className='message-button'
+              type='submit'
+              disabled={load}
+            >
+              Enviar
+            </button>
           )
         }
-
       </form>
-    </Container>
+    </MessageDivision>
   )
 }
 

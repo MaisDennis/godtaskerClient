@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { Rewind, CheckCircle } from 'react-feather'
 import { Link } from 'react-router-dom';
 import { parseISO, isBefore, subHours, format  } from 'date-fns';
 import { TiEdit } from 'react-icons/ti';
@@ -10,9 +9,11 @@ import { RiCloseCircleFill, RiSkipBackFill, RiCheckLine } from 'react-icons/ri';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import { Container } from '~/pages/_layouts/create/styles';
+import { updateTasks } from '~/store/modules/task/actions';
 import history from '~/services/history';
 // -----------------------------------------------------------------------------
 export default function UpdateTask({ match }) {
+
   const [initialTaskData, setInitialTaskData] = useState([]);
   const [taskName, setTaskName] = useState();
   const [taskDescription, setTaskDescription] = useState();
@@ -20,14 +21,19 @@ export default function UpdateTask({ match }) {
   const [startDateInputValue, setStartDateInputValue] = useState();
   const [dueDateInputValue, setDueDateInputValue] = useState();
   const [worker, setWorker] = useState();
+  const [weige, setWeige] = useState(1);
 
   const [subTaskToggleEdit, setSubTaskToggleEdit] = useState(false);
-  const [editSubTaskInputValue, setEditSubTasksInputValue] = useState();
+  const [editSubTaskInputValue, setEditSubTaskInputValue] = useState();
   const [editSubTaskIndex, setEditSubTaskIndex] = useState();
+  const [subTasksInputValue, setSubTasksInputValue] = useState([]); // don't delete subTaskInputValue.
 
+  const subTaskInputRef = useRef();
   const editSubTaskInputRef = useRef();
+  const weigeInputRef = useRef();
 
   const user_id = useSelector(state => state.user.profile.id);
+  const dispatch = useDispatch()
   // const user_id = 1;
   const task_id = parseInt(match.params.id);
 
@@ -53,15 +59,37 @@ export default function UpdateTask({ match }) {
     setDueDateInputValue(format(parseISO(taskData.due_date), "yyyy-MM-dd'T'HH:mm"))
   }
 
+  function handleAddSubTask() {
+    if (subTaskInputRef.current.value === '') {
+      return;
+    } else {
+
+      const sub_task_id = Math.floor(Math.random() * 1000000)
+      let subTask = {
+        id: sub_task_id,
+        description: subTaskInputRef.current.value,
+        weige: weigeInputRef.current.value,
+        complete: false,
+        user_read: false,
+      }
+      setSubTasks([...subTasks, subTask])
+    }
+    subTaskInputRef.current.value = '';
+    subTaskInputRef.current.focus();
+    // weigeInputRef.current.value = '1';
+    setWeige('1');
+  }
+
   function handleOpenEditInput(position) {
     setSubTaskToggleEdit(!subTaskToggleEdit)
-    setEditSubTasksInputValue(initialTaskData.sub_task_list[position].description)
+    setEditSubTaskInputValue(initialTaskData.sub_task_list[position].description)
     setEditSubTaskIndex(position)
   }
 
   function handleEditSubTask(position) {
+    console.log(subTasks)
     let editedSubTasks = subTasks.map((s, index) => {
-      if (index === position) {
+      if (index === position && s.description) { // s.description was added to avoid error if s is not an object with description.
         s.description = editSubTaskInputValue
       }
       return s;
@@ -109,9 +137,9 @@ export default function UpdateTask({ match }) {
         sub_task_list: subTasks,
         start_date,
         due_date,
-      }
-      );
-      history.push('/');
+      });
+      dispatch(updateTasks(new Date()))
+      // history.push('/');
       toast.success('Tarefa cadastrada com sucesso!');
     }
   }
@@ -120,7 +148,7 @@ export default function UpdateTask({ match }) {
    <Container>
      <form onSubmit={handleSubmit(onSubmit)}>
        <header>
-          <strong>Atualizar a tarefa</strong>
+          <strong className='header-title-strong'>Atualizar a tarefa</strong>
           <div className='header-bottom-div'>
             <input className='header-input'name="filter" placeholder='Busca por tarefas' />
             <div className='header-button-div'>
@@ -163,6 +191,31 @@ export default function UpdateTask({ match }) {
           </div><br/>
           {/* Sub Tasks */}
           <div className="sub-content-line-div">
+          <label>Sub-tarefas</label>
+            <textarea
+              id="test"
+              className="sub-task-input"
+              name="subTaskInput"
+              type="string"
+              placeholder="1. Molhar 2. Passar sabão 3. Enxaguar..."
+              ref={subTaskInputRef}
+              onChange={(e) => setSubTasksInputValue(e.target.value)}
+            />
+            <div className="weige-div">
+              <span className="form-span">Peso:</span>
+              <input
+                className="sub-task-weige-input"
+                type="number"
+                ref={weigeInputRef}
+                onChange={(e) => setWeige(e.target.value)}
+                value={weige}
+              />
+            </div>
+            <button
+              className='sub-task-add-button'
+              type="button"
+              onClick={handleAddSubTask}
+            >Adicionar a sub-tarefa à lista</button><br/>
             <ol className='sub-task-ol'>
               <label>Lista de Sub-tarefas</label>
               <label>(ao alterar, não esquecer de salvar)</label>
@@ -191,7 +244,7 @@ export default function UpdateTask({ match }) {
                             className='sub-task-input'
                             ref={editSubTaskInputRef}
                             value={editSubTaskInputValue}
-                            onChange={(e) => setEditSubTasksInputValue(e.target.value)}
+                            onChange={(e) => setEditSubTaskInputValue(e.target.value)}
                           />
                           <button
                             className='sub-task-add-button'
@@ -231,6 +284,7 @@ export default function UpdateTask({ match }) {
             <div className='sub-content-line-div'>
               <label>Início<sup>*</sup></label>
               <input
+                className="date-input"
                 name="start_date"
                 type="datetime-local"
                 ref={register}
@@ -241,6 +295,7 @@ export default function UpdateTask({ match }) {
             <div className='sub-content-line-div'>
               <label>Prazo<sup>*</sup></label>
               <input
+                className="date-input"
                 name="due_date"
                 type="datetime-local"
                 ref={register}
@@ -252,12 +307,27 @@ export default function UpdateTask({ match }) {
           <br/>
           {/* Worker */}
           <div className='sub-content-line-div'>
-            <div className="row-div">
+
               <label className='list-label'>Funcionário</label>
+
               <details>O funcionário é o ID da tarefa. Se quiser delegar a outro(a), na lista de tarefas, copie a tarefa, delegue-a para outro(a), e delete esta tarefa atual.</details>
               {/* <br/> */}
+              <div className="row-div">
+              <span className='worker-span'>{worker}</span>
             </div>
-            <span className='sub-task-li'>{worker}</span>
+          </div>
+        </div>
+        <div className='form-bottom-div'>
+          <input className='header-input'name="filter" placeholder='Busca por tarefas' />
+          <div className='header-button-div'>
+            <Link to='/'>
+              <button className="back-button" type="button">
+                <RiSkipBackFill size={18} color='#FFF' /> Voltar
+              </button>
+            </Link>
+            <button className="save-button" type="submit">
+              <RiCheckLine size={18} color='#FFF' /> Salvar
+            </button>
           </div>
         </div>
      </form>

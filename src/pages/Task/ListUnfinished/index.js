@@ -34,7 +34,6 @@ export default function ListTasksFinished() {
     : format(fdate, "dd'/'MMM'/'yyyy HH:mm", { locale: ptBR });
 
   async function load(workerNameFilter, userID) {
-    console.log(userID)
     const response = await api.get(`tasks/user/finished`, {
       params: { workerNameFilter, userID }
     })
@@ -43,7 +42,6 @@ export default function ListTasksFinished() {
     setDefaultTasks(response.data)
     setTask(response.data[0])
     // if (!response.data[0].messages) scrollIntoLastMessage() // this seems to fix the scrollIntoView
-    // console.log(response.data)
   }
 
   function scrollIntoLastMessage() { // if there are no messages, scrollIntoView has error.

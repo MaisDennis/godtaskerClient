@@ -1,22 +1,18 @@
 import produce from 'immer';
 // -----------------------------------------------------------------------------
 const INITIAL_STATE = {
-  image: null,
+  profile: {},
 };
 // -----------------------------------------------------------------------------
-export default function (state= INITIAL_STATE, action) {
+export default function phonenumber(state= INITIAL_STATE, action) {
   return produce(state, draft => {
     switch (action.type) {
-      case '@auth/SIGN_IN_SUCCESS': {
-        draft.image = null;
+      case '@phonenumber/SIGN_IN': {
+        draft.profile = action.payload;
         break;
       }
-      case '@image/UPDATE_IMAGE_SUCCESS': {
-        draft.image = action.payload.image;
-        break;
-      }
-      case '@image/SIGN_OUT' : {
-        draft.image = null;
+      case '@phonenumber/SIGN_OUT' : {
+        draft.profile = action.payload;
         break;
       }
       default:

@@ -29,8 +29,6 @@ export default function AvatarInput() {
     const data = new FormData();
     data.append('profileImage', e.target.files[0]);
 
-    //**********
-    // console.log(e.target.files[0])
     const response = await api.post('files', data, {
       headers: {
 				'accept': 'application/json',

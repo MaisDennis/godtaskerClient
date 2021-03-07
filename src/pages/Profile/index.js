@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import { Form, Input } from '@rocketseat/unform';
 import { useForm } from 'react-hook-form';
-// import InputMask from 'react-input-mask';
-// import { Select } from '@rocketseat/unform';
 // import * as Yup from 'yup';
 // -----------------------------------------------------------------------------
 import { Container } from './styles';
 import { updateProfileRequest } from '~/store/modules/user/actions';
 import AvatarInput from './AvatarInput';
+import { signOutUser } from '~/store/modules/user/actions';
+import { signOutPhonenumber } from '~/store/modules/phonenumber/actions';
 import { signOut } from '~/store/modules/auth/actions';
 // -----------------------------------------------------------------------------
 export default function UpdateProfile() {
@@ -17,28 +16,35 @@ export default function UpdateProfile() {
   const dispatch = useDispatch();
   const genderOptions = [ 'feminino', 'masculino', 'alien', 'outro']
 
-  function handleSignOut() {
-    dispatch(signOut());
+  const [firstName, setFirstName] = useState(profile.first_name);
+  const [lastName, setLastName] = useState(profile.last_name);
+  const [userName, setUserName] = useState(profile.user_name);
+  const [oldPassword, setOldPassword] = useState();
+  const [password, setPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
+  const [email, setEmail] = useState(profile.email);
+  const [birthDate, setBirthDate] = useState(profile.birth_date);
+  const [gender, setGender] = useState(profile.gender);
+
+  async function handleSignOut() {
+    await dispatch(signOutUser(null))
+    await dispatch(signOutPhonenumber(null, false))
+    await dispatch(signOut());
   }
 
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = ({ first_name, last_name, user_name, oldPassword, password, confirmPassword, birth_date, gender, preview }) => {
+  const onSubmit = ({
+    first_name, last_name, user_name,
+    oldPassword, password, confirmPassword,
+    email, birth_date, gender, preview
+  }) => {
     const phonenumber = profile.phonenumber
-    // console.log(image)
 
     dispatch(updateProfileRequest({
-      first_name,
-      last_name,
-      user_name,
-      oldPassword,
-      password,
-      confirmPassword,
-      phonenumber,
-      birth_date,
-      gender,
-      image,
-      preview
+      first_name, last_name, user_name,
+      oldPassword, password, confirmPassword,
+      phonenumber, email, birth_date, gender, image, preview
     }));
   }
   // ---------------------------------------------------------------------------
@@ -46,50 +52,32 @@ export default function UpdateProfile() {
 
     <Container>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <AvatarInput name="avatarInput" />
-        <input name= "first_name" placeholder="Primeiro Nome" ref={register} value="one more time"/>
-        <input name= "last_name" placeholder="Sobrenome" ref={register} value="123"/>
-        <input name= "user_name" placeholder="Nome de usuário" ref={register} value="123"/>
-        <input name="birth_date" placeholder="Data de nascimento" ref={register} value="123"/>
-        <select name="gender" placeholder="Gênero" ref={register}>
+        <AvatarInput name="avatarInput"/>
+        <input name="first_name" placeholder="Nome" ref={register} value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
+        <input name="last_name" placeholder="Sobrenome" ref={register} value={lastName} onChange={(e) => setLastName(e.target.value)}/>
+        <input name="user_name" placeholder="Nome de usuário" ref={register} value={userName} onChange={(e) => setUserName(e.target.value)}/>
+        <input name="birth_date" placeholder="Data de nascimento" ref={register} value={birthDate} onChange={(e) => setBirthDate(e.target.value)}/>
+        <select name="gender" placeholder="Gênero" ref={register} value={gender} onChange={(e) => setGender(e.target.value)}>
           {genderOptions.map(g =>
             <option key={g} value={g}>{g}</option>
           )}
         </select>
+        <input name="email" placeholder="e-mail" ref={register} value={email} onChange={(e) => setEmail(e.target.value)}/>
         <input
           name="oldPassword"
+          type="password"
           placeholder="Senha atual"
           ref={register}
-          value="123456"
+          value={oldPassword}
+          onChange={(e) => setOldPassword(e.target.value)}
         />
-        <input name="password" type="password" placeholder="Sua senha nova" ref={register} value="123123"/>
-        <input name="confirmPassword" type="password" placeholder="Confirmar a senha nova" ref={register} value="123123"/>
+        <input name="password" type="password" placeholder="Sua senha nova" ref={register} value={password} onChange={(e) => setPassword(e.target.value)}/>
+        <input name="confirmPassword" type="password" placeholder="Confirmar a senha nova" ref={register} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
 
 
         <button type="submit">Salvar</button>
-        <button type="button" onClick={handleSignOut}>Sair do godtasker</button>
+        <button className="exit-button" type="button" onClick={handleSignOut}>Sair do godtasker</button>
       </form>
     </Container>
-
-    // <Container>
-    //    <Form initialData={profile} onSubmit={handleSubmit}>
-
-    //     <br></br>
-    //     <Input name="name" placeholder="Nome completo" />
-    //     <Input name="email" placeholder="Seu email" />
-    //     <InputMask name ="phoneNumberMask" type="text" mask="(99)99999-9999" placeholder="Seu número de Whatsapp" maskChar="_"
-    //       onChange={e => {
-    //         setMasked(e.target.value);
-    //       }}
-    //     />
-    //     <Select name="gender" options={genderOptions} placeholder="Gênero"/>
-    //     <hr />
-    //     <Input type="password" name="oldPassword" placeholder="Sua senha atual" />
-    //     <Input type="password" name="password" placeholder="Nova senha" />
-    //     <Input type="password" name="confirmPassword" placeholder="Confirmação de senha" />
-    //     <button type="submit">Atualizar perfil</button>
-    //   </Form>
-    //   <button type="button" onClick={handleSignOut}>Sair do godtasker</button>
-    // </Container>
   );
 }

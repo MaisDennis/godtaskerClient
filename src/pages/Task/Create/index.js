@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { Rewind, CheckCircle } from 'react-feather'
 import { Link } from 'react-router-dom';
 import { parseISO, isBefore , subHours, format } from 'date-fns';
 import { TiEdit } from 'react-icons/ti';
 import { RiCloseCircleFill,  RiSkipBackFill, RiCheckLine } from 'react-icons/ri';
+
+import firebase from '~/services/firebase'
+import 'firebase/firestore'
+import 'firebase/auth'
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import { Container } from '~/pages/_layouts/create/styles';
-// import history from '~/services/history';
+import { updateTasks } from '~/store/modules/task/actions';
+import history from '~/services/history';
 // -----------------------------------------------------------------------------
 export default function CreateTask() {
   const [worker, setWorker] = useState([]);
@@ -21,19 +25,25 @@ export default function CreateTask() {
   const [subTasksInputValue, setSubTasksInputValue] = useState([]); // don't delete subTaskInputValue.
   const [startDateInputValue, setStartDateInputValue] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
 
-  const [editSubTaskInputValue, setEditSubTasksInputValue] = useState();
+  const [editSubTaskInputValue, setEditSubTaskInputValue] = useState();
   const [editSubTaskIndex, setEditSubTaskIndex] = useState();
   const [editWeigeInputValue, setEditWeigeInputValue] = useState();
 
-  const [radioPriority, setRadioPriority] = useState('');
-  const [radioUrgent, setRadioUrgent] = useState('');
-  const [radioComplex, setRadioComplex] = useState('');
+  const [radioPriority, setRadioPriority] = useState(4);
+  const [radioUrgent, setRadioUrgent] = useState(4);
+  const [radioComplex, setRadioComplex] = useState(4);
+  const [radioConfirmPhoto, setRadioConfirmPhoto] = useState(4);
 
   const subTaskInputRef = useRef();
   const editSubTaskInputRef = useRef();
   const weigeInputRef = useRef();
   const editWeigeInputRef = useRef();
   const user_id = useSelector(state => state.user.profile.id);
+  const dispatch = useDispatch()
+
+  const auth = firebase.auth()
+  const firestore = firebase.firestore()
+  const messagesRef = firestore.collection('messages');
 
   useEffect(() => {
     loadWorkerOptionsList(user_id);
@@ -51,7 +61,10 @@ export default function CreateTask() {
     if (subTaskInputRef.current.value === '') {
       return;
     } else {
+
+      const sub_task_id = Math.floor(Math.random() * 1000000)
       let subTask = {
+        id: sub_task_id,
         description: subTaskInputRef.current.value,
         weige: weigeInputRef.current.value,
         complete: false,
@@ -60,16 +73,16 @@ export default function CreateTask() {
       setSubTasks([...subTasks, subTask])
     }
     subTaskInputRef.current.value = '';
+    subTaskInputRef.current.focus();
     // weigeInputRef.current.value = '1';
     setWeige('1');
   }
 
   function handleOpenEditInput(position) {
     setSubTaskToggleEdit(!subTaskToggleEdit)
-    setEditSubTasksInputValue(subTasks[position].description)
+    setEditSubTaskInputValue(subTasks[position].description)
     setEditWeigeInputValue(subTasks[position].weige)
     setEditSubTaskIndex(position)
-
   }
 
   function handleEditSubTask(position) {
@@ -82,6 +95,7 @@ export default function CreateTask() {
     })
     setSubTasks(editedSubTasks);
     setEditSubTaskIndex(null);
+    setSubTaskToggleEdit(false);
   }
 
   function handleRemoveSubTask(position) {
@@ -103,7 +117,7 @@ export default function CreateTask() {
 
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = ({ name, description, start_date, due_date, phonenumbers }) => {
+  const onSubmit = async ({ name, description, start_date, due_date, phonenumbers }) => {
     const timeStart = parseISO(start_date);
     const timeEnd = parseISO(due_date); // This solves: start_date === end_date issue for now (2020.07.22)
     const taskAttributeArray = [ radioPriority, radioUrgent, radioComplex ]
@@ -127,21 +141,41 @@ export default function CreateTask() {
       toast.error('O prazo está antes do início.');
     } else {
       weigeToPercentage(subTasks)
-
-      phonenumbers.map(p => {
-        api.post('tasks', [
+      if(typeof(phonenumbers) === 'string') {
+        let response = api.post('tasks', [
           {
             name,
             description,
             sub_task_list: subTasks,
             task_attributes: taskAttributeArray,
+            confirm_photo: radioConfirmPhoto,
             start_date,
             due_date,
-            workerphonenumber: p
+            messaged_at: new Date(),
+            workerphonenumber: phonenumbers
           }, user_id
         ])
-        return p
-      })
+        console.log(response)
+      } else {
+        await phonenumbers.map( p => {
+          let response = api.post('tasks', [
+            {
+              name,
+              description,
+              sub_task_list: subTasks,
+              task_attributes: taskAttributeArray,
+              confirm_photo: radioConfirmPhoto,
+              start_date,
+              due_date,
+              messaged_at: new Date(),
+              workerphonenumber: p
+            }, user_id
+          ])
+          // console.log(response)
+          return p
+        })
+      }
+      dispatch(updateTasks(new Date()))
       // history.push('/');
       toast.success('Tarefa cadastrada com sucesso!');
     }
@@ -151,8 +185,8 @@ export default function CreateTask() {
   return (
     <Container>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <header>
-          <strong>Cadastro de Tarefas</strong>
+        <header className="header">
+          <strong className='header-title-strong'>Cadastro de Tarefas</strong>
           <div className='header-bottom-div'>
             <input className='header-input'name="filter" placeholder='Busca por tarefas' />
             <div className='header-button-div'>
@@ -171,7 +205,12 @@ export default function CreateTask() {
         <div className="form-body-div">
           <div className="sub-content-line-div">
             <label>Tarefa<sup>*</sup></label>
-            <input name="name" type="string" placeholder="Lavar o carro" ref={register} />
+            <input
+              name="name"
+              type="string"
+              placeholder="Lavar o carro"
+              ref={register}
+            />
           </div>
           {/* Description */}
           <div className="sub-content-line-div">
@@ -188,7 +227,11 @@ export default function CreateTask() {
           {/* Sub Tasks */}
           <div className="sub-content-line-div">
             <label className='checkbox-label'>
-              <input className='checkbox-input' type="checkbox" onClick={handleToggleSubTasksDiv}/>
+              <input
+                className='checkbox-input'
+                type="checkbox"
+                onClick={handleToggleSubTasksDiv}
+              />
               <span className='form-span'>Incluir sub-tarefas</span>
               { !subTasksCheckBox && (subTasks[0] !== undefined)
                 ? (
@@ -260,7 +303,7 @@ export default function CreateTask() {
                                   className='sub-task-input'
                                   ref={editSubTaskInputRef}
                                   value={editSubTaskInputValue}
-                                  onChange={(e) => setEditSubTasksInputValue(e.target.value)}
+                                  onChange={(e) => setEditSubTaskInputValue(e.target.value)}
                                 />
                                 <div className="weige-div">
                                   <span className="form-span">Peso:</span>
@@ -314,6 +357,7 @@ export default function CreateTask() {
             <div className='sub-content-line-div'>
               <label>Início<sup>*</sup></label>
               <input
+                className="date-input"
                 name="start_date"
                 type="datetime-local"
                 ref={register}
@@ -322,7 +366,12 @@ export default function CreateTask() {
             </div>
             <div className='sub-content-line-div'>
               <label>Prazo<sup>*</sup></label>
-              <input name="due_date" type="datetime-local" ref={register} />
+              <input
+                className="date-input"
+                name="due_date"
+                type="datetime-local"
+                ref={register}
+              />
             </div>
           </div>
           <br/>
@@ -336,7 +385,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Priority"
                     type="radio"
-                    value="baixa"
+                    value={1}
                     onChange={e => setRadioPriority(e.target.value)}
                     ref={register}
                   />
@@ -347,7 +396,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Priority"
                     type="radio"
-                    value="média"
+                    value={2}
                     onChange={e => setRadioPriority(e.target.value)}
                     ref={register}
                   />
@@ -358,7 +407,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Priority"
                     type="radio"
-                    value="alta"
+                    value={3}
                     onChange={e => setRadioPriority(e.target.value)}
                     ref={register}
                   />
@@ -369,7 +418,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Priority"
                     type="radio"
-                    value=''
+                    value={4}
                     onChange={e => setRadioPriority(e.target.value)}
                     ref={register}
                   />
@@ -385,7 +434,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Urgent"
                     type="radio"
-                    value='baixa'
+                    value={1}
                     onChange={e => setRadioUrgent(e.target.value)}
                     ref={register}
                   />
@@ -396,7 +445,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Urgent"
                     type="radio"
-                    value='média'
+                    value={2}
                     onChange={e => setRadioUrgent(e.target.value)}
                     ref={register}
                   />
@@ -407,7 +456,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Urgent"
                     type="radio"
-                    value='alta'
+                    value={3}
                     onChange={e => setRadioUrgent(e.target.value)}
                     ref={register}
                   />
@@ -418,7 +467,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Urgent"
                     type="radio"
-                    value=''
+                    value={4}
                     onChange={e => setRadioUrgent(e.target.value)}
                     ref={register}
                   />
@@ -434,7 +483,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Complex"
                     type="radio"
-                    value='baixa'
+                    value={1}
                     onChange={e => setRadioComplex(e.target.value)}
                     ref={register}
                   />
@@ -445,7 +494,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Complex"
                     type="radio"
-                    value='média'
+                    value={2}
                     onChange={e => setRadioComplex(e.target.value)}
                     ref={register}
                   />
@@ -456,7 +505,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Complex"
                     type="radio"
-                    value='alta'
+                    value={3}
                     onChange={e => setRadioComplex(e.target.value)}
                     ref={register}
                   />
@@ -467,7 +516,7 @@ export default function CreateTask() {
                     className='radio-input'
                     name="Complex"
                     type="radio"
-                    value=''
+                    value={4}
                     onChange={e => setRadioComplex(e.target.value)}
                     ref={register}
                   />
@@ -476,24 +525,74 @@ export default function CreateTask() {
               </div>
             </div>
           </div>
+          {/* Confirmação com foto */}
+          <div className="sub-content-line-divider-div">
+          <div className="sub-content-line-div">
+            <label>Requer foto de confirmação ao completar a tarefa?</label>
+            <div className="radio-div">
+              <label  className='checkbox-label' key={'1'}>
+                <input
+                  className='radio-input'
+                  name="ConfirmPhoto"
+                  type="radio"
+                  value={true}
+                  onChange={e => setRadioConfirmPhoto(e.target.value)}
+                  ref={register}
+                />
+                <span className='form-span'>Sim</span>
+              </label>
+              <label  className='checkbox-label' key={'2'}>
+                <input
+                  className='radio-input'
+                  name="ConfirmPhoto"
+                  type="radio"
+                  value={false}
+                  onChange={e => setRadioConfirmPhoto(e.target.value)}
+                  ref={register}
+                />
+                <span className='form-span'>Não é requisito</span>
+              </label>
+            </div>
+          </div>
+        </div>
           {/* Workers */}
           <div className='sub-content-line-div'>
             <label>Enviar a Funcionários<sup>*</sup></label>
-            { worker.map((w) =>
-              <label  className='checkbox-label' key={w.worker_name}>
-                <input
-                  className='checkbox-input'
-                  name="phonenumbers"
-                  type="checkbox"
-                  value={w.phonenumber}
-                  ref={register}
-                />
-                <span className='form-span'>{w.worker_name}</span>
-              </label>
-            )}
+            { worker
+              ? ( worker.map((w) =>
+                <label  className='worker-checkbox-label' key={w.worker_name}>
+                  <input
+                    className='checkbox-input'
+                    name="phonenumbers"
+                    type="checkbox"
+                    value={w.phonenumber}
+                    ref={register}
+
+                  />
+                  <span className='worker-span'>{w.worker_name}</span>
+                </label>
+              ))
+              : (
+                <span className='worker-list-span'>Não há funcionários cadastrados ainda.</span>
+              )
+            }
+          </div>
+        </div>
+        <div className='form-bottom-div'>
+          <input className='header-input'name="filter" placeholder='Busca por tarefas' />
+          <div className='header-button-div'>
+            <Link to='/'>
+              <button className="back-button" type="button">
+                <RiSkipBackFill size={18} color='#FFF' /> Voltar
+              </button>
+            </Link>
+            <button className="save-button" type="submit">
+              <RiCheckLine size={18} color='#FFF' /> Salvar
+            </button>
           </div>
         </div>
       </form>
+
     </Container>
   );
 }

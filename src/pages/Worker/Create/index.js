@@ -4,12 +4,11 @@ import { Link } from 'react-router-dom';
 import { Form, Input } from '@rocketseat/unform';
 import InputMask from 'react-input-mask';
 import { toast } from 'react-toastify';
-import { Rewind, CheckCircle } from 'react-feather'
-// import { Select } from '@rocketseat/unform';
+import { RiSkipBackFill, RiCheckLine } from 'react-icons/ri';
 // -----------------------------------------------------------------------------
 import { Container } from '~/pages/_layouts/create/styles';
 import api from '~/services/api';
-// import history from '~/services/history';
+import history from '~/services/history';
 // -----------------------------------------------------------------------------
 export default function CreateWorker() {
     const [masked, setMasked] = useState(' ');
@@ -17,18 +16,21 @@ export default function CreateWorker() {
 
   async function handleSubmit({ first_name, last_name, worker_name, department }) {
     const phonenumber = masked.replace(/\D/gim, '');
+    const id = Math.floor(Math.random() * 1000000)
+
     try {
       await api.post(`users/${user_id}/contact-list`, {
+        worker_id: id,
         first_name,
         last_name,
         worker_name,
         department,
         phonenumber,
       })
-      // history.push('/workers/list');
       toast.success('Funcionário cadastrado com sucesso!');
-    } catch {
-      toast.error('Por favor preencher os campos com (*)');
+      history.push('/contact-list/list');
+    } catch(error) {
+      toast.error(error.response.data.error);
     }
   }
   // -----------------------------------------------------------------------------
@@ -36,17 +38,17 @@ export default function CreateWorker() {
     <Container>
       <Form onSubmit={handleSubmit}>
         <header>
-          <strong>Cadastro de Funcionários</strong>
+          <strong className='header-title-strong'>Cadastro de Funcionários</strong>
           <div className='header-bottom-div'>
           <input className='header-input'name="filter" placeholder='Busca por tarefas' />
             <div className='header-button-div'>
-              <Link to='/'>
+              <Link to='/contact-list/list'>
                 <button className="back-button" type="button">
-                  <Rewind size={11} color='#FFF' /> Voltar
+                  <RiSkipBackFill size={18} color='#FFF' /> Voltar
                 </button>
               </Link>
               <button className="save-button" type="submit">
-                <CheckCircle size={11} color='#FFF' /> Salvar
+                <RiCheckLine size={18} color='#FFF' /> Salvar
               </button>
             </div>
           </div>

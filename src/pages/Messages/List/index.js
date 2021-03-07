@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux'
 import { Plus } from 'react-feather'
 import { Link } from 'react-router-dom';
 import { format, parseISO, isBefore } from 'date-fns';
@@ -7,11 +6,9 @@ import { ptBR } from 'date-fns/locale';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import { Container, Line } from '~/pages/_layouts/list/styles';
-import insert from '~/assets/insert_photo-24px.svg';
 // -----------------------------------------------------------------------------
 export default function ListMessages() {
   const [tasks, setTasks] = useState([]);
-  const [ message, setMessage ] = useState([]);
   const [ queryInput, setQueryInput ] = useState([]);
   const [taskDetailsId, setTaskDetailsId] = useState();
   // const user_id = useSelector(state => state.user.profile.id)
@@ -32,7 +29,6 @@ export default function ListMessages() {
       params: { workerNameFilter, userID }
     })
     setTasks(response.data);
-    console.log(response.data)
   }
 
   function handleInputChange(e) {

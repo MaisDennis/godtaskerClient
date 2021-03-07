@@ -1,18 +1,16 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import { Plus } from 'react-feather'
-// -----------------------------------------------------------------------------
-import { Container } from './styles';
-import Searchbar from '../../utils/Searchbar';
-import { format, parseISO, isBefore } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { MdNotifications } from 'react-icons/md';
 import { GrTask } from 'react-icons/gr';
 import { FiMessageSquare } from 'react-icons/fi';
 import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
+import 'firebase/firestore'
+import 'firebase/auth'
+// -----------------------------------------------------------------------------
 import api from '~/services/api';
-import { Line, Badge } from '~/pages/_layouts/list/styles';
-
+import Searchbar from '../../utils/Searchbar';
+import { ListDiv } from '~/pages/_layouts/list/styles';
+import TaskLine from '../TaskLine'
+// -----------------------------------------------------------------------------
 function TaskListDiv({
   user_id,
   load,
@@ -21,8 +19,12 @@ function TaskListDiv({
   defaultTasks,
   setTask,
   handleTaskDetails,
-
+  handleListState,
+  setListState,
+  messagesProp,
+  setMessagesProp,
 }) {
+
   const [inputState, setInputState] = useState('');
   const [toggleName, setToggleName] = useState();
   const [toggleWorker, setToggleWorker] = useState();
@@ -31,29 +33,17 @@ function TaskListDiv({
   const [toggleStartDate, setToggleStartDate] = useState();
   const [toggleDueDate, setToggleDueDate] = useState();
 
-  const messageInputRef = useRef();
+  // const selectArray = ['alta', 'média', 'baixa', '']
+  const selectArray = [
+    { id: 1, tag: 'baixa' },
+    { id: 2, tag: 'média' },
+    { id: 3, tag: 'alta' },
+    { id: 4, tag: '' },
+  ]
 
-  const selectArray = ['alta', 'média', 'baixa', '']
-
-  async function handleListState(number) {
-    // await setListState(number)
-    console.log(number)
-    await load('', user_id, number);
-  }
-
-  const formattedDate = fdate =>
-  fdate == null
-    ? ''
-    : format(parseISO(fdate), "dd'/'MMM'/'yyyy HH:mm", { locale: ptBR });
-
-  const hasUnread = (array) => {
-    let sum = 0;
-    for(let i = 0; i < array.length; i++) {
-      if(array[i].user_read === false) {
-        sum += 1
-      }
-    }
-    return sum
+  function handleListState(number) {
+    load('', user_id, number);
+    setListState(number);
   }
 
   const handleUpdateInput = async (input) => {
@@ -107,8 +97,10 @@ function TaskListDiv({
       tasks.sort(reversedCompare)
       setToggleName(!toggleName)
     }
+    // dispatch(updateTasks(new Date()))
     setToggleWorker(false); setTogglePrior(false);  setToggleUrgent(false);
-    setToggleStartDate(false);  setToggleDueDate(false);  setTask()
+    setToggleStartDate(false);  setToggleDueDate(false);
+    setTask()
 
     function compare(a, b) {
       if (a.name > b.name) {
@@ -144,20 +136,20 @@ function TaskListDiv({
     setToggleStartDate(false);  setToggleDueDate(false);  setTask()
 
     function compare(a, b) {
-      if (a.worker_name > b.worker_name) {
+      if (a.worker.worker_name > b.worker.worker_name) {
         return 1;
       }
-      if (a.worker_name < b.worker_name) {
+      if (a.worker.worker_name < b.worker.worker_name) {
         return -1;
       }
       return 0;
     }
 
     function reversedCompare(a, b) {
-      if (a.worker_name > b.worker_name) {
+      if (a.worker.worker_name > b.worker.worker_name) {
         return -1;
       }
-      if (a.worker_name < b.worker_name) {
+      if (a.worker.worker_name < b.worker.worker_name) {
         return 1;
       }
       return 0;
@@ -330,26 +322,31 @@ function TaskListDiv({
   }
   //----------------------------------------------------------------------------
   return (
-    <Container>
+    <>
+      <ListDiv>
       <header className='list-header'>
-        <strong>Tarefas:
-          <button className="list-header-button" onClick={() => handleListState(1)}>em aberto</button> |
-          <button className="list-header-button" onClick={() => handleListState(2)}>finalizadas</button> |
-          <button className="list-header-button" onClick={() => handleListState(3)}>canceladas</button> |
-          <button className="list-header-button" onClick={() => handleListState(4)}>todas</button>
-        </strong>
+        <div className="list-header-title-div">
+          <strong className="list-header-strong">Tarefas:</strong>
+          <ul className="list-header-button-ul">
+            <li><button className="list-header-button" onClick={() => handleListState(1)}>em aberto</button> |</li>
+            <li><button className="list-header-button" onClick={() => handleListState(2)}>finalizadas</button> |</li>
+            <li><button className="list-header-button" onClick={() => handleListState(3)}>canceladas</button> |</li>
+            <li><button className="list-header-button" onClick={() => handleListState(4)}>todas</button></li>
+          </ul>
+        </div>
+
         <div className='list-header-div'>
           <Link className='create-link' to='/tasks'>
             <button className="task-button search">
-              <Plus size={11} color='#FFF' /> Nova Tarefa
+              Nova Tarefa
             </button>
           </Link>
           <Searchbar className="header-input" input={inputState} onChange={handleUpdateInput}/>
         </div>
       </header>
 
-      <div className='title-bar'>
-        <strong className='title-strong' onClick={() => sortName()} style={{cursor:'pointer'}}>Tarefa
+      <div className="title-bar">
+        <strong className="title-strong" onClick={() => sortName()}>Tarefa
           { toggleName
             ? <TiArrowSortedUp style={{marginLeft: '8px'}}/>
             : <TiArrowSortedDown style={{marginLeft: '8px', alignSelf: 'center'}}/>
@@ -386,187 +383,31 @@ function TaskListDiv({
           }
         </strong>
         <strong className='short-tag'>Status</strong>
-        <div className='bell-tag'><GrTask size={18}/></div>
-        <div className='bell-tag last' onClick={() => sortMessages()} style={{cursor:'pointer'}}><FiMessageSquare size={18}/></div>
+        <div className='bell-tag'>
+          <GrTask size={18}/>
+        </div>
+        <div
+          className='bell-tag last'
+          onClick={() => sortMessages()}
+          style={{cursor:'pointer'}}
+        >
+          <FiMessageSquare size={18}/>
+        </div>
       </div>
+
       {/* Task List */}
       <ul className='item-list'>
         { tasks.map((t) =>
-          <Line key={t.id} className='item-list-row'>
-            {
-              t.end_date || t.canceled_at
-              ? (
-                <div
-                  className="line-div canceled" onClick={() => handleTaskDetails(t)}
-                >
-                  <label className="item-label">{t.name}</label>
-                  <label className="item-label">{t.worker.worker_name}</label>
-                  {/* Task selects */}
-                  <label className="short-label">{t.task_attributes[0]}</label>
-                  <label className="short-label">{t.task_attributes[1]}</label>
-                  {/* Task Dates */}
-                  <label className="startdate">{formattedDate(t.start_date)}</label>
-                  <label className="startdate">{formattedDate(t.due_date)}</label>
-                  {/* Task Status */}
-                  <label className="status-label">
-                    { t.end_date && isBefore(parseISO(t.end_date), parseISO(t.due_date)) &&
-                      (
-                        <label className="duedate red">
-                          {`Finalizada ${formattedDate(t.end_date)}`}
-                        </label>
-                      )
-
-                    }
-                    { t.end_date && isBefore(parseISO(t.due_date), parseISO(t.end_date)) &&
-                      (
-                        <label className="duedate green">
-                          {`Finalizada ${formattedDate(t.end_date)}`}
-                        </label>
-                      )
-
-                    }
-                    { t.canceled_at && (
-                      <div>
-                        {`Cancelada ${formattedDate(t.canceled_at)}`}
-                      </div>
-                    )}
-                    { !t.end_date && !t.canceled_at && (
-                      <>
-                        <div className="status-complete-div">
-                          <div
-                            className="status-incomplete-div"
-                            style={{"width": `${handleStatus(t.sub_task_list)}%`}}
-                          ></div>
-                        </div>
-                        <span className="status-span">
-                          {handleStatus(t.sub_task_list)}%
-                        </span>
-                      </>
-                    )}
-                  </label>
-                  {/* Task Bells */}
-                  <div className="bell-label">
-                    { (hasUnread(t.sub_task_list) === 0)
-                      ? (
-                        <Badge style={{visibility: 'hidden'}} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
-                          <MdNotifications color="#ccc" size={28} />
-                        </Badge>
-                      )
-                      : (
-                        <Badge hasUnread={hasUnread(t.sub_task_list)} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
-                          <MdNotifications color="#ccc" size={28} />
-                        </Badge>
-                      )
-                    }
-                  </div>
-                  <div className="bell-label last">
-                    { (hasUnread(t.messages) === 0)
-                      ? (
-                        <Badge style={{visibility: 'hidden'}} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
-                          <MdNotifications color="#ccc" size={28} />
-                        </Badge>
-                      )
-                      : (
-                        <Badge hasUnread={hasUnread(t.messages)} value={hasUnread(t.messages)} ref={messageInputRef}>
-                          <MdNotifications color="#ccc" size={28} />
-                        </Badge>
-                      )
-                    }
-                  </div>
-                </div>
-              )
-              : (
-                <div
-                  className="line-div" onClick={() => handleTaskDetails(t)}
-                >
-                  <label className="item-label">{t.name}</label>
-                  <label className="item-label">{t.worker.worker_name}</label>
-                  {/* Task selects */}
-                  <select
-                    className={`list-select ${t.task_attributes[0]}`}
-                    onChange={e => handleSelect(e, t.id, t.task_attributes, 'Prior')}
-                    value={t.task_attributes[0]}>
-                    {selectArray.map(s =>
-                      <option key={s} className="list-option" value={s}>{s}</option>
-                    )}
-                  </select>
-                  <select
-                    className={`list-select ${t.task_attributes[1]}`}
-                    onChange={e => handleSelect(e, t.id, t.task_attributes, 'Urgent')}
-                    value={t.task_attributes[1]}>
-                    {selectArray.map(s =>
-                      <option key={s} className="list-option" value={s}>{s}</option>
-                    )}
-                  </select>
-                  {/* Task Dates */}
-                  <label className="startdate">{formattedDate(t.start_date)}</label>
-                  { isBefore(parseISO(t.due_date), new Date())
-                    ? <label className="duedate red">{formattedDate(t.due_date)}</label>
-                    : <label className="duedate green">{formattedDate(t.due_date)}</label>
-                  }
-                  {/* Task Status */}
-                  <label className="status-label">
-                    { t.end_date && (
-                      <div>
-                        {`Finalizada ${formattedDate(t.end_date)}`}
-                      </div>
-                    )}
-                    { t.canceled_at && (
-                      <div>
-                        {`Cancelada ${formattedDate(t.canceled_at)}`}
-                      </div>
-                    )}
-                    { !t.end_date && !t.canceled_at && (
-                      <>
-                        <div className="status-complete-div">
-                          <div
-                            className="status-incomplete-div"
-                            style={{"width": `${handleStatus(t.sub_task_list)}%`}}
-                          ></div>
-                        </div>
-                        <span className="status-span">
-                          {handleStatus(t.sub_task_list)}%
-                        </span>
-                      </>
-                    )}
-                  </label>
-                  {/* Task Bells */}
-                  <div className="bell-label">
-                    { (hasUnread(t.sub_task_list) === 0)
-                      ? (
-                        <Badge style={{visibility: 'hidden'}} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
-                          <MdNotifications color="#ccc" size={28} />
-                        </Badge>
-                      )
-                      : (
-                        <Badge hasUnread={hasUnread(t.sub_task_list)} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
-                          <MdNotifications color="#ccc" size={28} />
-                        </Badge>
-                      )
-                    }
-                  </div>
-                  <div className="bell-label last">
-                    { (hasUnread(t.messages) === 0)
-                      ? (
-                        <Badge style={{visibility: 'hidden'}} value={hasUnread(t.sub_task_list)} ref={messageInputRef}>
-                          <MdNotifications color="#ccc" size={28} />
-                        </Badge>
-                      )
-                      : (
-                        <Badge hasUnread={hasUnread(t.messages)} value={hasUnread(t.messages)} ref={messageInputRef}>
-                          <MdNotifications color="#ccc" size={28} />
-                        </Badge>
-                      )
-                    }
-                  </div>
-                </div>
-              )
-            }
-
-          </Line>
+          <TaskLine
+            handleTaskDetails={handleTaskDetails}
+            handleSelect={handleSelect}
+            selectArray={selectArray}
+            t={t}
+          />
         )}
       </ul>
-    </Container>
+      </ListDiv>
+    </>
   )
 }
 

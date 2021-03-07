@@ -31,7 +31,7 @@ export default function DetailTask({ match }) {
 
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
-    console.log(data.inputScore)
+    // console.log(data.inputScore)
     if (task.end_date) {
       api.put(`tasks/${id}/t_detail`, { score: data.inputScore })
       load(id)
@@ -72,13 +72,6 @@ export default function DetailTask({ match }) {
                 </div>
               </div>
             </div>
-            {/* <div className="divAvatar">
-              {
-                t.worker.avatar === null
-                  ? <img alt='workerAvatar' src={insert}></img>
-                  : <img alt='workerAvatar' src={t.worker.avatar.url}></img>
-              }
-            </div> */}
           </section>
 
           <section>

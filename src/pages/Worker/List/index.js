@@ -2,111 +2,93 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Plus } from 'react-feather'
+// import { BsThreeDots } from 'react-icons/bs';
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
-import { Container, ListDiv, Line } from '~/pages/_layouts/list/styles';
 import Searchbar from '../../../utils/Searchbar';
-import insert from '~/assets/insert_photo-24px.svg';
-// import insert from '~/assets/insert_photo-24px.svg';
+import Contact from '~/components/Contact'
+
+import { Container, ListDiv } from '~/pages/_layouts/list/styles';
 // import whatsapplogo from '~/assets/whatsapplogo5.png'
 // -----------------------------------------------------------------------------
-export default function ListWorkers() {
-  const [inputState, setInputState] = useState('');
-  const [ workers, setWorkers ] = useState([]);
-  const [defaultWorkers, setDefaultWorkers] = useState([]);
-  const [ queryInput, setQueryInput ] = useState([]);
+export default function ListContacts() {
   const user_id = useSelector(state => state.user.profile.id);
 
+  const [inputState, setInputState] = useState('');
+  const [contacts, setContacts] = useState([]);
+  const [defaultContacts, setDefaultContacts] = useState([]);
+
   useEffect(() => {
-    loadWorkers(user_id);
+    loadContacts(user_id);
   },[ user_id ]);
 
-  async function loadWorkers(userID) {
+  async function loadContacts(userID) {
     const response = await api.get(`users/${userID}/contact-list`, {
     })
-    setWorkers(response.data);
-    setDefaultWorkers(response.data);
+
+    setContacts(response.data);
+    setDefaultContacts(response.data);
   }
 
   const handleUpdateInput = async (input) => {
-    const filteredList = defaultWorkers.filter(t => {
+    const filteredList = defaultContacts.filter(t => {
       let workerName = t.first_name + t.last_name + t.worker_name
       return workerName.toLowerCase().includes(input.toLowerCase())
     })
-    setWorkers(filteredList)
+    setContacts(filteredList)
     setInputState(input)
   }
 
-  let formattedPhoneNumber = (str) => {
-    //Filter only numbers from the input
-    let cleaned = ('' + str).replace(/\D/g, '');
-    //Check if the input is of correct length
-    let match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
-    if (match) {
-      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
-    };
-    return null
-  };
-
+  async function handleRemoveContact(phonenumber) {
+    await api.put(`/users/${user_id}/remove-contact`, {
+      phonenumber: phonenumber,
+    })
+    loadContacts(user_id);
+    // dispatch(updateContacts(new Date()))
+  }
   // -----------------------------------------------------------------------------
   return (
    <Container>
     <div className="container-div">
-    <ListDiv>
-      <header className="list-header">
-        <strong>Funcionários</strong>
-        <div className='list-header-div'>
-          <Link className='create-link' to='/workers'>
-            <button className="task-button search">
-              <Plus size={11} color='#FFF'/> Cadastrar Funcionário
-            </button>
-          </Link>
-          <Searchbar className="header-input" input={inputState} onChange={handleUpdateInput}/>
+      <ListDiv>
+        <header className="list-header">
+          <div className="list-header-title-div">
+            <strong className="list-header-strong">Funcionários</strong>
+          </div>
+          <div className='list-header-div'>
+            <Link className='create-link' to='/contact-list'>
+              <button className="task-button search">
+                <Plus size={11} color='#FFF'/> Cadastrar Funcionário
+              </button>
+            </Link>
+            <Searchbar className="header-input" input={inputState} onChange={handleUpdateInput}/>
+          </div>
+        </header>
+
+        <div className="title-bar">
+          <strong className='worker-strong'>Nome de usuário</strong>
+          <strong className='short-tag'>Nome</strong>
+          <strong className='short-tag'>Sobrenome</strong>
+          <strong className="short-tag">Dept.</strong>
+          <strong className="short-tag">Tel.</strong>
+          {/* <strong className="short-tag">Tarefas</strong> */}
+          <strong className="short-tag last">Outros</strong>
         </div>
-      </header>
-
-      <div className="title-bar">
-        <strong className='worker-strong'>Nome de usuário</strong>
-        <strong className='short-tag'>Nome</strong>
-        <strong className='short-tag'>Sobrenome</strong>
-        <strong className="short-tag">Dept.</strong>
-        <strong className="short-tag">Tel.</strong>
-        <strong className="short-tag">Tarefas</strong>
-      </div>
-
-      <ul className='item-list'>
-        {workers.map(w =>
-          <Line key={w.phonenumber} className='item-list-row'>
-            <div className="line-div">
-            {/* <div className='photo-and-name-div' title="Clicar para editar funcionário."> */}
-                {/* {
-                  w.avatar_id === null
-                    ? <img alt='del_avatar' src={insert}></img>
-                    : <img alt='del_avatar' src={w.avatar.url}></img>
-                } */}
-                <div className="worker-profile-div">
-                  <img src={insert} alt="Worker"/>
-                  <label className="worker-label">{w.worker_name}</label>
-                </div>
-
-            {/* </div> */}
-            {/* <label>
-              <a href={`https://api.whatsapp.com/send?phone=55${w.phonenumber}`} title={`${w.phonenumber}`} target="_blank" rel="noopener noreferrer" style={{color: 'blue'}}>
-                <button className="whatsappbutton" type="button">
-                  <img src={whatsapplogo} alt="whatsapplogo" style={{height:16}}/>
-                </button>
-              </a>
-            </label> */}
-            <label className="short-label">{w.first_name}</label>
-            <label className="short-label">{w.last_name}</label>
-            <label className="short-label">{w.department}</label>
-            <label className="short-label">{formattedPhoneNumber(w.phonenumber)}</label>
-            <label className="short-label"><Link to={`/dashboard/${w.worker_name}`}>entrar</Link></label>
-            </div>
-          </Line>
+        { contacts && (
+          <ul className='item-list'>
+          { contacts.map(c =>
+            <Contact
+              key={c.phonenumber}
+              contact={c}
+              handleRemoveContact={handleRemoveContact}
+              contacts={contacts}
+              setContacts={setContacts}
+            />
+          )}
+          </ul>
         )}
-      </ul>
-    </ListDiv>
+
+      </ListDiv>
     </div>
    </Container>
   );

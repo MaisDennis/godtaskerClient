@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import search from '~/assets/search-24px.svg';
-import { darken } from 'polished';
 
 export const Container = styled.div`
 .list-header {
@@ -17,11 +16,7 @@ export const Container = styled.div`
   }
 }
 
-.list-header-button {
-  margin: 0 8px;
-  border: none;
-  background-color: #F5F5F5;
-}
+
 
 .list-header-div {
   display: flex;
@@ -62,6 +57,7 @@ export const Container = styled.div`
 .title-strong {
   width: 220px;
   max-width: 220px;
+  font-size: 14px;
   text-align: center;
   margin: auto 0;
   /* background: #ffc87c; */
@@ -70,6 +66,7 @@ export const Container = styled.div`
 .worker-strong {
   width: 330px;
   max-width: 330px;
+  font-size: 14px;
   text-align: center;
   margin: auto 0;
   /* background: #ffc87c; */
@@ -77,6 +74,7 @@ export const Container = styled.div`
 
 .short-tag {
   width: 110px;
+  font-size: 14px;
   text-align: center;
   margin: auto 0;
   /* background-color: #fff; */

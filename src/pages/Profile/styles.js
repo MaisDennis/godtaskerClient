@@ -35,9 +35,10 @@ export const Container = styled.div`
       margin: 10px 0 20px;
     }
     button {
-      margin: 5px 0 0;
-      height: 44px;
-      background: #58595B;
+      margin: 8px 0;
+      height: 48px;
+      /* background: #58595B; */
+      background: #4433ee;
       font-weight: bold;
       color: #fff;
       border: 0;
@@ -45,8 +46,16 @@ export const Container = styled.div`
       font-size: 16px;
       transition: background 0.2s;
       &:hover {
-        background: ${darken(0.03, '#58595B')};
+        background: ${darken(0.05, '#4433ee')};
       }
+    }
+
+    .exit-button {
+      background: #666;
+      transition: background 0.2s;
+    &:hover {
+      background: ${darken(0.08, '#666')};
+    }
     }
   }
 

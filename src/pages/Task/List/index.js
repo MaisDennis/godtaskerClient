@@ -2,31 +2,40 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux'
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import 'firebase/firestore'
+import 'firebase/auth'
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import { Container } from '~/pages/_layouts/list/styles';
-import TaskListDiv from '../../../components/TaskListDiv'
-import TaskDetailsDiv from '../../../components/TaskDetailsDiv';
-import MessageDiv from '../../../components/MessageDiv';
+import TaskListDiv from '~/components/TaskListDiv'
+import TaskDetailsDiv from '~/components/TaskDetailsDiv';
+import MessageDiv from '~/components/MessageDiv';
+import firebase from '~/services/firebase'
 // -----------------------------------------------------------------------------
 export default function ListTasks() {
   const user_id = useSelector(state => state.user.profile.id)
   const user_name = useSelector(state => state.user.profile.user_name)
+  const update_tasks = useSelector(state => state.task.tasks)
   // task states
   const [tasks, setTasks] = useState([]);
   const [defaultTasks, setDefaultTasks] = useState([]);
-  const [task, setTask] = useState(tasks[0]);
-  const [chatMessage, setChatMessage] = useState(); // chat message state stays here in order (instead of MessageDiv) to update new message bell.
+  const [toggleHeaderDropMenu, setToggleHeaderDropMenu] = useState();
+
+  const [task, setTask] = useState();
+
   // message states
   const [forwardValue, setForwardValue] = useState();
-  const [taskMessages, setTaskMessages] = useState();
+  const [chatMessage, setChatMessage] = useState();
+
+  const [listState, setListState] = useState(1);
+
   const messageRef = useRef();
-  const lastMessageRef = useRef();
 
   // var devices = navigator.mediaDevices.getUserMedia({audio:true})
   useEffect(() => {
     load('', user_id, 1);
-  }, [user_id]);
+
+  }, [update_tasks]);
 
   const formattedMessageDate = fdate =>
   fdate == null
@@ -35,58 +44,85 @@ export default function ListTasks() {
 
   let response = null
 
+  const [messages, setMessages] = useState();
+  const firestore = firebase.firestore()
+
   async function load(workerNameFilter, userID, listState) {
+    switch(listState) {
+      case(1):
+        response = await api.get(`tasks/user/unfinished`, {
+          params: { workerNameFilter, userID }
+        })
+        setTasks(response.data); setDefaultTasks(response.data);
+        setTask(response.data[0]);
+        // if(response.data[0]) {
+        // setTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+        // setDefaultTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+        // }
+        // console.log(defaultTaskMessages)
+        break
+      case(2):
+        response = await api.get(`tasks/user/finished`, {
+          params: { workerNameFilter, userID }
+        })
+        setTasks(response.data); setDefaultTasks(response.data);
+        setTask(response.data[0]);
+        // if(response.data[0]) {
+          // setTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+          // setDefaultTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+        // }
+        break
+      case(3):
+        response = await api.get(`tasks/user/canceled`, {
+          params: { workerNameFilter, userID }
+        })
+        setTasks(response.data); setDefaultTasks(response.data);
+        setTask(response.data[0]);
+        // if(response.data[0]) {
+          // setTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+          // setDefaultTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+        // }
+        break
+      case(4):
+        response = await api.get(`tasks`, {
+          params: { workerNameFilter, userID }
+        })
+        setTasks(response.data); setDefaultTasks(response.data);
+        setTask(response.data[0]);
+        // if(response.data[0]) {
+          // setTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+          // setDefaultTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+        // }
+        break
+      default:
+        response = await api.get(`tasks/user/unfinished`, {
+          params: { workerNameFilter, userID }
+        })
+        setTasks(response.data); setDefaultTasks(response.data);
+        setTask(response.data[0]);
 
-    if(listState === 1) {
-      response = await api.get(`tasks/user/unfinished`, {
-        params: { workerNameFilter, userID }
-      })
-      setTasks(response.data); setDefaultTasks(response.data); setTask(response.data[0]); setTaskMessages(response.data[0].messages);
+        // if(response.data[0]) {
+          // setTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+          // setDefaultTaskMessages(response.data[0].messages.filter(m => m.visible === true));
+        // }
+      // console.log(listState)
     }
-    if(listState === 2) {
-      response = await api.get(`tasks/user/finished`, {
-        params: { workerNameFilter, userID }
-      })
-      setTasks(response.data); setDefaultTasks(response.data); setTask(response.data[0]); setTaskMessages(response.data[0].messages);
-    }
-    if(listState === 3) {
-      response = await api.get(`tasks/user/canceled`, {
-        params: { workerNameFilter, userID }
-      })
-      setTasks(response.data); setDefaultTasks(response.data); setTask(response.data[0]); setTaskMessages(response.data[0].messages);
-    }
-    if(listState === 4) {
-      response = await api.get(`tasks`, {
-        params: { workerNameFilter, userID }
-      })
-      setTasks(response.data); setDefaultTasks(response.data); setTask(response.data[0]); setTaskMessages(response.data[0].messages);
-    }
-
-    if (response.data && !response.data[0].messages) scrollIntoLastMessage() // this seems to fix the scrollIntoView
-    // console.log(response.data)
   }
 
-  function scrollIntoLastMessage() { // if there are no messages, scrollIntoView has error.
-    return lastMessageRef.current.scrollIntoView(false)
-  }
+  // function scrollIntoLastMessage() { // if there are no messages, scrollIntoView has error.
+  //   try {
+  //     return lastMessageRef.current.scrollIntoView(false, { behavior: 'smooth'})
+  //   }
+  //   catch(error) {
+  //     return
+  //   }
+  // }
 
   async function handleTaskDetails(t) {
-    let S = t.sub_task_list;
-    let editedMessages = t.messages;
+    const response = await api.get(`messages/${t.message_id}`)
+    let editedSubTaskList = t.sub_task_list;
+    let editedMessages = response.data.messages;
 
-    await S.map((s) => {
-      if(s.user_read === false) {
-        s.user_read = true;
-      }
-      return s
-    })
-
-    await editedMessages.map((m) => {
-      if(m.user_read === false) {
-        m.user_read = true;
-      }
-      return m
-    })
     if (forwardValue) {
       editedMessages.push({
         "message": forwardValue,
@@ -94,19 +130,48 @@ export default function ListTasks() {
         "user_read": true,
         "worker_read": false,
         "timestamp": formattedMessageDate(new Date()),
-        "forward_message": true,S
+        "forward_message": true,
       })
       setForwardValue();
     }
 
+    if (editedSubTaskList) {
+      await editedSubTaskList.map((s) => {
+        if(s.user_read === false) {
+          s.user_read = true;
+        }
+        return s
+      })
+    }
+
+    if (editedMessages) {
+      await editedMessages.map((m) => {
+        if(m.user_read === false) {
+          m.user_read = true;
+        }
+        return m
+      })
+    }
     await api.put(`tasks/${t.id}`, {
-      sub_task_list: S,
+      sub_task_list: editedSubTaskList,
+    })
+
+    await api.put(`messages/update/${t.message_id}`, {
       messages: editedMessages,
     })
-    setTask(t);
-    setTaskMessages(t.messages)
-  }
 
+    firestore.collection(`messagesTask${t.id}`)
+    .orderBy('createdAt')
+    .get().then(resp => {
+      // console.log(resp.docs)
+      resp.forEach(doc => {
+        doc.ref.update({user_read: true})
+        // console.log(doc.ref)
+      })
+    })
+
+    setTask(t);
+  }
   // -----------------------------------------------------------------------------
   return (
     <Container>
@@ -119,30 +184,41 @@ export default function ListTasks() {
           defaultTasks={defaultTasks}
           setTask={setTask}
           handleTaskDetails={handleTaskDetails}
+          listState={listState}
+          setListState={setListState}
+
+          messagesProp={messages}
+          setMesssagesProp={setMessages}
+
         />
         {/* Task Detail */}
-        <TaskDetailsDiv
-          task={task}
-          load={load}
-          user_id={user_id}
-        />
+        { task && (
+          <TaskDetailsDiv
+            task={task}
+            load={load}
+            user_id={user_id}
+            listState={listState}
+          />
+        )}
       </div>
       {/* Message */}
       <div className="container-div right">
-        <MessageDiv
-          task={task}
-          setTask={setTask}
-          setForwardValue={setForwardValue}
-          chatMessage={chatMessage}
-          setChatMessage={setChatMessage}
-          user_name={user_name}
-          formattedMessageDate={formattedMessageDate}
-          messageRef={messageRef}
-          lastMessageRef={lastMessageRef}
-          scrollIntoLastMessage={scrollIntoLastMessage}
-          taskMessages={taskMessages}
-          setTaskMessages={setTaskMessages}
-        />
+        { task && (
+          <MessageDiv
+            task={task}
+            setTask={setTask}
+            setForwardValue={setForwardValue}
+            chatMessage={chatMessage}
+            setChatMessage={setChatMessage}
+            user_name={user_name}
+            formattedMessageDate={formattedMessageDate}
+            messageRef={messageRef}
+            // lastMessageRef={lastMessageRef}
+            // scrollIntoLastMessage={scrollIntoLastMessage}
+            toggleHeaderDropMenu={toggleHeaderDropMenu}
+            setToggleHeaderDropMenu={setToggleHeaderDropMenu}
+          />
+        )}
       </div>
     </Container>
   );

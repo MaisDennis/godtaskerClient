@@ -32,7 +32,6 @@ export default function RouteWrapper({
       )}
     />
   )
-
 }
 
 RouteWrapper.propTypes = {

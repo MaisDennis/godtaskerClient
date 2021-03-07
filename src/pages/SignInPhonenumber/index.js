@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -6,13 +6,8 @@ import InputMask from 'react-input-mask';
 import * as Yup from 'yup';
 // import { auth } from '~/services/firebase'
 import firebase from '../../services/firebase'
-
-
-
-// import 'react-phone-number-input/style.css'
 // import PhoneInput from 'react-phone-number-input'
-
-
+// import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/material.css'
 // -----------------------------------------------------------------------------
@@ -20,8 +15,7 @@ import logo from '~/assets/detective/detective.svg';
 import godtaskerFont from '~/assets/godtaskerFont/godtaskerFontPlainGrey.png';
 import { signInRequest } from '~/store/modules/auth/actions';
 import { signInPhonenumber } from '~/store/modules/phonenumber/actions';
-
-import { StyledPhoneInput } from '../_layouts/auth/styles';
+// import { StyledPhoneInput } from '../_layouts/auth/styles';
 // -----------------------------------------------------------------------------
 export default function SignIn() {
   const schema = Yup.object().shape({
@@ -34,6 +28,8 @@ export default function SignIn() {
   const [ masked, setMasked ] = useState(' ');
   const dispatch = useDispatch();
   const loading = useSelector(state => state.auth.loading);
+  const currentConfirm = useSelector(state => state.phonenumber.profile.confirm);
+  const currentPhonenumber = useSelector(state => state.phonenumber.profile.phonenumber);
 
   const [value, setValue] = useState()
   const [phoneNumber, setPhoneNumber] = useState()
@@ -42,12 +38,15 @@ export default function SignIn() {
 
   const onSubmit = ({ password }) => {
     // const phonenumber = masked.replace(/\D/gim, '');
-    // dispatch(signInRequest(phoneNumber, password));
+    console.log(currentPhonenumber)
+    dispatch(signInRequest(currentPhonenumber, password));
   }
-  console.log(phoneNumber)
-  // If null, no SMS has been sent
+  // console.log(currentPhonenumber)
   const [confirm, setConfirm] = useState(null);
-  // const [code, setCode] = useState('');
+
+  useEffect(() => {
+    setConfirm(currentConfirm)
+  }, [currentConfirm])
 
 
   const setupRecaptcha = () => {
@@ -55,10 +54,7 @@ export default function SignIn() {
       'recaptcha-container', {
         'size': 'invisible',
         'callback': (response) => {
-          // reCAPTCHA solved, allow signInWithPhoneNumber.
-          // this.onSignInSubmit();
           console.log('captcha OK')
-          setConfirm(true)
         }
     });
   }
@@ -66,45 +62,46 @@ export default function SignIn() {
   const onSignInSubmit = (e) => {
     e.preventDefault()
     setupRecaptcha();
-    const parsedPhonenumber = '01912341234';
-    // const parsedPhonenumber = JSON.stringify('+'+phoneNumber);
+    const parsedPhonenumber = '+5511983495853';
     const appVerifier = window.recaptchaVerifier;
+    console.log(appVerifier)
     firebase.auth().signInWithPhoneNumber(parsedPhonenumber, appVerifier)
-    .then((confirmationResult) => {
-      // SMS sent. Prompt user to type the code from the message, then sign the
-      // user in with confirmationResult.confirm(code).
-      window.confirmationResult = confirmationResult;
-      // const code = getCodeFromUserInput();
-      var code = window.prompt("Enter OTP")
-      confirmationResult.confirm(code).then((result) => {
-        // User signed in successfully.
-        const user = result.user;
-        console.log(user)
-        setConfirm(true)
+      .then((confirmationResult) => {
+        // SMS sent. Prompt user to type the code from the message, then sign the
+        // user in with confirmationResult.confirm(code).
+        window.confirmationResult = confirmationResult;
+        // const code = getCodeFromUserInput();
+        var code = window.prompt("Enter OTP")
+        confirmationResult.confirm(code).then((result) => {
+          // User signed in successfully.
+          const user = result.user;
+          console.log(user)
+          setConfirm(true)
+          dispatch(signInPhonenumber(parsedPhonenumber, true))
+        }).catch((error) => {
+        // User couldn't sign in (bad verification code?)
+        // ...
+        });
       }).catch((error) => {
-      // User couldn't sign in (bad verification code?)
-      // ...
+        // Error; SMS not sent
+        // ...
       });
-    }).catch((error) => {
-      // Error; SMS not sent
-      // ...
-    });
   }
-
-
-
   // -----------------------------------------------------------------------------
   return (
   <>
-    <img className="logo" src={logo} alt="detective"/>
-    <img className="godtasker" src={godtaskerFont} alt="godtaskerFont"/>
-    <p>Delegue tarefas como um poderoso.</p>
+    <div className="logo-div">
+      <img className="logo" src={logo} alt="detective"/>
+      <img className="godtasker" src={godtaskerFont} alt="godtaskerFont"/>
+    </div>
+    {/* <p>Delegue tarefas como um poderoso.</p> */}
+    <p>Sign In Phonenumber</p>
     <div id="recaptcha-container"></div>
 
     <form schema={schema}
-    // onSubmit={handleSubmit(onSubmit)}
+    onSubmit={handleSubmit(onSubmit)}
     >
-      { !confirm
+           { !confirm
         ? (
           <>
             {/* <PhoneInput

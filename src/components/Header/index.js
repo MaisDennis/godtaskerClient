@@ -13,26 +13,22 @@ export default function Header() {
   return (
     <Container>
       <Content>
+      <img src={logo} alt="gerenteDash" />
         <nav>
-          <img src={logo} alt="gerenteDash" />
+
           <ul>
             <li><Link to="/dashboard">Tarefas</Link></li>
-            <li><Link to="/workers/list">Funcionários</Link></li>
-            {/* <li><Link to="/messages">Mensagens</Link></li> */}
+            <li><Link to="/contact-list/list">Funcionários</Link></li>
             <li><Link to="/tutorial">Tutorial</Link></li>
+            <li><Link to="/profile">Meu perfil</Link></li>
           </ul>
         </nav>
 
         <aside>
-        <Notifications />
+        {/* <Notifications /> */}
           <Profile>
             <div>
-              <strong>
-                {profile.user_name}
-              </strong>
-              <Link to="/profile">
-                Meu perfil
-              </Link>
+              <strong>{profile.user_name}</strong>
             </div>
             {!profile.avatar
               ? <img src={insert} alt="User"/>
