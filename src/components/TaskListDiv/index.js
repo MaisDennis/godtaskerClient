@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import { GrTask } from 'react-icons/gr';
 import { FiMessageSquare } from 'react-icons/fi';
 import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
-import 'firebase/firestore'
-import 'firebase/auth'
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import Searchbar from '../../utils/Searchbar';
@@ -19,10 +17,9 @@ function TaskListDiv({
   defaultTasks,
   setTask,
   handleTaskDetails,
+  handleTest,
   handleListState,
   setListState,
-  messagesProp,
-  setMessagesProp,
 }) {
 
   const [inputState, setInputState] = useState('');
@@ -76,16 +73,6 @@ function TaskListDiv({
     }
     );
     load('', user_id);
-  }
-
-  const handleStatus = (sub_task_list) => {
-    let weigeSum = 0;
-    for(let i = 0; i < sub_task_list.length; i++) {
-      if(sub_task_list[i].complete === true) {
-        weigeSum += (sub_task_list[i].weige_percentage)
-      }
-    }
-    return Math.round(weigeSum)
   }
 
   function sortName() {
@@ -399,7 +386,9 @@ function TaskListDiv({
       <ul className='item-list'>
         { tasks.map((t) =>
           <TaskLine
+            key={t.id}
             handleTaskDetails={handleTaskDetails}
+            handleTest={handleTest}
             handleSelect={handleSelect}
             selectArray={selectArray}
             t={t}

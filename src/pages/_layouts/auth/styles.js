@@ -1,17 +1,5 @@
 import styled from 'styled-components';
 import { darken } from 'polished';
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
-
-export const StyledPhoneInput = styled(PhoneInput).attrs(props => {
-  props.inputStyle = {
-    backgroundColor: '#4433ee',
-    width: '22px',
-  }
-
-})`
-background-color: #f00;
-`;
 
 export const Wrapper = styled.div`
   display: flex;
@@ -25,11 +13,32 @@ export const Wrapper = styled.div`
 `;
 
 export const Content = styled.div`
-  width: auto;
-  max-width: 320px;
+  width: 100%;
   height: auto;
   text-align: center;
   /* background-color: #F5f; */
+
+  .sign-in-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    height: auto;
+    text-align: center;
+    /* background-color: #4433ee; */
+  }
+
+  .sign-in-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: auto;
+    max-width: 320px;
+    height: auto;
+    text-align: center;
+    /* background-color: #F5f; */
+  }
 
   .logo-div {
     display: flex;
@@ -37,7 +46,7 @@ export const Content = styled.div`
     align-items: center;
     justify-content: center;
     width: auto;
-      background-color: #F00;
+    /* background-color: #F00; */
   }
   .logo {
     width: 50%;
@@ -84,7 +93,7 @@ export const Content = styled.div`
     flex-direction: column;
     align-items: center;
     width: auto;
-    margin: 48px auto;
+    margin: 21px auto;
     padding: auto;
     /* background-color: #ff892e; */
 
@@ -106,12 +115,12 @@ export const Content = styled.div`
     input, select {
       height: 44px;
       width: 100%;
-      background: rgba(0,0,0,0.3);
       border: 0;
       border-radius: 4px;
       padding: 0 15px;
       margin: 8px 0;
       color: #fff;
+      background-color: rgba(0,0,0,0.3);
       &::placeholder {
         color: ${darken(0.3, '#fff')};
       }
@@ -129,7 +138,7 @@ export const Content = styled.div`
     }
 
     button {
-      margin: 16px 0 0;
+      margin: 4px 0;
       height: 44px;
       width: 100%;
       background: #4433ee;

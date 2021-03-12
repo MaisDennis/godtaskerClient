@@ -11,14 +11,14 @@ export const DetailsDiv = styled.div`
     background: #ccc;
   }
   padding: 4px;
-  background-color: #f00;
+  /* background-color: #f00; */
 
   .details-header-div {
     display: flex;
     flex-direction: column;
     width: 100%;
     margin: 4px 0;
-    background: #a0da;
+    /* background: #a0da; */
   }
 
   .details-title-strong {
@@ -30,13 +30,13 @@ export const DetailsDiv = styled.div`
     overflow: hidden;
     margin: 4px 0 12px;
     color: #444;
-    background-color: #9d9eb4;
+    /* background-color: #9d9eb4; */
   }
   .details-body {
     display: flex;
     flex-direction: column;
     margin: 4px 0;
-    background-color: #4e3;
+    /* background-color: #4e3; */
   }
   .details-strong {
     width: auto;
@@ -44,29 +44,30 @@ export const DetailsDiv = styled.div`
     font-weight: bold;
     text-align: left;
     margin: 4px 0;
+    margin-top: 12px;
     color: #444;
-    background: #666;
+    /* background: #666; */
   }
 
   .details-description-div {
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 36px;
+    height: 42px;
     width: 100%;
     font-size: 14px;
     font-weight: normal;
     border: 0;
     border-radius: 4px;
-    /* border: 1px solid #ccc; */
-    padding: 0 8px;
-    background-color: #F5F5F5;
+    border: 1px solid #ddd;
+    padding: 0 12px;
+    background-color: #fff;
   }
 
   .sub-tasks-div {
     display: flex;
     flex-direction: column;
-    background-color: #ff4;
+    /* background-color: #ff4; */
   }
   .sub-tasks-list-div {
     display: flex;
@@ -74,10 +75,10 @@ export const DetailsDiv = styled.div`
     align-items: center;
     height: auto;
     width: 100%;
-    /* border-radius: 4px; */
-    /* border: 1px solid #ccc; */
-    background-color: #F5F5F5;
-    background-color: #F5F;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    /* background-color: #F5F; */
   }
 
   .sub-tasks-checkbox-div {
@@ -88,8 +89,8 @@ export const DetailsDiv = styled.div`
     height: 36px;
     width: 90%;
     border-bottom: 1px solid #ccc;
-    margin: 4px 0;
-    background-color: #4433ee;
+    margin: 12px 0;
+    /* background-color: #4433ee; */
   }
 
   .sub-tasks-checkbox-label {
@@ -115,7 +116,7 @@ export const DetailsDiv = styled.div`
     justify-content: flex-end;
     width: auto;
     margin: 4px 0;
-    background-color: #222;
+    /* background-color: #222; */
   }
 
   .task-button {
@@ -189,7 +190,7 @@ export const DetailsDiv = styled.div`
     flex-direction: column;
     justify-content: center;
     width: 100%;
-    background-color: #4ee;
+    /* background-color: #4ee; */
   }
 
   .task-details-img {
@@ -197,7 +198,7 @@ export const DetailsDiv = styled.div`
     height: auto;
     border-radius: none;
     margin: 4px auto;
-    background-color: #f00;
+    /* background-color: #f00; */
   }
 
   @media (max-width: 1400px) {
@@ -216,7 +217,7 @@ export const DetailsDiv = styled.div`
       font-size: .8rem;
       text-align: left;
       /* margin: auto 0; */
-      background: #ffc87c;
+      /* background: #ffc87c; */
     }
 
     .details-description-div {

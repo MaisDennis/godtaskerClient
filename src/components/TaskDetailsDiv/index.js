@@ -10,7 +10,7 @@ function TaskDetailsDiv({ task, load, user_id, listState }) {
   const [ toggleEvaluate, setToggleEvaluate ] = useState();
   const [ scoreValue, setScoreValue] = useState();
   const { register, handleSubmit } = useForm();
-  console.log(task)
+  // console.log(task)
   async function handleRemoveTask(task) {
     await api.delete(`tasks/${task.id}`);
     load('', user_id, 1);
@@ -33,7 +33,7 @@ function TaskDetailsDiv({ task, load, user_id, listState }) {
       <header className="details-header-div">
         <strong className="details-title-strong">Detalhes da tarefa: {task && task.name}</strong>
       </header>
-      <body className="details-body">
+      <div className="details-body">
         <strong className="details-strong">Descrição</strong>
         <div className="details-description-div">
           {task && task.description}
@@ -114,6 +114,7 @@ function TaskDetailsDiv({ task, load, user_id, listState }) {
               <img
                 className="task-details-img"
                 src={task.signature.url}
+                alt="confirm-img"
               />
 
             </div>
@@ -143,7 +144,7 @@ function TaskDetailsDiv({ task, load, user_id, listState }) {
             <HiEmojiHappy size={24} color={'#ccc'}/>
           </div>
         )}
-      </body>
+      </div>
     </DetailsDiv>
   )
 }

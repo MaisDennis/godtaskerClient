@@ -5,9 +5,9 @@ const SearchBar = ({ input: keyword, onChange: setKeyword, placeholder: keyPlace
     height: "36px",
     width: "100%",
     margin: 0,
-    padding: "10px 12px",
-    border:"1px solid #CCC",
-    borderRadius: ".4rem",
+    padding: "0 12px",
+    border:"1px solid #ddd",
+    borderRadius: "4px",
     backgroundColor: "#FFF"
   }
   return (

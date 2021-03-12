@@ -60,6 +60,15 @@ export default function UpdateWorker({ match }) {
       toast.error(error.response.data.error);
     }
   }
+
+  let formattedPhoneNumber = (str) => {
+    let cleaned = ('' + str).replace(/\D/g, '').slice(2, ); //Filter only numbers from the input
+    // console.log(cleaned)
+    let match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/); //Check if the input is of correct length
+    if (match) {
+      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+    };
+  };
   // -----------------------------------------------------------------------------
   return (
     <Container>
@@ -137,7 +146,7 @@ export default function UpdateWorker({ match }) {
               onChange={e => {
               setMasked(e.target.value);
               }}
-              value={phonenumber}
+              value={formattedPhoneNumber(phonenumber)}
               style={{ backgroundColor: '#f5f5f5'}}
             />
           </div>

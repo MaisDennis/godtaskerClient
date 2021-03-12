@@ -2,14 +2,12 @@ import React, { useState, useRef, useEffect } from 'react'
 import { format, parseISO, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { MdNotifications } from 'react-icons/md';
-import 'firebase/firestore'
-import 'firebase/auth'
 // -----------------------------------------------------------------------------
 import { Line, Badge } from '~/pages/_layouts/list/styles';
 import firebase from '~/services/firebase'
 
 export default function TaskLine({
-  handleTaskDetails, handleSelect,
+  handleTaskDetails, handleSelect, handleTest,
   selectArray, t,
 }) {
   const messageInputRef = useRef();
@@ -17,7 +15,7 @@ export default function TaskLine({
   const [messages, setMessages] = useState();
 
   useEffect(() => {
-    getMessages();
+    // getMessages();
   }, [])
 
   const formattedDate = fdate =>
@@ -35,20 +33,20 @@ export default function TaskLine({
     return Math.round(weigeSum)
   }
 
-  const firestore = firebase.firestore()
-  const messagesRef = firestore.collection(`messagesTask${t.id}`)
+  // const firestore = firebase.firestore()
+  // const messagesRef = firestore.collection(`messages/task/${t.id}`)
 
   async function getMessages() {
-    const unsubscribe = await messagesRef
-      .orderBy('createdAt')
-      .onSnapshot((querySnapshot) => {
-        console.log('Can you hear me?')
-        const data = querySnapshot.docs.map(d => ({
-          ...d.data(),
-        }));
-        setMessages(data)
-      })
-    return unsubscribe;
+    // const unsubscribe = await messagesRef
+    //   .orderBy('createdAt')
+    //   .onSnapshot((querySnapshot) => {
+
+    //     const data = querySnapshot.docs.map(d => ({
+    //       ...d.data(),
+    //     }));
+    //     setMessages(data)
+    //   })
+    // return unsubscribe;
   }
 
   const hasUnread = (array) => {
@@ -60,6 +58,7 @@ export default function TaskLine({
         }
       }
       return sum
+
     } catch(error) {
       return
     }
@@ -72,7 +71,9 @@ export default function TaskLine({
         t.end_date || t.canceled_at
         ? (
           <div
-            className="line-div canceled" onClick={() => handleTaskDetails(t)}
+            className="line-div canceled"
+            // onClick={() => handleTaskDetails(t)}
+            // onClick={() => handleTest(t)}
           >
             <label className="item-label">{t.name}</label>
             <label className="item-label">{t.worker.worker_name}</label>
@@ -169,7 +170,9 @@ export default function TaskLine({
         )
         : (
           <div
-            className="line-div" onClick={() => handleTaskDetails(t)}
+            className="line-div"
+            // onClick={() => handleTaskDetails(t)}
+            onClick={() => handleTest(t)}
           >
             <label className="item-label">{t.name}</label>
             <label className="item-label">{t.worker.worker_name}</label>
@@ -191,7 +194,16 @@ export default function TaskLine({
               )}
             </select>
             {/* Task Dates */}
-            <label className="startdate">{formattedDate(t.start_date)}</label>
+            {
+              t.initiated_at
+                ? (
+                  <label className="startdate green">{formattedDate(t.initiated_at)}</label>
+                )
+                : (
+                  <label className="startdate">{formattedDate(t.start_date)}</label>
+                )
+            }
+
             { isBefore(parseISO(t.due_date), new Date())
               ? <label className="duedate red">{formattedDate(t.due_date)}</label>
               : <label className="duedate green">{formattedDate(t.due_date)}</label>

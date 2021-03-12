@@ -4,5 +4,6 @@ export const Wrapper = styled.div`
   height: auto;
   min-height: 100%;
   padding-bottom: 24px;
-  background: #222;
+  background-color: #222;
+  /* background-color: #f00; */
 `;

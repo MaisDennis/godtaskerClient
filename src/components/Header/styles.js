@@ -19,14 +19,14 @@ export const Content = styled.div`
     display: flex;
     align-items: center;
     width: auto;
-    background: #5edc1f;
+    /* background: #5edc1f; */
 
   }
 
   img {
     height: 48px;
     width: 48px;
-    background: #4433ee;
+    /* background: #4433ee; */
   }
 
   ul {
@@ -34,12 +34,12 @@ export const Content = styled.div`
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    background: #5edc;
+    /* background: #5edc; */
   }
   li {
     display: inline;
     margin: 0 12px;
-      background: #ff3;
+      /* background: #ff3; */
   }
 
   a {
@@ -51,7 +51,7 @@ export const Content = styled.div`
     &:hover {
       color: ${darken(0.2, '#f5f5f5')};
     }
-    background: #999;
+    /* background: #999; */
   }
 
   aside {
@@ -100,7 +100,7 @@ export const Profile = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: #f00;
+  /* background: #f00; */
 
   div {
     display: flex;

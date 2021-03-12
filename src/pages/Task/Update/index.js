@@ -10,7 +10,7 @@ import { RiCloseCircleFill, RiSkipBackFill, RiCheckLine } from 'react-icons/ri';
 import api from '~/services/api';
 import { Container } from '~/pages/_layouts/create/styles';
 import { updateTasks } from '~/store/modules/task/actions';
-import history from '~/services/history';
+// import history from '~/services/history';
 // -----------------------------------------------------------------------------
 export default function UpdateTask({ match }) {
 
@@ -200,6 +200,7 @@ export default function UpdateTask({ match }) {
               placeholder="1. Molhar 2. Passar sabão 3. Enxaguar..."
               ref={subTaskInputRef}
               onChange={(e) => setSubTasksInputValue(e.target.value)}
+              value={subTasksInputValue}
             />
             <div className="weige-div">
               <span className="form-span">Peso:</span>

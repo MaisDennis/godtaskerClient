@@ -39,6 +39,7 @@ export default function AvatarInput() {
 
     const { image, location } = response.data;
     setPreview(location);
+    // console.log(image)
     dispatch(updateImageRequest(image))
   }
   //----------------------------------------------------------------------------

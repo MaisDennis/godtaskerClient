@@ -40,6 +40,7 @@ export default function UpdateProfile() {
     email, birth_date, gender, preview
   }) => {
     const phonenumber = profile.phonenumber
+    console.log(preview)
 
     dispatch(updateProfileRequest({
       first_name, last_name, user_name,

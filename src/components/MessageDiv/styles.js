@@ -4,14 +4,14 @@ import { darken } from 'polished';
 export const MessageDivision = styled.div`
 width: 100%;
 padding: 4px;
-background-color: #5edc1f;
+/* background-color: #5edc1f; */
 
 .message-header {
   display: flex;
   flex-direction: column;
   height:auto;
   margin: 4px 0;
-  background-color: #22eeee;
+  /* background-color: #22eeee; */
 }
 
 .message-header-strong {
@@ -31,7 +31,7 @@ background-color: #5edc1f;
   flex-direction: row;
   justify-content: space-between;
   margin: 4px 0;
-  background-color: #ff0;
+  /* background-color: #ff0; */
 }
 
 .worker-profile-div {
@@ -41,7 +41,7 @@ background-color: #5edc1f;
   height: auto;
   min-height: 48px;
   width: 100%;
-  background-color: #4433ee;
+  /* background-color: #4433ee; */
 }
 
 .message-search-input {
@@ -52,7 +52,7 @@ background-color: #5edc1f;
   border: 0;
   border-radius: 4px;
   padding: 0 8px;
-  color: #222;
+  /* color: #222; */
 }
 
 .worker-tag {
@@ -60,7 +60,7 @@ background-color: #5edc1f;
   flex-direction: row;
   width: auto;
   padding: 0 4px;
-  background-color: #f00fff;
+  /* background-color: #f00fff; */
 }
 
 img {
@@ -75,14 +75,14 @@ img {
   display: flex;
   align-self: center;
   overflow: hidden;
-  background-color: #f00;
+  /* background-color: #f00; */
 }
 
 .message-menu-div {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: #007333;
+  /* background-color: #007333; */
 }
 
 .message-menu-button {
@@ -110,14 +110,14 @@ img {
   list-style-type: none;
   box-shadow: 2px 2px 2px #ccc;
   background-color: #fff;
-  background-color: #4433ee;
+  /* background-color: #4433ee; */
 }
 
 .others-drop-menu-button {
   border: none;
   color: #4433ee;
   background-color: #fff;
-  background-color: #334422;
+  /* background-color: #334422; */
 }
 
 .message-menu-icon {
@@ -137,7 +137,7 @@ img {
   width: 100%;
   /* padding: 4px; */
   margin: 4px 0;
-  /* border: 1px solid #ccc; */
+  border: 1px solid #ddd;
   border-radius: 4px;
   overflow-y: scroll;
   background-color: #fff;
@@ -157,7 +157,7 @@ img {
   width: 100%;
   padding: 4px 0;
   border-bottom: 1px solid #F5F5F5;
-  background-color: #F00;
+  /* background-color: #F00; */
 }
 
 .message-container-div.worker {
@@ -189,7 +189,7 @@ img {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: #f0ff;
+  /* background-color: #f0ff; */
 }
 
 .time-message-div.user {
@@ -210,7 +210,7 @@ img {
   margin: 0 4px;
   padding: 4px 8px;
   border-radius: 8px;
-  background-color: #ff0;
+  /* background-color: #ff0; */
 }
 
 .message-line-div.user {
@@ -254,18 +254,18 @@ img {
   justify-content: space-between;
   align-items: center;
   margin: 4px 0;
-  background-color: #4433ee;
+  /* background-color: #4433ee; */
 }
 
 .message-arrow-div.removed {
-  background-color: #f00;
+  /* background-color: #f00; */
 }
 
 .message-span {
   font-size: 14px;
   align-self: center;
   margin: 0 8px;
-  background-color: #fff;
+  /* background-color: #fff; */
 }
 
 .message-time-span {
@@ -278,6 +278,9 @@ img {
   align-items: center;
   justify-content: space-between;
   align-items: center;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-top: 12px;
 }
 
 .temporary-message-div {
@@ -287,7 +290,7 @@ img {
   height: auto;
   min-height: 36px;
   border-radius: 4px;
-  /* border: 1px solid #ccc; */
+  border: 1px solid #ccc;
   border: none;
   width: 100%;
   padding: 4px 8px;
@@ -302,12 +305,13 @@ img {
   align-items: center;
   height: auto;
   width: 100%;
-  margin: 4px 0;
+  margin: 12px 0;
   padding: 8px; // exception to the rule.
-  /* border: 1px solid #ccc; */
-  border: none;
+  border: 1px solid #ccc;
+  /* border: none; */
   border-radius: 4px;
   background-color: #fff;
+  /* background-color: #444; */
 }
 
 .message-button {
@@ -350,7 +354,7 @@ img {
   .message-menu-icon {
    font-size: 14px;
     margin: 0;
-  background-color: #fff131;
+  /* background-color: #fff131; */
 }
 
   .others-drop-menu-button {

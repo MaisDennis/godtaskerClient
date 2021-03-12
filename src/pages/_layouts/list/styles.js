@@ -9,7 +9,7 @@ export const Container = styled.div`
   width: 100%;
   font-weight: normal;
   padding: 8px;
-  background-color: #a0d;
+  /* background-color: #a0d; */
 
   label {
     text-align: center;
@@ -36,8 +36,11 @@ export const Container = styled.div`
 
   .container-div {
   width: 100%;
-    /* border-radius: 4px; */
-    background-color: #F5F;
+    border-radius: 4px;
+    margin: 4px;
+    padding: 12px;
+    background-color: #f5f5f5;
+    /* background-color: #F5F; */
   }
   .container-div.left {
     width: 75%;
@@ -45,7 +48,7 @@ export const Container = styled.div`
   }
   .container-div.right {
     width: 25%;
-    height: 90vh;
+    height: auto;
     /* background: #a044; */
   }
 
@@ -67,13 +70,14 @@ export const Container = styled.div`
 export const ListDiv = styled.div`
   width: 100%;
   padding: 4px;
+  background-color: #f5f5f5;
 
   .list-header {
     display: flex;
     flex-direction: column;
     width: 100%;
     margin: 4px 0;
-    background: #a0da;
+    /* background: #a0da; */
   }
   .list-header-title-div {
     display: flex;
@@ -82,7 +86,7 @@ export const ListDiv = styled.div`
     justify-content: space-between;
     width: 100%;
     margin: 4px 0 12px;
-    background-color: #4ee;
+    /* background-color: #4ee; */
   }
 
   .list-header-strong {
@@ -107,7 +111,7 @@ export const ListDiv = styled.div`
     margin: 0 8px;
     border: none;
     color: #4433ee;
-    background-color: #F00;
+    /* background-color: #F00; */
   }
 
   .list-header-div {
@@ -115,7 +119,7 @@ export const ListDiv = styled.div`
     justify-content: space-between;
     width: 100%;
     margin: 4px 0;
-    background: #a0daa9;
+    /* background: #a0daa9; */
   }
 
   .task-button {
@@ -150,6 +154,7 @@ export const ListDiv = styled.div`
     border-radius: 4px;
     padding: 0px 8px;
     color: #222;
+    /* background-color: #f00; */
   }
 
   .title-bar {
@@ -162,7 +167,7 @@ export const ListDiv = styled.div`
     border-radius: 4px;
     border-bottom: 1px solid #ccc;
     /* background-color: #fff; */
-    background-color: #b86d29;
+    /* background-color: #b86d29; */
   }
 
   .title-strong {
@@ -170,20 +175,20 @@ export const ListDiv = styled.div`
     max-width: 220px;
     text-align: center;
     cursor: pointer;
-    background: #ffc87c;
+    /* background: #ffc87c; */
   }
 
   .worker-strong {
     width: 330px;
     max-width: 330px;
     text-align: center;
-    background: #ffc87c;
+    /* background: #ffc87c; */
   }
 
   .short-tag {
     width: 110px;
     text-align: center;
-    background-color: #fff;
+    /* background-color: #fff; */
   }
 
   .short-tag.last {
@@ -194,7 +199,7 @@ export const ListDiv = styled.div`
     padding: auto;
     width: 48px;
     text-align: center;
-    background-color: #ff4;
+    /* background-color: #ff4; */
   }
 
   .bell-tag.last {
@@ -210,7 +215,7 @@ export const ListDiv = styled.div`
     align-items: center;
     width: 110px;
     max-width: 110px;
-    background-color: #4433ee;
+    /* background-color: #4433ee; */
   }
   .others-div {
     display: flex;
@@ -232,10 +237,13 @@ export const ListDiv = styled.div`
       background-color: #f5f5f5;
     }
   .others-button {
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
     border: none;
-    margin: 4px 0;
+    margin: 8px 0;
     background: none;
-    background-color: #F00;
+    /* background-color: #F00; */
   }
 
   .item-list {
@@ -277,13 +285,13 @@ export const ListDiv = styled.div`
       font-size: .8rem;
       text-align: center;
       /* margin: auto 0; */
-      background: #ffc87c;
+      /* background: #ffc87c; */
     }
 
     .worker-strong {
       width: 80px;
       font-size: .8rem;
-      background: #ffc87c;
+      /* background: #ffc87c; */
     }
 
     .short-tag {
@@ -291,7 +299,7 @@ export const ListDiv = styled.div`
       font-size: .8rem;
       text-align: center;
       /* margin: auto 0; */
-      background-color: #fff;
+      /* background-color: #fff; */
     }
 
     .others-label {
@@ -305,7 +313,7 @@ export const ListDiv = styled.div`
       width: 24px;
       text-align: center;
       /* margin: auto 0; */
-      background-color: #ff4;
+      /* background-color: #ff4; */
     }
 
     .bell-tag.last {
@@ -313,7 +321,7 @@ export const ListDiv = styled.div`
       width: 24px;
       /* margin: auto 0;
       margin-right: 12px; */
-      background-color: #ff4;
+      /* background-color: #ff4; */
     }
   }
 
@@ -348,14 +356,14 @@ export const ListDiv = styled.div`
     .worker-strong {
       width: 60px;
       font-size: .6rem;
-      background: #ffc87c;
+      /* background: #ffc87c; */
     }
 
     .short-tag {
       width: 48px;
       font-size: .6rem;
       text-align: center;
-      background-color: #fff;
+      /* background-color: #fff; */
     }
 
     .others-label {
@@ -391,7 +399,7 @@ export const Line = styled.div`
     min-height: 36px;
     width: 100%;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     padding: 4px 0;
     margin: 4px 0;
     background-color: #fff;
@@ -421,13 +429,13 @@ export const Line = styled.div`
     width: 220px;
     max-width: 220px;
     overflow: hidden;
-    background: #eac853;
+    /* background: #eac853; */
   }
 
   .short-label {
     width: 110px;
     max-width: 110px;
-    background-color: #daf1e0;
+    /* background-color: #daf1e0; */
   }
 
   .list-select-4 {
@@ -469,7 +477,7 @@ export const Line = styled.div`
     border-radius: 4px;
     border: none;
     /* color: #fff; */
-    background-color: #ff892e;
+    /* background-color: #ff892e; */
     background-color: #f3c775;
     /* background-color: #F3C48C; */
   }
@@ -495,7 +503,7 @@ export const Line = styled.div`
 
   .list-option {
     color: #222;
-    background-color: #F5F5F5;
+    background-color: #fff;
   }
 
   .startdate {
@@ -503,7 +511,11 @@ export const Line = styled.div`
     border-radius: 24px;
     padding: 4px;
     margin: 0 4px;
-    background-color: #F5F5F5;
+    background-color: #f9f9f9;
+  }
+
+  .startdate.green {
+    background-color: #009966;
   }
   .duedate {
     width: 102px;
@@ -529,7 +541,7 @@ export const Line = styled.div`
     width: 110px;
     max-width: 110px;
     margin: auto 0;
-    background-color: #443e;
+    /* background-color: #443e; */
   }
 
   .status-complete-div {
@@ -576,7 +588,7 @@ export const Line = styled.div`
     .item-label {
       width: 80px;
       font-size: .8rem;
-      background: #eac853;
+      /* background: #eac853; */
     }
 
     .worker-profile-div {
@@ -594,7 +606,7 @@ export const Line = styled.div`
     .short-label {
       width: 72px;
       font-size: .8rem;
-      background-color: #4433ee;
+      /* background-color: #4433ee; */
     }
 
     .list-select-4 {
@@ -648,12 +660,12 @@ export const Line = styled.div`
 
     .bell-label {
       width: 24px;
-      background-color: #999;
+      /* background-color: #999; */
     }
 
     .bell-label.last {
       width: 24px;
-      background-color: #999;
+      /* background-color: #999; */
     }
   }
 
@@ -661,7 +673,7 @@ export const Line = styled.div`
     .item-label {
       width: 60px;
       font-size: .6rem;
-      background: #eac853;
+      /* background: #eac853; */
     }
 
     .worker-profile-div {
@@ -673,7 +685,7 @@ export const Line = styled.div`
     .short-label {
       width: 60px;
       font-size: .6rem;
-      background-color: #4433ee;
+      /* background-color: #4433ee; */
     }
 
     .list-select-4 {
@@ -751,7 +763,7 @@ export const Line = styled.div`
       height: 8px;
       border-radius: 8px;
       /* background-color: #daf1e0; */
-      background-image: linear-gradient(to right, #ffdd33, #ff892e);
+      /* background-image: linear-gradient(to right, #ffdd33, #ff892e); */
     }
 
     .status-label {

@@ -7,11 +7,8 @@ import * as Yup from 'yup';
 // import { auth } from '~/services/firebase'
 import firebase from '../../services/firebase'
 
-
-
 // import 'react-phone-number-input/style.css'
 // import PhoneInput from 'react-phone-number-input'
-
 
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/material.css'
@@ -95,7 +92,7 @@ export default function SignIn() {
 
   // -----------------------------------------------------------------------------
   return (
-  <>
+  <div className="sign-in-div">
     <img className="logo" src={logo} alt="detective"/>
     <img className="godtasker" src={godtaskerFont} alt="godtaskerFont"/>
     <p>Delegue tarefas como um poderoso.</p>
@@ -166,6 +163,6 @@ export default function SignIn() {
         )
       }
     </form>
-  </>
+  </div>
   );
 }

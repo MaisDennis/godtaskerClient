@@ -34,7 +34,8 @@ export default function Contact({ contact, contacts, setContacts }) {
   }
 
   let formattedPhoneNumber = (str) => {
-    let cleaned = ('' + str).replace(/\D/g, ''); //Filter only numbers from the input
+    let cleaned = ('' + str).replace(/\D/g, '').slice(2, ); //Filter only numbers from the input
+    // console.log(cleaned)
     let match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/); //Check if the input is of correct length
     if (match) {
       return '(' + match[1] + ') ' + match[2] + '-' + match[3]

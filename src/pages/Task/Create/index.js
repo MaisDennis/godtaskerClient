@@ -6,10 +6,6 @@ import { Link } from 'react-router-dom';
 import { parseISO, isBefore , subHours, format } from 'date-fns';
 import { TiEdit } from 'react-icons/ti';
 import { RiCloseCircleFill,  RiSkipBackFill, RiCheckLine } from 'react-icons/ri';
-
-import firebase from '~/services/firebase'
-import 'firebase/firestore'
-import 'firebase/auth'
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import { Container } from '~/pages/_layouts/create/styles';
@@ -41,10 +37,6 @@ export default function CreateTask() {
   const user_id = useSelector(state => state.user.profile.id);
   const dispatch = useDispatch()
 
-  const auth = firebase.auth()
-  const firestore = firebase.firestore()
-  const messagesRef = firestore.collection('messages');
-
   useEffect(() => {
     loadWorkerOptionsList(user_id);
   }, [user_id])
@@ -68,7 +60,8 @@ export default function CreateTask() {
         description: subTaskInputRef.current.value,
         weige: weigeInputRef.current.value,
         complete: false,
-        user_read: false,
+        user_read: true,
+        worker_read: false,
       }
       setSubTasks([...subTasks, subTask])
     }
@@ -158,7 +151,7 @@ export default function CreateTask() {
         console.log(response)
       } else {
         await phonenumbers.map( p => {
-          let response = api.post('tasks', [
+          api.post('tasks', [
             {
               name,
               description,

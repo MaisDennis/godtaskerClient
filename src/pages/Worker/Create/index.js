@@ -15,7 +15,9 @@ export default function CreateWorker() {
   const user_id = useSelector(state => state.user.profile.id);
 
   async function handleSubmit({ first_name, last_name, worker_name, department }) {
-    const phonenumber = masked.replace(/\D/gim, '');
+    const countryCode = '+'+'55'
+    const phonenumber = countryCode+`${masked.replace(/\D/gim, '')}`;
+    console.log(phonenumber)
     const id = Math.floor(Math.random() * 1000000)
 
     try {

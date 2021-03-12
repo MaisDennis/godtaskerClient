@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 import Route from './Route'
+import LandIn from '~/pages/LandIn';
 import SignInPhonenumber from '~/pages/SignInPhonenumber';
 import SignIn from '~/pages/SignIn';
 import SignUp from '~/pages/SignUp';
@@ -24,8 +25,9 @@ export default function Routes() {
 // -----------------------------------------------------------------------------
   return (
     <Switch>
-      <Route path="/" exact component={SignInPhonenumber} />
-      <Route path="/login" exact component={SignIn} />
+      <Route path="/" exact component={LandIn} />
+      <Route path="/login" exact component={SignInPhonenumber} />
+      <Route path="/password" exact component={SignIn} />
       <Route path="/register" exact component={SignUp} />
       <Route path="/profile" exact component={UpdateProfile} isPrivate/>
 

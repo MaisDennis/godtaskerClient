@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux'
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import 'firebase/firestore'
-import 'firebase/auth'
 // -----------------------------------------------------------------------------
 import api from '~/services/api';
 import { Container } from '~/pages/_layouts/list/styles';
@@ -22,6 +20,7 @@ export default function ListTasks() {
   const [toggleHeaderDropMenu, setToggleHeaderDropMenu] = useState();
 
   const [task, setTask] = useState();
+  const [ toggleMessageDiv, setToggleMessageDiv] = useState();
 
   // message states
   const [forwardValue, setForwardValue] = useState();
@@ -34,9 +33,10 @@ export default function ListTasks() {
   // var devices = navigator.mediaDevices.getUserMedia({audio:true})
   useEffect(() => {
     load('', user_id, 1);
+    // getMessages()
 
   }, [update_tasks]);
-
+  // console.log(task)
   const formattedMessageDate = fdate =>
   fdate == null
     ? ''
@@ -44,8 +44,9 @@ export default function ListTasks() {
 
   let response = null
 
-  const [messages, setMessages] = useState();
-  const firestore = firebase.firestore()
+  // const [messages, setMessages] = useState();
+
+
 
   async function load(workerNameFilter, userID, listState) {
     switch(listState) {
@@ -55,6 +56,8 @@ export default function ListTasks() {
         })
         setTasks(response.data); setDefaultTasks(response.data);
         setTask(response.data[0]);
+
+        // setToggleMessageDiv(response.data[0]);
         // if(response.data[0]) {
         // setTaskMessages(response.data[0].messages.filter(m => m.visible === true));
         // setDefaultTaskMessages(response.data[0].messages.filter(m => m.visible === true));
@@ -118,60 +121,68 @@ export default function ListTasks() {
   //   }
   // }
 
-  async function handleTaskDetails(t) {
-    const response = await api.get(`messages/${t.message_id}`)
-    let editedSubTaskList = t.sub_task_list;
-    let editedMessages = response.data.messages;
-
-    if (forwardValue) {
-      editedMessages.push({
-        "message": forwardValue,
-        "sender": "user",
-        "user_read": true,
-        "worker_read": false,
-        "timestamp": formattedMessageDate(new Date()),
-        "forward_message": true,
-      })
-      setForwardValue();
-    }
-
-    if (editedSubTaskList) {
-      await editedSubTaskList.map((s) => {
-        if(s.user_read === false) {
-          s.user_read = true;
-        }
-        return s
-      })
-    }
-
-    if (editedMessages) {
-      await editedMessages.map((m) => {
-        if(m.user_read === false) {
-          m.user_read = true;
-        }
-        return m
-      })
-    }
-    await api.put(`tasks/${t.id}`, {
-      sub_task_list: editedSubTaskList,
-    })
-
-    await api.put(`messages/update/${t.message_id}`, {
-      messages: editedMessages,
-    })
-
-    firestore.collection(`messagesTask${t.id}`)
-    .orderBy('createdAt')
-    .get().then(resp => {
-      // console.log(resp.docs)
-      resp.forEach(doc => {
-        doc.ref.update({user_read: true})
-        // console.log(doc.ref)
-      })
-    })
-
+  function handleTest(t) {
+    // getMessages()
+    setToggleMessageDiv(t)
     setTask(t);
+    // console.log(t)
   }
+
+  // async function handleTaskDetails(t) {
+
+  //   const response = await api.get(`messages/${t.message_id}`)
+  //   let editedSubTaskList = t.sub_task_list;
+  //   let editedMessages = response.data.messages;
+
+  //   if (forwardValue) {
+  //     editedMessages.push({
+  //       "message": forwardValue,
+  //       "sender": "user",
+  //       "user_read": true,
+  //       "worker_read": false,
+  //       "timestamp": formattedMessageDate(new Date()),
+  //       "forward_message": true,
+  //     })
+  //     setForwardValue();
+  //   }
+
+  //   if (editedSubTaskList) {
+  //     await editedSubTaskList.map((s) => {
+  //       if(s.user_read === false) {
+  //         s.user_read = true;
+  //       }
+  //       return s
+  //     })
+  //   }
+
+  //   if (editedMessages) {
+  //     await editedMessages.map((m) => {
+  //       if(m.user_read === false) {
+  //         m.user_read = true;
+  //       }
+  //       return m
+  //     })
+  //   }
+  //   await api.put(`tasks/${t.id}`, {
+  //     sub_task_list: editedSubTaskList,
+  //   })
+
+  //   await api.put(`messages/update/${t.message_id}`, {
+  //     messages: editedMessages,
+  //   })
+
+  //   // firestore.collection(`messages/task/${t.id}`)
+  //   // .orderBy('createdAt')
+  //   // .get().then(resp => {
+  //   //   // console.log(resp.docs)
+  //   //   resp.forEach(doc => {
+  //   //     doc.ref.update({user_read: true})
+  //   //     // console.log(doc.ref)
+  //   //   })
+  //   // })
+
+  //   setTask(t);
+  // }
   // -----------------------------------------------------------------------------
   return (
     <Container>
@@ -183,12 +194,10 @@ export default function ListTasks() {
           setTasks={setTasks}
           defaultTasks={defaultTasks}
           setTask={setTask}
-          handleTaskDetails={handleTaskDetails}
+          // handleTaskDetails={handleTaskDetails}
+          handleTest={handleTest}
           listState={listState}
           setListState={setListState}
-
-          messagesProp={messages}
-          setMesssagesProp={setMessages}
 
         />
         {/* Task Detail */}
@@ -217,6 +226,10 @@ export default function ListTasks() {
             // scrollIntoLastMessage={scrollIntoLastMessage}
             toggleHeaderDropMenu={toggleHeaderDropMenu}
             setToggleHeaderDropMenu={setToggleHeaderDropMenu}
+            toggleMessageDiv={toggleMessageDiv}
+            setToggleMessageDiv={setToggleMessageDiv}
+            // messages={messages}
+            // setMesssages={setMessages}
           />
         )}
       </div>
