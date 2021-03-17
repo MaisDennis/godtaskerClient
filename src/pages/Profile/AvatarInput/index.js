@@ -13,6 +13,7 @@ export default function AvatarInput() {
   const [preview, setPreview] = useState(defaultValue && defaultValue.url);
   const dispatch = useDispatch();
   const ref = useRef();
+  console.log(defaultValue)
 
   useEffect(() => {
     if (ref.current) {

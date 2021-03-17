@@ -2,7 +2,11 @@ import styled from 'styled-components';
 import { darken } from 'polished';
 
 export const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   background: #222;
+  /* background-color: #4433ee; */
 `;
 
 export const Content = styled.div`
@@ -10,8 +14,8 @@ export const Content = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  /* height: 6vh; */
-  width: 70%;
+  height: 8vh;
+  width: 68%;
   margin: 0 auto;
   /* background: #5edc1f; */
 
@@ -24,8 +28,11 @@ export const Content = styled.div`
   }
 
   img {
-    height: 48px;
-    width: 48px;
+
+    /* height: 48px; */
+    /* width: 48px; */
+    height: 32px;
+    width: auto;
     /* background: #4433ee; */
   }
 
@@ -46,10 +53,10 @@ export const Content = styled.div`
     font-weight: bold;
     font-size: 16px;
     text-align: center;
-    color: #f5f5f5;
+    color: #999;
     /* background: #5edc1f; */
     &:hover {
-      color: ${darken(0.2, '#f5f5f5')};
+      color: ${darken(0.2, '#999')};
     }
     /* background: #999; */
   }
@@ -79,8 +86,8 @@ export const Content = styled.div`
     /* background-color: #f5f5f5; */
 
     img {
-      height: 36px;
-      width: 36px;
+      height: 18px;
+      width: auto;
       /* background: #5edc1f; */
     }
     nav {

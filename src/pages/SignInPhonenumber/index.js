@@ -49,7 +49,7 @@ const [ masked, setMasked ] = useState(' ');
   const onSignInSubmit = (e) => {
     e.preventDefault()
     const countryCode = '+'+'55'
-    const phonenumber = countryCode+`${masked.replace(/\D/gim, '')}`;
+    const phonenumber = countryCode+masked.replace(/\D/gim, '');
     // console.log(phonenumber)
     setupRecaptcha();
     // const phonenumber = '+5511983495853';
@@ -83,7 +83,9 @@ const [ masked, setMasked ] = useState(' ');
   const { register, handleSubmit } = useForm();
 
   const onSubmit = ({ password }) => {
-    dispatch(signInRequest(currentPhonenumber, password));
+    let testPhonenumber = '+5501912341234'
+    // dispatch(signInRequest(currentPhonenumber, password));
+    dispatch(signInRequest(testPhonenumber, password));
   }
   // -----------------------------------------------------------------------------
   return (
@@ -127,7 +129,7 @@ const [ masked, setMasked ] = useState(' ');
                   value={phoneNumber}
                   onChange={setPhoneNumber}
                 /> */}
-                <p>Login</p>
+                <p>Bem-vindo!</p>
                 <InputMask
                   name ="phoneNumberMask"
                   type="text"
@@ -141,17 +143,32 @@ const [ masked, setMasked ] = useState(' ');
             )
             : (
               <>
-                <p>Senha</p>
+                <p>Login</p>
+                <InputMask
+                  name ="signinPhoneNumberMask"
+                  type="text"
+                  mask="(99) 99999-9999"
+                  placeholder="(99) 91234-1234"
+                  maskChar="_"
+                  onChange={e => {setMasked(e.target.value);}}
+                />
                 <input
                   name="password"
                   type="password"
-                  placeholder="Sua senha secreta"
+                  placeholder="Sua senha"
                   ref={register}
                 />
-                <button type="submit">
+                <button
+                  type="submit"
+                  style={{backgroundColor: '#999'}}
+                >
                   { loading ? 'Carregando...' : 'Acessar'}
                 </button>
-                <Link to="/register" data={phoneNumber}>
+                <Link
+                  to="/register"
+                  style={{color: '#18A0FB'}}
+                  data={phoneNumber}
+                >
                   Criar conta gratuita
                 </Link>
               </>

@@ -4,6 +4,7 @@ const SearchBar = ({ input: keyword, onChange: setKeyword, placeholder: keyPlace
   const BarStyling = {
     height: "36px",
     width: "100%",
+    maxWidth: '440px',
     margin: 0,
     padding: "0 12px",
     border:"1px solid #ddd",

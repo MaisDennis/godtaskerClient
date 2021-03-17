@@ -11,9 +11,36 @@ function TaskDetailsDiv({ task, load, user_id, listState }) {
   const [ scoreValue, setScoreValue] = useState();
   const { register, handleSubmit } = useForm();
   // console.log(task)
-  async function handleRemoveTask(task) {
+
+  async function handleCancelTask(task) {
+    try {
+      await api.put(`tasks/${task.id}/cancel`, {
+        status: {
+          status: 4,
+          comment: `Canceled on ${new Date()}`,
+        },
+      });
+      load('', user_id, 1);
+    }
+    catch(error) {
+    }
+  }
+
+  async function handleReviveTask(task) {
+    await api.put(`tasks/${task.id}`, {
+      initiated_at: null,
+      canceled_at: null,
+      status: {
+        status: 1,
+        comment: `Restored on ${new Date()}`,
+      },
+    });
+    load('', user_id, 3);
+  }
+
+  async function handleDestroyTask() {
     await api.delete(`tasks/${task.id}`);
-    load('', user_id, 1);
+    load('', user_id, 3);
   }
 
   function handleEvaluateTask() {
@@ -125,18 +152,19 @@ function TaskDetailsDiv({ task, load, user_id, listState }) {
             <Link className='create-link' to={task && (`/tasks/update/${task.id}`)}>
               <button className="task-button blue">Editar</button>
             </Link>
-            <button className="task-button grey" onClick={() => handleRemoveTask(task)}>Cancelar</button>
+            <button className="task-button grey" onClick={() => handleCancelTask(task)}>Cancelar</button>
           </div>
         )}
         {listState === 2 && (
           <div className="sub-tasks-buttons-div">
               <button className="task-button blue" onClick={() => handleEvaluateTask(task)}>Avaliar</button>
+              <button className="task-button grey" onClick={() => handleDestroyTask(task)}>Deletar</button>
           </div>
         )}
         {listState === 3 && (
           <div className="sub-tasks-buttons-div">
-            <button className="task-button blue" onClick={() => handleRemoveTask(task)}>Recuperar</button>
-            <button className="task-button grey" onClick={() => handleEvaluateTask(task)}>Deletar</button>
+            <button className="task-button blue" onClick={() => handleReviveTask(task)}>Recuperar</button>
+            <button className="task-button grey" onClick={() => handleDestroyTask(task)}>Deletar</button>
           </div>
         )}
         {listState === 4 && (

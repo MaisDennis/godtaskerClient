@@ -58,7 +58,7 @@ export default function ListContacts() {
           <div className='list-header-div'>
             <Link className='create-link' to='/contact-list'>
               <button className="task-button search">
-                <Plus size={11} color='#FFF'/> Cadastrar Funcionário
+                Cadastrar Funcionário
               </button>
             </Link>
             <Searchbar className="header-input" input={inputState} onChange={handleUpdateInput}/>

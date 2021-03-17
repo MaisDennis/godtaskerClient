@@ -2,7 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 // -----------------------------------------------------------------------------
-import logo from '~/assets/detective/detective.svg';
+// import logo from '~/assets/detective/detective.svg';
+import logo from '~/assets/godtaskerFont/GroupgodtaskerFontPlainGrey.svg';
+// import logo from '~/assets/godtaskerFont/GroupgodtaskerFontLogoGrey.svg';
 import insert from '~/assets/insert_photo-24px.svg';
 import { Container, Content, Profile } from './styles';
 import Notifications from '~/components/Notifications';
@@ -13,7 +15,7 @@ export default function Header() {
   return (
     <Container>
       <Content>
-      <img src={logo} alt="gerenteDash" />
+      <img src={logo} alt="gerenteDash"/>
         <nav>
 
           <ul>

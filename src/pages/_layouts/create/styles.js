@@ -9,7 +9,7 @@ export const Container = styled.div`
   border-radius: 4px;
   padding: 8px 12px;
   /* padding-bottom: 12px; */
-  margin: 0px auto;
+  margin: 12px auto;
   margin-bottom: 12px;
   background: #F5F5F5;
   /* background: #a0daa9; */

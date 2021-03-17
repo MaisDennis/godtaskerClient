@@ -20,6 +20,8 @@ function TaskListDiv({
   handleTest,
   handleListState,
   setListState,
+  task,
+  selectedTaskId,
 }) {
 
   const [inputState, setInputState] = useState('');
@@ -52,28 +54,28 @@ function TaskListDiv({
     setInputState(input)
   }
 
-  async function handleSelect(e, id, taskAttributes, radioType) {
-    let editedTaskAttributes = []
-    if(radioType === 'Prior') {
-      editedTaskAttributes = [
-        e.target.value,
-        taskAttributes[1],
-        taskAttributes[2],
-      ]
-    } else {
-      editedTaskAttributes = [
-        taskAttributes[0],
-        e.target.value,
-        taskAttributes[2],
-      ]
-    }
+  // async function handleSelect(e, id, taskAttributes, radioType) {
+  //   let editedTaskAttributes = []
+  //   if(radioType === 'Prior') {
+  //     editedTaskAttributes = [
+  //       e.target.value,
+  //       taskAttributes[1],
+  //       taskAttributes[2],
+  //     ]
+  //   } else {
+  //     editedTaskAttributes = [
+  //       taskAttributes[0],
+  //       e.target.value,
+  //       taskAttributes[2],
+  //     ]
+  //   }
 
-    await api.put(`tasks/${id}`, {
-      task_attributes: editedTaskAttributes
-    }
-    );
-    load('', user_id);
-  }
+    // await api.put(`tasks/${id}`, {
+    //   task_attributes: editedTaskAttributes
+    // }
+    // );
+    // load('', user_id, 1);
+  // }
 
   function sortName() {
     if (!toggleName) {
@@ -389,9 +391,12 @@ function TaskListDiv({
             key={t.id}
             handleTaskDetails={handleTaskDetails}
             handleTest={handleTest}
-            handleSelect={handleSelect}
+            // handleSelect={handleSelect}
             selectArray={selectArray}
             t={t}
+            selectedTaskId={selectedTaskId}
+            user_id={user_id}
+            load={load}
           />
         )}
       </ul>

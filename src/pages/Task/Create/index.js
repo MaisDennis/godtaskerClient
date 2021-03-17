@@ -134,6 +134,7 @@ export default function CreateTask() {
       toast.error('O prazo está antes do início.');
     } else {
       weigeToPercentage(subTasks)
+
       if(typeof(phonenumbers) === 'string') {
         let response = api.post('tasks', [
           {
@@ -322,7 +323,7 @@ export default function CreateTask() {
                               <div className="sub-task-dangle-list-style">
                               {s.description}
                               <div className='sub-task-icons'>
-                              <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
+                                <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
                                 <TiEdit
                                   className='sub-task-edit-icon'
                                   onClick={() => handleOpenEditInput(index)}

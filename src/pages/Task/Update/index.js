@@ -13,7 +13,6 @@ import { updateTasks } from '~/store/modules/task/actions';
 // import history from '~/services/history';
 // -----------------------------------------------------------------------------
 export default function UpdateTask({ match }) {
-
   const [initialTaskData, setInitialTaskData] = useState([]);
   const [taskName, setTaskName] = useState();
   const [taskDescription, setTaskDescription] = useState();
@@ -26,11 +25,13 @@ export default function UpdateTask({ match }) {
   const [subTaskToggleEdit, setSubTaskToggleEdit] = useState(false);
   const [editSubTaskInputValue, setEditSubTaskInputValue] = useState();
   const [editSubTaskIndex, setEditSubTaskIndex] = useState();
+  const [editWeigeInputValue, setEditWeigeInputValue] = useState();
   const [subTasksInputValue, setSubTasksInputValue] = useState([]); // don't delete subTaskInputValue.
 
   const subTaskInputRef = useRef();
   const editSubTaskInputRef = useRef();
   const weigeInputRef = useRef();
+  const editWeigeInputRef = useRef();
 
   const user_id = useSelector(state => state.user.profile.id);
   const dispatch = useDispatch()
@@ -70,7 +71,8 @@ export default function UpdateTask({ match }) {
         description: subTaskInputRef.current.value,
         weige: weigeInputRef.current.value,
         complete: false,
-        user_read: false,
+        user_read: true,
+        worker_read: false,
       }
       setSubTasks([...subTasks, subTask])
     }
@@ -82,7 +84,13 @@ export default function UpdateTask({ match }) {
 
   function handleOpenEditInput(position) {
     setSubTaskToggleEdit(!subTaskToggleEdit)
-    setEditSubTaskInputValue(initialTaskData.sub_task_list[position].description)
+    setEditSubTaskInputValue(subTasks[position].description)
+    // if (initialTaskData.sub_task_list[position]) {
+    //   setEditSubTaskInputValue(initialTaskData.sub_task_list[position].description)
+    // } else {
+    //   setEditSubTaskInputValue(subTasks[position].description)
+    // }
+    setEditWeigeInputValue(subTasks[position].weige)
     setEditSubTaskIndex(position)
   }
 
@@ -91,6 +99,7 @@ export default function UpdateTask({ match }) {
     let editedSubTasks = subTasks.map((s, index) => {
       if (index === position && s.description) { // s.description was added to avoid error if s is not an object with description.
         s.description = editSubTaskInputValue
+        s.weige = editWeigeInputValue;
       }
       return s;
     })
@@ -101,6 +110,18 @@ export default function UpdateTask({ match }) {
   function handleRemoveSubTask(position) {
     let editedSubTasks = subTasks.filter((s, index) => index !== position)
     setSubTasks(editedSubTasks);
+  }
+
+  function weigeToPercentage(subTasks) {
+    let weigeSum = 0;
+    for(let i = 0; i < subTasks.length; i++) {
+      weigeSum += parseFloat(subTasks[i].weige)
+    }
+
+    for(let i = 0; i < subTasks.length; i++) {
+      subTasks[i].weige_percentage = (Math.round((parseFloat(subTasks[i].weige) / weigeSum)*1000) /10)
+    }
+    return weigeSum;
   }
 
   const { register, handleSubmit } = useForm();
@@ -131,7 +152,9 @@ export default function UpdateTask({ match }) {
       toast.error('O prazo está antes do início.');
       return;
     } else {
-      api.put(`tasks/${task_id}`, {
+      weigeToPercentage(subTasks)
+
+      api.put(`tasks/${task_id}/notification/user`, {
         name,
         description,
         sub_task_list: subTasks,
@@ -140,7 +163,7 @@ export default function UpdateTask({ match }) {
       });
       dispatch(updateTasks(new Date()))
       // history.push('/');
-      toast.success('Tarefa cadastrada com sucesso!');
+      toast.success('Tarefa alterada com sucesso!');
     }
   }
   // -----------------------------------------------------------------------------
@@ -200,7 +223,6 @@ export default function UpdateTask({ match }) {
               placeholder="1. Molhar 2. Passar sabão 3. Enxaguar..."
               ref={subTaskInputRef}
               onChange={(e) => setSubTasksInputValue(e.target.value)}
-              value={subTasksInputValue}
             />
             <div className="weige-div">
               <span className="form-span">Peso:</span>
@@ -247,6 +269,16 @@ export default function UpdateTask({ match }) {
                             value={editSubTaskInputValue}
                             onChange={(e) => setEditSubTaskInputValue(e.target.value)}
                           />
+                          <div className="weige-div">
+                            <span className="form-span">Peso:</span>
+                            <input
+                              className="sub-task-weige-input"
+                              type="number"
+                              ref={editWeigeInputRef}
+                              value={editWeigeInputValue}
+                              onChange={(e) => setEditWeigeInputValue(e.target.value)}
+                            />
+                          </div>
                           <button
                             className='sub-task-add-button'
                             type="button"
@@ -261,6 +293,7 @@ export default function UpdateTask({ match }) {
                             <div className="sub-task-dangle-list-style">
                               {s.description}
                               <div className='sub-task-icons'>
+                                <span className="weige-span">{`Peso: ${s.weige || 'n/a'}`}</span>
                                 <TiEdit
                                   className='sub-task-edit-icon'
                                   onClick={() => handleOpenEditInput(index)}

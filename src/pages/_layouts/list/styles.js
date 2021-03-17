@@ -8,7 +8,7 @@ export const Container = styled.div`
   height: auto;
   width: 100%;
   font-weight: normal;
-  padding: 8px;
+  padding: 0 8px;
   /* background-color: #a0d; */
 
   label {
@@ -37,7 +37,7 @@ export const Container = styled.div`
   .container-div {
   width: 100%;
     border-radius: 4px;
-    margin: 4px;
+    margin: 0 4px;
     padding: 12px;
     background-color: #f5f5f5;
     /* background-color: #F5F; */
@@ -53,6 +53,7 @@ export const Container = styled.div`
   }
 
   @media (max-width: 1400px) {
+    padding: 0;
   }
   @media (max-width: 620px) {
     .container-div.left {
@@ -61,7 +62,7 @@ export const Container = styled.div`
     }
     .container-div.right {
       width: 100%;
-      height: 60vh;
+      height: auto;
       /* background: #a044; */
     }
   }
@@ -76,7 +77,7 @@ export const ListDiv = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin: 4px 0;
+    margin: 0 0 20px 0;
     /* background: #a0da; */
   }
   .list-header-title-div {
@@ -116,7 +117,7 @@ export const ListDiv = styled.div`
 
   .list-header-div {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     width: 100%;
     margin: 4px 0;
     /* background: #a0daa9; */
@@ -133,9 +134,9 @@ export const ListDiv = styled.div`
     font-size: 14px;
     font-weight: bold;
     border: none;
-    /* border-radius: 4px; */
+    border-radius: 4px;
     margin-right: 8px;
-    padding: 4px;
+    padding: 4px 21px;
     transition: background 0.2s;
     color: #fff;
     background-color: #4343ee;
@@ -269,7 +270,7 @@ export const ListDiv = styled.div`
     .task-button {
       width: 72px;
       font-size: .8rem;
-      /* padding: auto; */
+      padding: 4px 0;
       /* background-color: #f00; */
     }
 
@@ -396,7 +397,7 @@ export const Line = styled.div`
     align-items: center;
     justify-content: space-between;
     height: auto;
-    min-height: 36px;
+    min-height: 66px;
     width: 100%;
     border-radius: 4px;
     border: 1px solid #ddd;
@@ -408,6 +409,14 @@ export const Line = styled.div`
 
   .line-div.canceled {
     background-color: #F5F5F5;
+  }
+
+  .line-div.selected {
+    border: 2px solid #666;
+  }
+
+  .line-div.canceled.selected {
+    border: 2px solid #666;
   }
 
   .worker-profile-div {

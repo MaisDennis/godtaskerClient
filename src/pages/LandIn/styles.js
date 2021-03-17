@@ -19,6 +19,7 @@ export const Container = styled.div`
     height: 10vh;
     width: 100%;
     font-weight: normal;
+    background-color: #222;
     /* background-color: #f00; */
   }
 
@@ -245,7 +246,7 @@ export const Container = styled.div`
   }
 
   .footer-img {
-    height: 42px;
+    height: 48px;
     width: auto;
     /* background-color: #4433ee; */
   }

@@ -22,7 +22,6 @@ export const Content = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-
     width: 100%;
     height: auto;
     text-align: center;
@@ -141,7 +140,7 @@ export const Content = styled.div`
       margin: 4px 0;
       height: 44px;
       width: 100%;
-      background: #4433ee;
+      background: #18A0FB;
       font-weight: bold;
       color: #fff;
       border: 0;
@@ -149,7 +148,7 @@ export const Content = styled.div`
       font-size: 16px;
       transition: background 0.2s;
       &:hover {
-        background: ${darken(0.03, '#4433ee')};
+        background: ${darken(0.03, '#18A0FB')};
       }
     }
     a {

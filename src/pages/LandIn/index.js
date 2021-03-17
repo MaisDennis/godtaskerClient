@@ -4,6 +4,7 @@ import history from '~/services/history';
 // -----------------------------------------------------------------------------
 import godtaskerFont from '~/assets/godtaskerFont/GroupgodtaskerFontLogoGrey.svg';
 import godtaskerFontFooter from '~/assets/godtaskerFont/GroupgodtaskerFontPlainGrey.svg';
+import footerLogo from '~/assets/detective/detective.svg';
 import hero from '~/assets/stockImages/hero.jpg';
 import subHeroTop from '~/assets/stockImages/sub-hero-top.jpg';
 import subHeroBottom from '~/assets/stockImages/sub-hero-bottom.jpg';
@@ -86,8 +87,8 @@ export default function LandIn() {
                 </ul>
                 <li className="sub-hero-li bottom">Notifications when:</li>
                 <ul className="help-ul">
-                  <li className="sub-hero-li bottom">Any sub-task, due date, priority is altered.</li>
-                  <li className="sub-hero-li bottom">Any new message in the chat.</li>
+                  <li className="sub-hero-li bottom">A sub-task, due date, priority is altered or completed.</li>
+                  <li className="sub-hero-li bottom">New messages in the chat.</li>
                 </ul>
                 <li className="sub-hero-li bottom">Worker completes the task.</li>
                 <ul className="help-ul">
@@ -130,10 +131,10 @@ export default function LandIn() {
               Some examples of use
             </strong>
             <ul className="sub-hero-ul">
-              <li className="sub-hero-li">Employees need to do a certain task on the job.</li>
-              <li className="sub-hero-li">Between co-workers and across departments with clear specific instructions and a helpdesk.</li>
+              <li className="sub-hero-li">Your employees need to do a certain task on the job.</li>
+              <li className="sub-hero-li">Between co-workers and across departments with clear instructions along with a helpdesk.</li>
               <li className="sub-hero-li">Sales task force: setting goals, setting locations, scheduling clients.</li>
-              <li className="sub-hero-li">Fitness trainers: Workout routine and completion confirmation (can be photo-required).</li>
+              <li className="sub-hero-li">Fitness trainers: Workout routine and completion confirmation (can be photo-required 😥).</li>
               <li className="sub-hero-li">A to-do list for the babysitter/housecleaner.</li>
               <li className="sub-hero-li">By yourself. To-do lists, checklists, meeting schedules, resolutions.</li>
             </ul>
@@ -153,7 +154,7 @@ export default function LandIn() {
 
       <footer className="footer-div">
         <div className="left-header-div">
-          <img className="footer-img" src={godtaskerFontFooter} alt="godtaskerFont"/>
+          <img className="footer-img" src={footerLogo} alt="godtaskerFont"/>
         </div>
         <div className="center-header-div">
           <ul className="header-ul">

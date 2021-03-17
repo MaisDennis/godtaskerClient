@@ -10,7 +10,7 @@ padding: 4px;
   display: flex;
   flex-direction: column;
   height:auto;
-  margin: 4px 0;
+  margin: 0 0 4px 0;
   /* background-color: #22eeee; */
 }
 
@@ -30,7 +30,7 @@ padding: 4px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 4px 0;
+  margin: 12px 0 8px 0;
   /* background-color: #ff0; */
 }
 
@@ -333,6 +333,17 @@ img {
 }
 @media (max-width: 1400px) {
   padding: 4px;
+
+  .list-header {
+    flex-direction: column;
+    margin: 12px 0 8px 0;
+    /* background-color: #ff0; */
+  }
+
+  .worker-profile-div {
+    margin: 0 0 4px 0;
+    /* background-color: #4433ee; */
+  }
 
   .message-header-strong {
       font-size: .8rem;
