@@ -42,31 +42,31 @@ export function* signUp({ payload }) {
     const {
       first_name, last_name, user_name,
       password, phonenumber, email,
-      birth_date, gender
+      birth_date, gender, instagram, linkedin,
     } = payload;
+
+    console.log(payload)
 
     yield call(api.post, 'users', {
       first_name, last_name, user_name,
       password, phonenumber, email,
-      birth_date, gender, subscriber: false
+      birth_date, gender,
+      instagram, linkedin, subscriber: false
     })
 
     toast.success('Usuário cadastrado com sucesso!');
 
     yield call(api.post, 'workers', {
-      first_name,
-      last_name,
+      first_name, last_name,
       worker_name: user_name,
       worker_password: password,
-      phonenumber,
-      email,
-      birth_date,
-      gender,
+      phonenumber, email, birth_date, gender,
+      instagram, linkedin,
       subscriber: false
     })
 
     toast.success('Funcionário cadastrado com sucesso!');
-    history.push('/');
+    history.push('/login');
 
   } catch (error) {
     toast.error(error.response.data.error);

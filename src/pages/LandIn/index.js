@@ -1,9 +1,10 @@
 import React from 'react'
+import { GrApple, GrAndroid } from 'react-icons/gr';
+// -----------------------------------------------------------------------------
 import { Container } from './styles'
 import history from '~/services/history';
-// -----------------------------------------------------------------------------
 import godtaskerFont from '~/assets/godtaskerFont/GroupgodtaskerFontLogoGrey.svg';
-import godtaskerFontFooter from '~/assets/godtaskerFont/GroupgodtaskerFontPlainGrey.svg';
+// import godtaskerFontFooter from '~/assets/godtaskerFont/GroupgodtaskerFontPlainGrey.svg';
 import footerLogo from '~/assets/detective/detective.svg';
 import hero from '~/assets/stockImages/hero.jpg';
 import subHeroTop from '~/assets/stockImages/sub-hero-top.jpg';
@@ -14,6 +15,7 @@ import subHeroExample3 from '~/assets/stockImages/sub-hero-example-3.jpg';
 import subHeroExample4 from '~/assets/stockImages/sub-hero-example-4.jpg';
 import subHeroExample5 from '~/assets/stockImages/sub-hero-example-5.jpg';
 import subHeroExample6 from '~/assets/stockImages/sub-hero-example-6.jpg';
+import qrcodegeneric from '~/assets/stockImages/qrcodegeneric.png';
 
 export default function LandIn() {
 
@@ -59,7 +61,7 @@ export default function LandIn() {
         </div>
 
         <div className="sub-hero-top-div">
-          {/* <div className="sub-hero-wrapper"> */}
+          <div className="sub-hero-wrapper">
             <img className="sub-hero-img" src={subHeroTop} alt="sub-hero-top"/>
             <div className="sub-hero-message-div">
               <strong className="sub-hero-strong">
@@ -73,11 +75,11 @@ export default function LandIn() {
                 <li className="sub-hero-li">Now the worker is entitled to complete that task before the deadline.</li>
               </ul>
             </div>
-          {/* </div> */}
+          </div>
         </div>
 
         <div className="sub-hero-bottom-div">
-          {/* <div className="sub-hero-wrapper"> */}
+          <div className="sub-hero-wrapper">
             <div className="sub-hero-message-div">
               <strong className="sub-hero-strong bottom">For the worker</strong>
               <ul className="sub-hero-ul">
@@ -98,7 +100,7 @@ export default function LandIn() {
               </ul>
             </div>
             <img className="sub-hero-img" src={subHeroBottom} alt="sub-hero-bottom"/>
-          {/* </div> */}
+          </div>
         </div>
 
         <div className="sub-hero-top-div">
@@ -132,7 +134,7 @@ export default function LandIn() {
             </strong>
             <ul className="sub-hero-ul">
               <li className="sub-hero-li">Your employees need to do a certain task on the job.</li>
-              <li className="sub-hero-li">Between co-workers and across departments with clear instructions along with a helpdesk.</li>
+              <li className="sub-hero-li">Collaboration between co-workers and across departments with clear instructions along with a helpdesk.</li>
               <li className="sub-hero-li">Sales task force: setting goals, setting locations, scheduling clients.</li>
               <li className="sub-hero-li">Fitness trainers: Workout routine and completion confirmation (can be photo-required 😥).</li>
               <li className="sub-hero-li">A to-do list for the babysitter/housecleaner.</li>
@@ -142,13 +144,40 @@ export default function LandIn() {
         </div>
 
         <div className="sign-up-div">
-          <strong className="sign-up-strong">
-            godtasker should be used anytime a task is done by one person(s) for another person, planned or not.
-          </strong>
-          <button
-            className="hero-button"
-            onClick={() => handleSingIn()}
-          >Join Today</button>
+          <div className="sign-up-top-div">
+            <strong className="sign-up-strong">
+              godtasker should be used anytime a task is done by one person(s) for another person, planned or not.
+            </strong>
+
+            <button
+              className="hero-button"
+              onClick={() => handleSingIn()}
+            >Join Today</button>
+          </div>
+
+          <div className="sign-up-bottom-div">
+            <div className="apple-div">
+              <div className="sign-up-title-div">
+                <GrApple size={32} color='#fff'/>
+                  <p className="app-p">
+                    App Store
+                  </p>
+              </div>
+
+
+              <img className="qrcode-img" src={qrcodegeneric} alt="qrcodegeneric"/>
+            </div>
+            <div className="android-div">
+              <div className="sign-up-title-div">
+                <GrAndroid size={32} color='#fff'/>
+                  <p className="app-p">
+                    Google Play
+                  </p>
+              </div>
+
+              <img className="qrcode-img" src={qrcodegeneric} alt="qrcodegeneric"/>
+            </div>
+          </div>
         </div>
       </body>
 
@@ -158,7 +187,6 @@ export default function LandIn() {
         </div>
         <div className="center-header-div">
           <ul className="header-ul">
-            <li className="footer-li">Mobile App</li>
             <li className="footer-li">Community</li>
             <li className="footer-li">Support</li>
           </ul>

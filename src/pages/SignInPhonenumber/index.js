@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import firebase from '../../services/firebase'
 // import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/material.css'
+import { toast } from 'react-toastify';
 // -----------------------------------------------------------------------------
 import logo from '~/assets/detective/detective.svg';
 import godtaskerFont from '~/assets/godtaskerFont/godtaskerFontPlainGrey.png';
@@ -15,13 +16,6 @@ import { signInRequest } from '~/store/modules/auth/actions';
 import { signInPhonenumber } from '~/store/modules/phonenumber/actions';
 // -----------------------------------------------------------------------------
 export default function SignIn() {
-  const schema = Yup.object().shape({
-    phonenumber: Yup.string()
-    .required()
-    .min(11),
-    password: Yup.string().min(6,'No mínimo 6 caracteres.').required('A senha é obrigatorória'),
-  });
-
   const dispatch = useDispatch();
   const loading = useSelector(state => state.auth.loading);
   const currentConfirm = useSelector(state => state.phonenumber.profile.confirm);
@@ -29,12 +23,19 @@ export default function SignIn() {
 
 const [ masked, setMasked ] = useState(' ');
   // const [value, setValue] = useState()
-  const [phoneNumber, setPhoneNumber] = useState()
+  const [otpPhoneNumber, setOtpPhoneNumber] = useState()
   const [confirm, setConfirm] = useState(null);
 
   useEffect(() => {
     setConfirm(currentConfirm)
   }, [currentConfirm])
+
+  const schema = Yup.object().shape({
+    phonenumber: Yup.string()
+    .required()
+    .min(11),
+    password: Yup.string().min(6,'No mínimo 6 caracteres.').required('A senha é obrigatorória'),
+  });
 
   const setupRecaptcha = () => {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
@@ -50,32 +51,37 @@ const [ masked, setMasked ] = useState(' ');
     e.preventDefault()
     const countryCode = '+'+'55'
     const phonenumber = countryCode+masked.replace(/\D/gim, '');
+    setOtpPhoneNumber(phonenumber)
     // console.log(phonenumber)
     setupRecaptcha();
     // const phonenumber = '+5511983495853';
     // const phonenumber = '+'+phoneNumber;
 
     const appVerifier = window.recaptchaVerifier;
-    console.log(appVerifier)
+    // console.log(appVerifier)
     firebase.auth().signInWithPhoneNumber(phonenumber, appVerifier)
       .then((confirmationResult) => {
         // SMS sent. Prompt user to type the code from the message, then sign the
         // user in with confirmationResult.confirm(code).
         window.confirmationResult = confirmationResult;
         // const code = getCodeFromUserInput();
-        var code = window.prompt("Enter OTP")
+        var code = window.prompt("Insira o código:")
         confirmationResult.confirm(code).then((result) => {
           // User signed in successfully.
-          const user = result.user;
-          // console.log(user)
+          // const user = result.user;
           setConfirm(true)
           dispatch(signInPhonenumber(phonenumber, true))
-        }).catch((error) => {
+        }).catch(() => {
+          console.log('bad verification code')
+          toast.error('Código inválido');
+
         // User couldn't sign in (bad verification code?)
         // ...
         });
-      }).catch((error) => {
+      }).catch(() => {
         // Error; SMS not sent
+        console.log('SMS not sent')
+        toast.error('SMS não enviado. Tente atualizar a página');
         // ...
       });
   }
@@ -83,15 +89,20 @@ const [ masked, setMasked ] = useState(' ');
   const { register, handleSubmit } = useForm();
 
   const onSubmit = ({ password }) => {
-    let testPhonenumber = '+5501912341234'
-    // dispatch(signInRequest(currentPhonenumber, password));
-    dispatch(signInRequest(testPhonenumber, password));
+    // let testPhonenumber = '+5501912341234'
+    const countryCode = '+'+'55'
+    const loginPhonenumber = countryCode+masked.replace(/\D/gim, '');
+    // console.log(loginPhonenumber)
+    dispatch(signInRequest(loginPhonenumber, password));
+    // dispatch(signInRequest(testPhonenumber, password));
   }
   // -----------------------------------------------------------------------------
   return (
     <div className="sign-in-wrapper">
+
+
       <div className="sign-in-div">
-        <div className="logo-div">
+      <div className="logo-div">
           <img className="logo" src={logo} alt="detective"/>
           <img className="godtasker" src={godtaskerFont} alt="godtaskerFont"/>
         </div>
@@ -102,33 +113,9 @@ const [ masked, setMasked ] = useState(' ');
           schema={schema}
           onSubmit={handleSubmit(onSubmit)}
         >
-              { !confirm
+              { confirm
             ? (
               <>
-                {/* <PhoneInput
-                  country="br"
-                  placeholder="+999..."
-                  inputStyle={{
-                    border: 0,
-                    borderRadius: '4px',
-                    height: '44px',
-                    width: '100%',
-                    color: '#fff',
-                    backgroundColor: 'rgba(0,0,0,0.3)',
-                  }}
-                  buttonStyle={{
-                    backgroundColor: 'rgba(0,0,0,0.1)',
-                  }}
-                  dropdownStyle={{
-                    height: '160px',
-                    width: '320px',
-                    textAlign: 'left',
-                    textDecoration: 'none',
-                    color: '#111',
-                  }}
-                  value={phoneNumber}
-                  onChange={setPhoneNumber}
-                /> */}
                 <p>Bem-vindo!</p>
                 <InputMask
                   name ="phoneNumberMask"
@@ -138,7 +125,12 @@ const [ masked, setMasked ] = useState(' ');
                   maskChar="_"
                   onChange={e => {setMasked(e.target.value);}}
                 />
-                <button onClick={onSignInSubmit}>Entrar</button>
+                <button
+                  className="captcha-button"
+                  onClick={onSignInSubmit}
+                >
+                  Entrar
+                </button>
               </>
             )
             : (
@@ -159,15 +151,15 @@ const [ masked, setMasked ] = useState(' ');
                   ref={register}
                 />
                 <button
+                  className="login-button"
                   type="submit"
-                  style={{backgroundColor: '#999'}}
                 >
                   { loading ? 'Carregando...' : 'Acessar'}
                 </button>
                 <Link
                   to="/register"
-                  style={{color: '#18A0FB'}}
-                  data={phoneNumber}
+                  data={otpPhoneNumber}
+                  style={{color: '#4433ee'}}
                 >
                   Criar conta gratuita
                 </Link>

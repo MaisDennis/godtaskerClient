@@ -9,7 +9,7 @@ export const Container = styled.div`
   border-radius: 4px;
   padding: 8px 12px;
   /* padding-bottom: 12px; */
-  margin: 12px auto;
+  margin: 0 auto;
   margin-bottom: 12px;
   background: #F5F5F5;
   /* background: #a0daa9; */
@@ -44,11 +44,10 @@ export const Container = styled.div`
     border-radius: 4px;
     padding: 0 12px;
     margin: 4px 0;
-    color: #444;
+    color: #222;
     background-color: #fff;
     &::placeholder {
-      font-size: 14px;
-      color: #ccc;
+      color: ${darken(0.3, '#fff')};
     }
   }
 
@@ -79,7 +78,7 @@ export const Container = styled.div`
     font-size: 14px;
     font-weight: bold;
     border: 0;
-    /* border-radius: 4px; */
+    border-radius: 4px;
     padding: 4px;
     margin: 0 4px;
     transition: background 0.2s;
@@ -99,7 +98,7 @@ export const Container = styled.div`
     font-size: 14px;
     font-weight: bold;
     border: 0;
-    /* border-radius: 4px; */
+    border-radius: 4px;
     padding: auto;
     margin: 0 4px;
     color: #fff;
@@ -217,7 +216,7 @@ export const Container = styled.div`
     background-color: #fff;
     &::placeholder {
       font-size: 14px;
-      color: #ccc;
+      color: ${darken(0.3, '#fff')};
     }
   }
 
@@ -234,7 +233,7 @@ export const Container = styled.div`
     padding: 4px 12px;
     color: #444;
     &::placeholder {
-      color: #ccc;
+      color: ${darken(0.3, '#fff')};
     }
     @media (max-width: 620px) {
       width: 98%;
@@ -354,6 +353,7 @@ export const Container = styled.div`
 
   @media (max-width: 1400px) {
     max-width: 90%;
+    margin: 0 auto;
     .sub-content-line-divider-div {
       flex-direction: column;
     }
@@ -361,6 +361,7 @@ export const Container = styled.div`
   }
   @media (max-width: 620px) {
     max-width: 100%;
+
     border-radius: 0;
 
     /* .header-title-strong {

@@ -79,6 +79,11 @@ export const Line = styled.div`
       font-size: 2vw;
       margin: auto 1px;
     }
+
+    .others-button {
+      font-size: .2rem;
+    }
+
     .whatsappbutton {
       height: 22px;
       width: 22px;

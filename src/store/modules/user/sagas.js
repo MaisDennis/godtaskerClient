@@ -45,6 +45,7 @@ export function* updateProfile({ payload }) {
       });
 
     } else {
+      console.log('Heya!')
       const imageResponse = yield call(api.get, 'files', {
         params: { image },
       })

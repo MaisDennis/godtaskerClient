@@ -115,7 +115,7 @@ export const DetailsDiv = styled.div`
     display: flex;
     justify-content: flex-end;
     width: auto;
-    margin: 4px 0;
+    margin: 16px 0 4px 0;
     /* background-color: #222; */
   }
 
@@ -188,13 +188,14 @@ export const DetailsDiv = styled.div`
   .task-details-img-div {
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     width: 100%;
     /* background-color: #4ee; */
   }
 
   .task-details-img {
-    width: 70%;
+    width: 30%;
     height: auto;
     border-radius: none;
     margin: 4px auto;

@@ -14,16 +14,14 @@ import firebase from '~/services/firebase'
 import ChatMessage from '~/components/ChatMessage'
 
 function MessageDiv({
-  task, setTask,
+  task,
   setForwardValue,
   chatMessage, setChatMessage,
   user_name,
   formattedMessageDate,
   messageRef,
-  scrollIntoLastMessage,
+  // scrollIntoLastMessage,
   toggleHeaderDropMenu, setToggleHeaderDropMenu,
-  toggleMessageDiv, setToggleMessageDiv,
-  // messages, setMessages
 }) {
   const user = useSelector(state => state.user.profile);
 
@@ -36,9 +34,8 @@ function MessageDiv({
   const [messages, setMessages] = useState();
   const [defaultMessages, setDefaultMessages] = useState();
   const [load, setLoad] = useState();
-
   const [inputState, setInputState] = useState(); // chat message state stays here in order (instead of MessageDiv) to update new message bell.
-  const [messagesTest, setMessagesTest] = useState(task.id);
+
   const phonenumber = task.worker.phonenumber
 
   const lastMessageRef = useRef();
@@ -213,7 +210,7 @@ function MessageDiv({
       setReplyValue();
 
       // scroll into view ******************************************************
-      // lastMessageRef.current.scrollIntoView(false, { behavior: 'smooth' });
+      lastMessageRef.current.scrollIntoView(false, { behavior: 'smooth' });
 
       // if(messages && messages.length > 3) scrollIntoLastMessage()
       messageRef.current.value = '';
@@ -275,8 +272,16 @@ function MessageDiv({
               (
                 <div className="worker-tag">
                   { workerData === undefined || workerData.avatar === null
-                    ? <img src={insert} alt="Worker"/>
-                    : <img src={workerData.avatar.url} alt="Worker"/>
+                    ? (
+                      <div className="image-background-div">
+                        <img src={insert} alt="Worker"/>
+                      </div>
+                    )
+                    : (
+                      <div className="image-background-div">
+                        <img src={workerData.avatar.url} alt="Worker"/>
+                      </div>
+                    )
                   }
                   <label className="worker-profile-label">{task && task.worker.worker_name}</label>
                 </div>

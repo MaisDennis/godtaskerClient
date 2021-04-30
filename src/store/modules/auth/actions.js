@@ -18,14 +18,14 @@ export function signFailure() {
 export function signUpRequest(
   first_name, last_name, user_name,
   password, phonenumber, email,
-  birth_date, gender
+  birth_date, gender, instagram, linkedin,
 ) {
   return {
     type: '@auth/SIGN_UP_REQUEST',
     payload: {
       first_name, last_name, user_name,
       password, phonenumber, email,
-      birth_date, gender
+      birth_date, gender, instagram, linkedin,
     },
   }
 }

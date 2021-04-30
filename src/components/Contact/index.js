@@ -26,6 +26,14 @@ export default function Contact({ contact, contacts, setContacts }) {
     setWorkerData(worker.data)
   }
 
+  function handleToggleOthers() {
+    if(toggleOthers) {
+      setToggleOthers(false)
+      return
+    }
+    setToggleOthers(!toggleOthers)
+  }
+
   async function handleRemoveContact(phonenumber) {
     const response = await api.put(`/users/${user_id}/remove-contact`, {
       phonenumber: phonenumber,
@@ -62,17 +70,20 @@ export default function Contact({ contact, contacts, setContacts }) {
         {/* <label className="short-label"><Link to={`/dashboard/${contact.worker_name}`}>entrar</Link></label> */}
         <label className="others-label">
           <div className="others-div">
-            <button className="others-button" onClick={() => setToggleOthers(!toggleOthers)}>
+            <button className="others-button" onClick={() => handleToggleOthers()}>
               <BsThreeDots size={14}/>
             </button>
             { toggleOthers && (
               <div className="others-menu-div">
-                <label className="short-label">
-                  <Link to={`/contact-list/update/${contact.worker_name}`}>
+                <label className="others-drop-label">
+                  <Link
+                    to={`/contact-list/update/${contact.worker_name}`}
+                    style={{color: '#4433ee'}}
+                  >
                     editar
                   </Link>
                 </label>
-                <label className="short-label">
+                <label className="others-drop-label">
                   <button
                     className="others-button"
                     onClick={() => handleRemoveContact(contact.phonenumber)}

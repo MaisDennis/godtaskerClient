@@ -8,7 +8,7 @@ export const Container = styled.div`
   height: auto;
   width: 100%;
   font-weight: normal;
-  padding: 0 8px;
+  padding: 0 4px;
   /* background-color: #a0d; */
 
   label {
@@ -230,20 +230,30 @@ export const ListDiv = styled.div`
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 40px 0;
-      right: 4px;
+      margin: 24px 0;
+      /* right: 36px; */
       height: auto;
       width: auto;
+      border: 1px solid #ccc;
       border-radius: 4px;
-      background-color: #f5f5f5;
+      background-color: #fff;
+      /* opacity: .8; */
     }
-  .others-button {
-    /* display: flex;
+  .others-drop-label {
+    display: flex;
     align-items: center;
-    justify-content: center; */
+    justify-content: center;
+    width: 100%;
+    padding: 8px;
+    margin: 8px;
+    /* background-color: #4433ee; */
+
+  }
+
+  .others-button {
     border: none;
-    margin: 8px 0;
     background: none;
+    color: #4433ee;
     /* background-color: #F00; */
   }
 
@@ -376,7 +386,7 @@ export const ListDiv = styled.div`
       padding: auto;
       width: 18px;
       text-align: center;
-      background-color: #ff4;
+      /* background-color: #ff4; */
     }
 
     .bell-tag.last {
@@ -384,7 +394,7 @@ export const ListDiv = styled.div`
       width: 18px;
       /* margin: auto 0;
       margin-right: 12px; */
-      background-color: #ff4;
+      /* background-color: #ff4; */
     }
   }
 
@@ -788,12 +798,16 @@ export const Line = styled.div`
 
     .bell-label {
       width: 18px;
-      background-color: #43e;
+      /* background-color: #43e; */
     }
 
     .bell-label.last {
       width: 18px;
-      background-color: #43e;
+      /* background-color: #43e; */
+    }
+
+    .others-button {
+      font-size: .6rem;
     }
   }
 `;
@@ -821,4 +835,46 @@ export const Badge = styled.button`
       border-radius: 50%;
     }
   `}
+  @media (max-width: 1400px) {
+    width: 18px;
+    height: 18px;
+    ${props => props.hasUnread && css`
+    visibility:${props.hasUnread || 'hidden'};
+    /* visibility: hidden; */
+    &::after {
+      position: absolute;
+      right: 0;
+      top: 16px;
+      width: 11px;
+      height: 11px;
+      background: #daf1e0;
+      color: #111;
+      font-size: 9px;
+      /* padding-top: 1px; */
+      content: '${props.hasUnread}';
+      border-radius: 50%;
+      }
+    `}
+  }
+  @media (max-width: 620px) {
+    width: 16px;
+    height: 16px;
+    ${props => props.hasUnread && css`
+    visibility:${props.hasUnread || 'hidden'};
+    /* visibility: hidden; */
+    &::after {
+      position: absolute;
+      right: 0;
+      top: 20px;
+      width: 10px;
+      height: 10px;
+      background: #daf1e0;
+      color: #111;
+      font-size: 8px;
+      /* padding-top: 1px; */
+      content: '${props.hasUnread}';
+      border-radius: 50%;
+      }
+    `}
+  }
 `;

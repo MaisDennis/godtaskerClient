@@ -13,7 +13,7 @@ export default function AvatarInput() {
   const [preview, setPreview] = useState(defaultValue && defaultValue.url);
   const dispatch = useDispatch();
   const ref = useRef();
-  console.log(defaultValue)
+  // console.log(defaultValue)
 
   useEffect(() => {
     if (ref.current) {
@@ -47,7 +47,10 @@ export default function AvatarInput() {
   return (
     <Container>
       <label htmlFor="avatar">
+        <div className="image-background-div">
         <img src={preview || search } alt="search"/>
+        {/* <div className="test" test={preview}></div> */}
+        </div>
         <input
           type="file"
           id="avatar"

@@ -223,7 +223,7 @@ export default function ListTasks() {
             task={task}
             selectedTaskId={selectedTaskId}
           />
-          {/* Task Detail */}
+
           { task && (
             <TaskDetailsDiv
               task={task}
@@ -233,12 +233,10 @@ export default function ListTasks() {
             />
           )}
         </div>
-        {/* Message */}
         <div className="container-div right">
           { task && (
             <MessageDiv
               task={task}
-              setTask={setTask}
               setForwardValue={setForwardValue}
               chatMessage={chatMessage}
               setChatMessage={setChatMessage}
@@ -249,10 +247,6 @@ export default function ListTasks() {
               // scrollIntoLastMessage={scrollIntoLastMessage}
               toggleHeaderDropMenu={toggleHeaderDropMenu}
               setToggleHeaderDropMenu={setToggleHeaderDropMenu}
-              toggleMessageDiv={toggleMessageDiv}
-              setToggleMessageDiv={setToggleMessageDiv}
-              // messages={messages}
-              // setMesssages={setMessages}
             />
           )}
         </div>

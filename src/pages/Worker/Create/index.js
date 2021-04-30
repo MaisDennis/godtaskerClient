@@ -30,7 +30,7 @@ export default function CreateWorker() {
         phonenumber,
       })
       toast.success('Funcionário cadastrado com sucesso!');
-      history.push('/contact-list/list');
+      // history.push('/contact-list/list');
     } catch(error) {
       toast.error(error.response.data.error);
     }
@@ -59,19 +59,19 @@ export default function CreateWorker() {
         <div className="form-body-div">
           <div className="sub-content-line-div">
             <label>Nome<sup>*</sup></label>
-            <Input name="first_name"  type="text" placeholder="Nome"/>
+            <Input name="first_name"  type="text" placeholder="Rita"/>
           </div>
           <div className="sub-content-line-div">
             <label>Sobrenome<sup>*</sup></label>
-            <Input name="last_name"  type="text" placeholder="Nome"/>
+            <Input name="last_name"  type="text" placeholder="Lee Jones de Carvalho"/>
           </div>
           <div className="sub-content-line-div">
             <label>Conhecido como (nome ou apelido para delegar tarefas)<sup>*</sup>:</label>
-            <Input name="worker_name"  type="text" placeholder="Nome"/>
+            <Input name="worker_name"  type="text" placeholder="Rita Lee"/>
           </div>
           <div className="sub-content-line-div">
             <label>Departamento</label>
-            <Input name="department"  type="text" placeholder="Dept" />
+            <Input name="department"  type="text" placeholder="Compras" />
           </div>
           <div className="sub-content-line-div">
             <label>Número de celular<sup>*</sup></label>

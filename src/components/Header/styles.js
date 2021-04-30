@@ -5,6 +5,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  /* border: 1px solid #ccc; */
   background: #222;
   /* background-color: #4433ee; */
 `;
@@ -27,12 +28,13 @@ export const Content = styled.div`
 
   }
 
-  img {
+  .image-logo {
 
     /* height: 48px; */
     /* width: 48px; */
     height: 32px;
     width: auto;
+    /* border: 1px solid #fff; */
     /* background: #4433ee; */
   }
 
@@ -45,7 +47,7 @@ export const Content = styled.div`
   }
   li {
     display: inline;
-    margin: 0 12px;
+    margin: 0 16px;
       /* background: #ff3; */
   }
 
@@ -71,6 +73,7 @@ export const Content = styled.div`
 
   @media (max-width: 1400px) {
     width: 90%;
+    height: 15vh;
     nav {
       width: auto;
     }
@@ -82,12 +85,12 @@ export const Content = styled.div`
 
   @media (max-width: 620px) {
     width: 98%;
+
     margin: 0 auto;
     /* background-color: #f5f5f5; */
 
-    img {
-      height: 18px;
-      width: auto;
+    .image-logo {
+      display: none;
       /* background: #5edc1f; */
     }
     nav {
@@ -95,7 +98,7 @@ export const Content = styled.div`
     }
 
     li {
-      margin: 0 4px;
+      margin: 0 6px;
     }
 
     a {
@@ -121,10 +124,21 @@ export const Profile = styled.div`
     font-size: 14px;
   }
 
-  img {
+  .image-background-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: #ddd;
+  }
+
+  .image-user {
     height: 36px;
     width: 36px;
     border-radius: 50%;
+    border: 1px solid #fff;
     background: #F5F5F5;
   }
 

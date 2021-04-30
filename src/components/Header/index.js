@@ -15,14 +15,18 @@ export default function Header() {
   return (
     <Container>
       <Content>
-      <img src={logo} alt="gerenteDash"/>
+      <img
+        className="image-logo"
+        src={logo}
+        alt="gerenteDash"
+      />
         <nav>
 
           <ul>
             <li><Link to="/dashboard">Tarefas</Link></li>
             <li><Link to="/contact-list/list">Funcionários</Link></li>
             <li><Link to="/tutorial">Tutorial</Link></li>
-            <li><Link to="/profile">Meu perfil</Link></li>
+            <li><Link to="/profile">Editar perfil</Link></li>
           </ul>
         </nav>
 
@@ -33,8 +37,23 @@ export default function Header() {
               <strong>{profile.user_name}</strong>
             </div>
             {!profile.avatar
-              ? <img src={insert} alt="User"/>
-              : <img src={profile.avatar.url} alt="User"/>
+              ? (
+                <div className="image-background-div">
+                  <img
+                    className="image-user"
+                    src={insert} alt="User"
+                  />
+                </div>
+              )
+              : (
+                <div className="image-background-div">
+                  <img
+                    className="image-user"
+                    src={profile.avatar.url}
+                    alt="User"
+                  />
+                </div>
+              )
             }
           </Profile>
         </aside>

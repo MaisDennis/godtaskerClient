@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { HiEmojiHappy } from 'react-icons/hi';
+import { toast } from 'react-toastify';
 //------------------------------------------------------------------------------
 import { DetailsDiv } from './styles'
 import api from '~/services/api';
@@ -20,9 +21,12 @@ function TaskDetailsDiv({ task, load, user_id, listState }) {
           comment: `Canceled on ${new Date()}`,
         },
       });
+
       load('', user_id, 1);
+      toast.success('Tarefa cancelada com sucesso!');
     }
     catch(error) {
+      toast.error('Erro ao cancelar a tarefa.');
     }
   }
 
@@ -36,11 +40,13 @@ function TaskDetailsDiv({ task, load, user_id, listState }) {
       },
     });
     load('', user_id, 3);
+    toast.success('Tarefa ressucitada com sucesso!');
   }
 
   async function handleDestroyTask() {
     await api.delete(`tasks/${task.id}`);
     load('', user_id, 3);
+    toast.success('Tarefa apagada com sucesso!');
   }
 
   function handleEvaluateTask() {

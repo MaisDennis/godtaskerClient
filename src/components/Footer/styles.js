@@ -45,6 +45,15 @@ export const Container = styled.div`
 
   @media (max-width: 1400px) {
     width: 90%;
+    .footer-li {
+      font-size: .8rem;
+
+      /* background-color: #4ee; */
+    }
+
+    .footer-p {
+      font-size: .6rem;
+    }
   }
 
   @media (max-width: 620px) {

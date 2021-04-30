@@ -63,11 +63,22 @@ padding: 4px;
   /* background-color: #f00fff; */
 }
 
+.image-background-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  width: 52px;
+  border-radius: 50%;
+  margin: 0 8px;
+  background-color: #ddd;
+}
+
 img {
   height: 48px;
   width: 48px;
+  border: 1px solid #fff;
   border-radius: 50%;
-  margin: 0 8px;
   background-color: #f5f5f5;
 }
 

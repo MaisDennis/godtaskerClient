@@ -110,7 +110,7 @@ export default function CreateTask() {
 
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = async ({ name, description, start_date, due_date, phonenumbers }) => {
+  const onSubmit = async ({ name, description, start_date, due_date, confirmPhoto, phonenumbers }) => {
     const timeStart = parseISO(start_date);
     const timeEnd = parseISO(due_date); // This solves: start_date === end_date issue for now (2020.07.22)
     const taskAttributeArray = [ radioPriority, radioUrgent, radioComplex ]
@@ -132,6 +132,9 @@ export default function CreateTask() {
       return;
     } else if (isBefore(timeEnd, timeStart)) {
       toast.error('O prazo está antes do início.');
+    } else if (!confirmPhoto) {
+      toast.error('Por favor, preenhcer se a confirmação é com foto?');
+      return;
     } else {
       weigeToPercentage(subTasks)
 
@@ -237,7 +240,7 @@ export default function CreateTask() {
               }
             </label>
           </div>
-          { !subTasksCheckBox
+          { subTasksCheckBox
             ? (
               // Sub Tasks Add
               <div className="sub-content-line-div">
@@ -527,7 +530,7 @@ export default function CreateTask() {
               <label  className='checkbox-label' key={'1'}>
                 <input
                   className='radio-input'
-                  name="ConfirmPhoto"
+                  name="confirmPhoto"
                   type="radio"
                   value={true}
                   onChange={e => setRadioConfirmPhoto(e.target.value)}
@@ -538,7 +541,7 @@ export default function CreateTask() {
               <label  className='checkbox-label' key={'2'}>
                 <input
                   className='radio-input'
-                  name="ConfirmPhoto"
+                  name="confirmPhoto"
                   type="radio"
                   value={false}
                   onChange={e => setRadioConfirmPhoto(e.target.value)}
